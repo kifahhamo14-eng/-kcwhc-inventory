@@ -731,26 +731,72 @@ function ean13Svg(code){
 function printProductLabel(id){
   const p=products.find(x=>x.id===id);
   if(!p)return;
+
+  const maxQty=Math.max(1,Number(p.quantity)||1);
+  const raw=prompt(`How many labels do you want to print for ${p.name}?\n\nCurrent quantity: ${maxQty}`,String(maxQty));
+  if(raw===null)return;
+
+  const count=Number(raw);
+  if(!Number.isInteger(count)||count<1){
+    toast('Enter a whole number of labels to print.');
+    return;
+  }
+  if(count>500){
+    toast('Print 500 labels or fewer at one time.');
+    return;
+  }
+
   const code=String(p.barcode||'');
   const svg=ean13Svg(code);
-  const win=window.open('','_blank','width=650,height=520');
-  if(!win){toast('Allow pop-ups to print the label');return}
-  const loc=[p.storage_room,p.shelf_bin].filter(Boolean).join(' • ')||'—';
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>KCWHC Product Label</title><style>
-  body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#eee;color:#000}
-  .label{width:76mm;min-height:45mm;background:#fff;border:1px solid #bbb;padding:5mm;box-sizing:border-box}
-  .name{font-size:16px;font-weight:800;margin-bottom:4px}.meta{font-size:11px;margin:2px 0}
-  .barcode{margin-top:8px;max-width:64mm}.digits{text-align:center;font:13px monospace;letter-spacing:1.5px;margin-top:2px}
-  .no-print{margin-top:15px;padding:10px 14px;font-weight:700}
-  @media print{body{background:#fff;padding:0}.label{border:0}.no-print{display:none}}
-  </style></head><body><div class="label">
-  <div class="name">${esc(p.name||'Product')}</div>
-  <div class="meta"><b>Storage #:</b> ${esc(p.storage_number||'—')}</div>
-  <div class="meta"><b>Location:</b> ${esc(loc)}</div>
-  ${p.selling_price?`<div class="meta"><b>Price:</b> $${Number(p.selling_price).toFixed(2)}</div>`:''}
-  <div class="barcode">${svg||'<div>Barcode unavailable</div>'}</div>
-  <div class="digits">${esc(code)}</div>
-  </div><button class="no-print" onclick="window.print()">Print Label</button></body></html>`);
+  const colorText=String(p.color||'—');
+  const priceText=Number(p.selling_price||0).toFixed(2);
+
+  const labels=Array.from({length:count},(_,i)=>`
+    <div class="label">
+      <div class="name">${esc(p.name||'Product')}</div>
+      <div class="meta"><b>Color:</b> ${esc(colorText)}</div>
+      <div class="meta"><b>Price:</b> $${priceText}</div>
+      <div class="unitNo">${i+1} of ${count}</div>
+      <div class="barcode">${svg||'<div class="missing">Barcode unavailable</div>'}</div>
+      <div class="digits">${esc(code)}</div>
+    </div>
+  `).join('');
+
+  const win=window.open('','_blank','width=720,height=680');
+  if(!win){toast('Allow pop-ups to print labels');return}
+
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>KCWHC Product Labels</title><style>
+    @page{margin:5mm}
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;margin:0;padding:10px;background:#eee;color:#000}
+    .sheet{display:grid;grid-template-columns:repeat(2,76mm);gap:5mm;align-items:start}
+    .label{width:76mm;min-height:45mm;background:#fff;border:1px solid #bbb;padding:5mm;position:relative;break-inside:avoid;page-break-inside:avoid}
+    .name{font-size:16px;font-weight:800;margin-bottom:5px;line-height:1.15}
+    .meta{font-size:11px;margin:2px 0}
+    .unitNo{position:absolute;top:5mm;right:5mm;font-size:11px;font-weight:900;border:1px solid #000;border-radius:12px;padding:2px 7px;background:#fff}
+    .barcode{margin-top:8px;max-width:64mm}
+    .digits{text-align:center;font:13px monospace;letter-spacing:1.5px;margin-top:2px}
+    .missing{font-size:11px;text-align:center;padding:10px;border:1px dashed #999}
+    .toolbar{position:sticky;top:0;background:#eee;padding:0 0 10px;display:flex;align-items:center;gap:8px;z-index:10}
+    .toolbar button{padding:10px 14px;font-weight:800;border:1px solid #888;border-radius:8px;background:#fff}
+    .summary{font-size:12px;font-weight:700}
+    @media print{
+      body{background:#fff;padding:0}
+      .toolbar{display:none}
+      .sheet{gap:4mm}
+      .label{border:0}
+    }
+    @media(max-width:700px){
+      .sheet{grid-template-columns:1fr}
+      .label{width:100%;max-width:76mm}
+    }
+  </style></head><body>
+    <div class="toolbar">
+      <button onclick="window.print()">Print ${count} Label${count===1?'':'s'}</button>
+      <div class="summary">Same barcode • Numbered 1–${count}</div>
+    </div>
+    <div class="sheet">${labels}</div>
+  </body></html>`);
   win.document.close();
 }
 
