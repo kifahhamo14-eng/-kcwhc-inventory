@@ -616,7 +616,7 @@ function filteredProducts(){const q=$('search').value.trim().toLowerCase();retur
 function productImage(p){return p.image_url||EMBEDDED_IMAGES[p.storage_number]||''}
 function stockLabel(p){if((+p.quantity||0)<=0)return['Out of Stock','red'];if((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)return['Low Stock','amber'];return['In Stock','green']}
 function renderProducts(){if($('categoryButtons'))$('categoryButtons').innerHTML=categoryButtonsHtml(categoryFilter,'setCategory');if($('salesChannelButtons'))$('salesChannelButtons').innerHTML=salesChannelButtonsHtml(channelFilter);let rows=filteredProducts();rows=sortedByChannelPriority(rows);$('productCount').textContent=rows.length;$('products').innerHTML=rows.length?rows.map(productCard).join(''):'<div class="panel"><div class="empty">No products match this view.</div></div>';renderChannelPriorityPanel()}
-function productCard(p){const img=productImage(p),[status,cls]=stockLabel(p),rec=(p.recommendation||'Stock OK'),recCls=(+p.quantity||0)<=0?'red':((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)?'':'green';return `<article class="productCard"><div class="pcTop"><div>${img?`<img class="prodImg" src="${img}" alt="${esc(p.name)}">`:'<div class="placeholder">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number||'—')}</div><div class="pname">${esc(p.name||'Unnamed product')}</div><div class="tags"><span class="tag">${esc(productCategory(p))}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel||'Online + Showroom')}</span></div><div class="detailsGrid"><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${+p.quantity||0}</b><small>Quantity</small></div><div class="detail"><b>${+p.reorder_level||0}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div></div></div></div><div class="barcodeBox"><div class="recommend ${recCls}">💡 Recommendation: ${esc(rec)}</div><div class="barcode">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'No barcode')}</div></div></div><div class="pcActions"><button class="smallbtn primary" onclick="openProduct('${p.id}')">View</button><button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="adjustStock('${p.id}')">Adjust Stock</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="openProduct('${p.id}',true)">Edit</button>`:''}</div></article>`}
+function productCard(p){const img=productImage(p),[status,cls]=stockLabel(p),rec=(p.recommendation||'Stock OK'),recCls=(+p.quantity||0)<=0?'red':((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)?'':'green';return `<article class="productCard"><div class="pcTop"><div>${img?`<img class="prodImg" src="${img}" alt="${esc(p.name)}">`:'<div class="placeholder">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number||'—')}</div><div class="pname">${esc(p.name||'Unnamed product')}</div><div class="tags"><span class="tag">${esc(productCategory(p))}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel||'Online + Showroom')}</span></div><div class="detailsGrid"><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${+p.quantity||0}</b><small>Quantity</small></div><div class="detail"><b>${+p.reorder_level||0}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div><div class="detail"><b>${esc(p.sku||'—')}</b><small>SKU</small></div></div></div></div><div class="barcodeBox"><div class="recommend ${recCls}">💡 Recommendation: ${esc(rec)}</div><div class="barcode">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'No barcode')}</div></div></div><div class="pcActions"><button class="smallbtn primary" onclick="openProduct('${p.id}')">View</button><button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="adjustStock('${p.id}')">Adjust Stock</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="openProduct('${p.id}',true)">Edit</button>`:''}</div></article>`}
 function captureInventoryView(){
   const home=$('home');
   if(!home?.classList.contains('active'))return savedInventoryView;
@@ -661,7 +661,28 @@ function focusSearch(){go('home');setTimeout(()=>$('search').focus(),100)}
 function openProduct(id,edit=false){currentProduct=products.find(p=>p.id===id);if(!currentProduct)return;go('detail');renderDetail(edit)}
 function renderDetail(edit=false){const p=currentProduct,img=productImage(p),[status,cls]=stockLabel(p);$('detailBody').innerHTML=`<div class="detailHero"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:125px" src="${img}">`:'<div class="placeholder" style="width:100px;height:125px">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${esc(p.name)}</div><div class="tags"><span class="tag">${esc(p.category||'Uncategorized')}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${p.quantity}</b><small>Quantity</small></div><div class="detail"><b>${p.reorder_level}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div></div></div></div><div class="barcode" style="margin:12px auto 0;max-width:240px">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'')}</div></div><div class="recommend ${p.risk_level==='High'?'red':p.risk_level==='Low'?'green':''}" style="margin-top:10px">${esc(p.recommendation||'Stock OK')} • Risk: ${esc(p.risk_level||'Low')} — ${esc(p.risk_reason||'')}</div><div class="tabs"><button class="tab active" onclick="detailTab('activity',this)">Activity</button><button class="tab" onclick="detailTab('details',this)">Details</button><button class="tab" onclick="detailTab('sales',this)">Sales</button><button class="tab" onclick="detailTab('risk',this)">Risk</button></div><div id="tabPanel" class="tabPanel"></div><div class="pcActions">${canDo('can_sell')?`<button class="smallbtn primary" onclick="prepareSell('${p.id}')">Sell Item</button>`:''}<button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="adjustStock('${p.id}')">Adjust Stock</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="enableEditCurrent()">Edit Product</button>`:''}${canDo('can_delete_products')?`<button class="smallbtn" style="color:#b21919" onclick="deleteProduct('${p.id}')">Delete Product</button>`:''}</div></div>`;detailTab('activity',document.querySelector('.tab'));if(edit&&canDo('can_edit_products'))enableEditCurrent()}
 async function detailTab(tab,btn){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');const p=currentProduct,panel=$('tabPanel');if(tab==='details'){panel.innerHTML=`<div class="listRow"><b>${esc(p.name)}</b><div class="sub">Category: ${esc(p.category||'—')} • Size: ${esc(p.size||'—')} • Color: ${esc(p.color||'—')}</div><div class="sub">Channel: ${esc(p.sales_channel)} • Status: ${esc(p.status||'Active')}</div></div>`;return}if(tab==='risk'){panel.innerHTML=`<div class="listRow"><b>${esc(p.risk_level||'Low')} Risk • ${p.risk_score||0}/100</b><div class="sub" style="margin-top:4px">${esc(p.risk_reason||'No major risk detected')}</div></div>`;return}if(profile.role!=='admin'){panel.innerHTML='<div class="sub">Admin access required for this history.</div>';return}if(tab==='activity'){panel.innerHTML='Loading…';const {data}=await sb.from('inventory_activity').select('*,profiles(full_name)').eq('product_id',p.id).order('created_at',{ascending:false}).limit(25);panel.innerHTML=(data||[]).length?(data||[]).map(a=>`<div class="activityRow"><b>${esc(a.action)}</b><div class="sub">${esc(a.profiles?.full_name||'User')} • ${a.quantity_before??'—'} → ${a.quantity_after??'—'} • ${new Date(a.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No activity yet.</div>';return}if(tab==='sales'){panel.innerHTML='Loading…';const {data}=await sb.from('orders').select('*').eq('product_id',p.id).eq('record_type','Sale').order('created_at',{ascending:false}).limit(25);panel.innerHTML=(data||[]).length?(data||[]).map(o=>`<div class="activityRow"><b>Sale × ${o.quantity}</b><div class="sub">$${Number(o.total_price||0).toFixed(2)} • ${new Date(o.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No sales yet.</div>'}}
-function buildAddForm(p=null){const needed=p?'can_edit_products':'can_add_products';if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');go('home');return}const x=p||{};$('addForm').innerHTML=`<div class="formGrid"><div class="field full"><label>Product Image</label><input id="fImage" type="file" accept="image/*"></div><div class="field full"><label>Item Name *</label><input id="fName" value="${esc(x.name||'')}"></div><div class="field"><label>Category</label><select id="fCategory">${KC_CATEGORIES.map(c=>`<option value="${esc(c)}" ${productCategory(x)===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="field"><label>Size</label><input id="fSize" value="${esc(x.size||'')}"></div><div class="field"><label>Color</label><input id="fColor" value="${esc(x.color||'')}"></div><div class="field full"><label>Sales Channel *</label><div class="channelChoice"><button type="button" data-v="Online Only" onclick="pickFormChannel(this)">🌐<br>Online Only</button><button type="button" data-v="Showroom Only" onclick="pickFormChannel(this)">🏬<br>Showroom Only</button><button type="button" data-v="Online + Showroom" onclick="pickFormChannel(this)">◉<br>Online + Showroom</button><button type="button" data-v="Bazar" onclick="pickFormChannel(this)">◆<br>Bazar</button></div><input id="fChannel" type="hidden" value="${esc(x.sales_channel||'Online + Showroom')}"></div><div class="field"><label>Selling Price</label><input id="fPrice" type="number" step="0.01" value="${x.selling_price??0}"></div><div class="field"><label>Quantity</label><input id="fQty" type="number" min="0" value="${x.quantity??0}"></div><div class="field"><label>Reorder Level</label><input id="fReorder" type="number" min="0" value="${x.reorder_level??0}"></div><div class="field"><label>Storage Room</label><input id="fRoom" value="${esc(x.storage_room||'')}"></div><div class="field"><label>Shelf / Bin / Box</label><input id="fShelf" value="${esc(x.shelf_bin||'')}"></div><div class="field"><label>Storage Number *</label><input id="fStorage" value="${esc(x.storage_number||'')}"></div><div class="field"><label>Barcode</label><input id="fBarcode" value="${esc(x.barcode||'')}"></div><div class="field"><label>Status</label><select id="fStatus"><option ${x.status==='Active'?'selected':''}>Active</option><option ${x.status==='Out of Stock'?'selected':''}>Out of Stock</option><option ${x.status==='Discontinued'?'selected':''}>Discontinued</option></select></div></div><button class="saveBtn" onclick="saveProduct('${x.id||''}')">${x.id?'Save Changes':'Save Product'}</button>`;setTimeout(()=>{document.querySelectorAll('.channelChoice button').forEach(b=>b.classList.toggle('selected',b.dataset.v===$('fChannel').value));if(!x.id){if(!$('fStorage').value.trim())$('fStorage').value=generateUniqueStorageNumber();if(!$('fBarcode').value.trim())$('fBarcode').value=generateUniqueBarcode();$('fStorage').readOnly=true;$('fBarcode').readOnly=true;$('fStorage').title='Automatically generated';$('fBarcode').title='Automatically generated'}},0)}
+function buildAddForm(p=null){
+  const needed=p?'can_edit_products':'can_add_products';
+  if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');go('home');return}
+  const x=p||{};
+  $('addForm').innerHTML=`<div class="formGrid"><div class="field full"><label>Product Image</label><input id="fImage" type="file" accept="image/*"></div><div class="field full"><label>Item Name *</label><input id="fName" value="${esc(x.name||'')}"></div><div class="field"><label>Category</label><select id="fCategory" onchange="onProductCategoryChange()">${KC_CATEGORIES.map(c=>`<option value="${esc(c)}" ${productCategory(x)===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="field"><label>Size</label><input id="fSize" value="${esc(x.size||'')}"></div><div class="field"><label>Color</label><input id="fColor" value="${esc(x.color||'')}"></div><div class="field full"><label>Sales Channel *</label><div class="channelChoice"><button type="button" data-v="Online Only" onclick="pickFormChannel(this)">🌐<br>Online Only</button><button type="button" data-v="Showroom Only" onclick="pickFormChannel(this)">🏬<br>Showroom Only</button><button type="button" data-v="Online + Showroom" onclick="pickFormChannel(this)">◉<br>Online + Showroom</button><button type="button" data-v="Bazar" onclick="pickFormChannel(this)">◆<br>Bazar</button></div><input id="fChannel" type="hidden" value="${esc(x.sales_channel||'Online + Showroom')}"></div><div class="field"><label>Selling Price</label><input id="fPrice" type="number" step="0.01" value="${x.selling_price??0}"></div><div class="field"><label>Quantity</label><input id="fQty" type="number" min="0" value="${x.quantity??0}"></div><div class="field"><label>Reorder Level</label><input id="fReorder" type="number" min="0" value="${x.reorder_level??0}"></div><div class="field"><label>Storage Room</label><input id="fRoom" value="${esc(x.storage_room||'')}"></div><div class="field"><label>Shelf / Bin / Box</label><input id="fShelf" value="${esc(x.shelf_bin||'')}"></div><div class="field"><label>Storage Number *</label><input id="fStorage" value="${esc(x.storage_number||'')}"></div><div class="field"><label>SKU</label><input id="fSku" value="${esc(x.sku||'')}"></div><div class="field"><label>Barcode</label><input id="fBarcode" value="${esc(x.barcode||'')}"></div><div class="field"><label>Status</label><select id="fStatus"><option ${x.status==='Active'?'selected':''}>Active</option><option ${x.status==='Out of Stock'?'selected':''}>Out of Stock</option><option ${x.status==='Discontinued'?'selected':''}>Discontinued</option></select></div></div><button class="saveBtn" onclick="saveProduct('${x.id||''}')">${x.id?'Save Changes':'Save Product'}</button>`;
+  setTimeout(()=>{
+    document.querySelectorAll('.channelChoice button').forEach(b=>b.classList.toggle('selected',b.dataset.v===$('fChannel').value));
+    if(!x.id){
+      refreshAutoProductCodes();
+      if(!$('fBarcode').value.trim())$('fBarcode').value=generateUniqueBarcode();
+      $('fStorage').readOnly=true;
+      $('fSku').readOnly=true;
+      $('fBarcode').readOnly=true;
+      $('fStorage').title='Automatically generated from category';
+      $('fSku').title='Automatically generated from category';
+      $('fBarcode').title='Automatically generated unique barcode';
+    }else{
+      // Existing product identifiers stay unchanged unless SKU is missing.
+      if(!$('fSku').value.trim())$('fSku').value=generateCategoryCode($('fCategory').value).sku;
+    }
+  },0);
+}
 function pickFormChannel(b){$('fChannel').value=b.dataset.v;document.querySelectorAll('.channelChoice button').forEach(x=>x.classList.toggle('selected',x===b))}
 async function uploadImage(file,storage){if(!file)return null;const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`${storage||'product'}-${Date.now()}.${ext}`;const {error}=await sb.storage.from('product-images').upload(path,file,{upsert:false});if(error)throw error;return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl}
 
@@ -676,19 +697,50 @@ function makeEan13(first12){
   return s + ean13CheckDigit(s);
 }
 
-function generateUniqueStorageNumber(){
-  const used=new Set(products.map(p=>String(p.storage_number||'').trim().toUpperCase()));
+const CATEGORY_CODE_MAP={
+  'Shawls':'SH',
+  'Thobe':'TH',
+  'Pillows':'PI',
+  'Jackets':'JA',
+  'Bags / Wallet / Pouch':'BG',
+  'Accessories':'AC',
+  'Gifts':'GI',
+  'Hangers':'HA',
+  'Bazar':'BZ'
+};
+function categoryCode(category){
+  return CATEGORY_CODE_MAP[canonicalCategory(category,'')]||'PR';
+}
+function generateCategoryCode(category){
+  const prefix=categoryCode(category);
+  const usedStorage=new Set(products.map(p=>String(p.storage_number||'').trim().toUpperCase()));
+  const usedSku=new Set(products.map(p=>String(p.sku||'').trim().toUpperCase()));
   let max=0;
   products.forEach(p=>{
-    const m=String(p.storage_number||'').trim().toUpperCase().match(/^KC-(\d+)$/);
-    if(m) max=Math.max(max,Number(m[1])||0);
+    [p.storage_number,p.sku].forEach(v=>{
+      const m=String(v||'').trim().toUpperCase().match(new RegExp('^'+prefix+'-(\\d+)$'));
+      if(m)max=Math.max(max,Number(m[1])||0);
+    });
   });
-  let n=max+1, code='';
+  let n=max+1,code='';
   do{
-    code=`KC-${String(n).padStart(4,'0')}`;
+    code=`${prefix}-${String(n).padStart(4,'0')}`;
     n++;
-  }while(used.has(code));
-  return code;
+  }while(usedStorage.has(code)||usedSku.has(code));
+  return {storage:code,sku:code};
+}
+function refreshAutoProductCodes(){
+  const category=$('fCategory')?.value||'';
+  const codes=generateCategoryCode(category);
+  if($('fStorage'))$('fStorage').value=codes.storage;
+  if($('fSku'))$('fSku').value=codes.sku;
+}
+function onProductCategoryChange(){
+  if(!$('fStorage')||!$('fSku'))return;
+  if($('fStorage').readOnly&&$('fSku').readOnly)refreshAutoProductCodes();
+}
+function generateUniqueStorageNumber(category){
+  return generateCategoryCode(category||$('fCategory')?.value||'').storage;
 }
 
 function generateUniqueBarcode(){
@@ -800,10 +852,49 @@ function printProductLabel(id){
   win.document.close();
 }
 
-async function saveProduct(id){const needed=id?'can_edit_products':'can_add_products';if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');return}if(!id&&!$('fStorage').value.trim())$('fStorage').value=generateUniqueStorageNumber();if(!id&&!$('fBarcode').value.trim())$('fBarcode').value=generateUniqueBarcode();const name=$('fName').value.trim(),storage=$('fStorage').value.trim();if(!name||!storage){toast('Item Name and Storage Number are required');return}let image_url=id?currentProduct?.image_url:null;try{const file=$('fImage').files[0];if(file)image_url=await uploadImage(file,storage)}catch(e){toast(e.message);return}const row={name,storage_number:storage,barcode:$('fBarcode').value.trim()||null,category:canonicalCategory($('fCategory').value,name)||null,size:$('fSize').value.trim()||null,color:$('fColor').value.trim()||null,selling_price:+$('fPrice').value||0,quantity:+$('fQty').value||0,reorder_level:+$('fReorder').value||0,storage_room:$('fRoom').value.trim()||null,shelf_bin:$('fShelf').value.trim()||null,status:$('fStatus').value,sales_channel:$('fChannel').value,image_url};const q=id?sb.from('products').update(row).eq('id',id):sb.from('products').insert(row);const {error}=await q;if(error){toast(error.message);return}toast(id?'Product updated':'Product added');await loadProducts();renderAll();backToInventory()}
-function enableEditCurrent(){if(!canDo('can_edit_products')||!currentProduct){toast('Edit Products is not enabled for your account.');return}go('add');buildAddForm(currentProduct)}
-function prepareSell(id){if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;currentProduct=p;go('sell');renderSell(p)}
-function renderSell(p){const img=productImage(p);$('sellBody').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${esc(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div></div></div></div><div style="margin-top:14px;font-weight:900;font-size:11px">Quantity to Sell</div><div class="qtyCtl"><button onclick="changeSellQty(-1)">−</button><b id="sellQty">1</b><button onclick="changeSellQty(1)">＋</button></div><button class="goldWide" onclick="confirmSale()">Confirm Sale</button></div>`}
+async function saveProduct(id){
+  const needed=id?'can_edit_products':'can_add_products';
+  if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');return}
+  if(!id&&(!$('fStorage').value.trim()||!$('fSku').value.trim()))refreshAutoProductCodes();
+  if(!id&&!$('fBarcode').value.trim())$('fBarcode').value=generateUniqueBarcode();
+
+  const name=$('fName').value.trim();
+  const storage=$('fStorage').value.trim();
+  const sku=$('fSku').value.trim();
+  if(!name||!storage||!sku){toast('Item Name, Storage Number and SKU are required');return}
+
+  let image_url=id?currentProduct?.image_url:null;
+  try{
+    const file=$('fImage').files[0];
+    if(file)image_url=await uploadImage(file,storage);
+  }catch(e){toast(e.message);return}
+
+  const row={
+    name,
+    storage_number:storage,
+    sku,
+    barcode:$('fBarcode').value.trim()||null,
+    category:canonicalCategory($('fCategory').value,name)||null,
+    size:$('fSize').value.trim()||null,
+    color:$('fColor').value.trim()||null,
+    selling_price:+$('fPrice').value||0,
+    quantity:+$('fQty').value||0,
+    reorder_level:+$('fReorder').value||0,
+    storage_room:$('fRoom').value.trim()||null,
+    shelf_bin:$('fShelf').value.trim()||null,
+    status:$('fStatus').value,
+    sales_channel:$('fChannel').value,
+    image_url
+  };
+
+  const q=id?sb.from('products').update(row).eq('id',id):sb.from('products').insert(row);
+  const {error}=await q;
+  if(error){toast(error.message);return}
+  toast(id?'Product updated':'Product added');
+  await loadProducts();
+  renderAll();
+  backToInventory();
+}
 function changeSellQty(d){const el=$('sellQty');let n=Math.max(1,Math.min(+currentProduct.quantity||0,(+el.textContent||1)+d));el.textContent=n}
 async function confirmSale(){if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}if(!currentProduct)return;const qty=+$('sellQty').textContent||1;if(qty>+currentProduct.quantity){toast('Not enough stock');return}const {error}=await sb.rpc('adjust_stock',{p_product_id:currentProduct.id,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});if(error){toast(error.message);return}toast('Sale recorded');await loadProducts();currentProduct=products.find(p=>p.id===currentProduct.id);renderAll();renderSell(currentProduct)}
 async function countStock(id){if(!canDo('can_count_stock')){toast('Count Stock is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;const v=prompt(`Count stock for ${p.name}. Current: ${p.quantity}` ,p.quantity);if(v===null)return;const n=Number(v);if(!Number.isInteger(n)||n<0){toast('Enter a whole number 0 or higher');return}const {error}=await sb.rpc('set_stock_count',{p_product_id:id,p_quantity:n,p_note:'Physical stock count'});if(error){toast(error.message);return}toast('Stock count saved');await loadProducts();renderAll();if(currentProduct?.id===id){currentProduct=products.find(x=>x.id===id);renderDetail()}}
@@ -816,7 +907,7 @@ async function startScanner(){if(scanner)await stopScanner();$('scannerPrompt').
 ]});try{await scanner.start({facingMode:'environment'},{fps:12,qrbox:{width:280,height:140},aspectRatio:1.777778},code=>{onScanned(code);stopScanner()})}catch(e){$('scannerPrompt').classList.remove('hidden');toast('Camera could not start. Use manual barcode entry.') }}
 async function stopScanner(){if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}$('scannerPrompt')?.classList.remove('hidden')}
 function onScanned(code){$('manualBarcode').value=code;manualLookup()}
-function manualLookup(){const v=$('manualBarcode').value.trim();const p=products.find(x=>x.barcode===v||x.storage_number?.toLowerCase()===v.toLowerCase());if(!p){$('scanResult').innerHTML='<div class="empty">No product found.</div>';return}currentProduct=p;const img=productImage(p);$('scanResult').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${esc(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div></div></div></div><button class="goldWide" onclick="prepareSell('${p.id}')">Sell This Product</button></div>`}
+function manualLookup(){const v=$('manualBarcode').value.trim();const p=products.find(x=>x.barcode===v||x.storage_number?.toLowerCase()===v.toLowerCase()||x.sku?.toLowerCase()===v.toLowerCase());if(!p){$('scanResult').innerHTML='<div class="empty">No product found.</div>';return}currentProduct=p;const img=productImage(p);$('scanResult').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${esc(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div></div></div></div><button class="goldWide" onclick="prepareSell('${p.id}')">Sell This Product</button></div>`}
 function openModal(title,body){$('modalTitle').textContent=title;$('modalBody').innerHTML=body;$('modal').classList.add('open')}
 function closeModal(){$('modal').classList.remove('open')}
 function toggleFilterSheet(){openModal('Filter by Category',`<button class="listRow" style="width:100%;text-align:left" onclick="setCategory('All Products');closeModal()">✓ All Products</button>${KC_CATEGORIES.map(c=>`<button class="listRow" style="width:100%;text-align:left" onclick="setCategory('${c.replace(/'/g,"\\'")}');closeModal()">${esc(c)}</button>`).join('')}`)}
