@@ -1027,25 +1027,55 @@ function printProductLabel(id){
   const colorText=String(p.color||'—');
   const priceText=Number(p.selling_price||0).toFixed(2);
 
-  const labels=Array.from({length:count},(_,i)=>`
-    <section class="label">
-      <div class="name">${esc(p.name||'Product')}</div>
-      <div class="topline">
-        <div class="meta"><b>Color:</b> ${esc(colorText)}</div>
-        <div class="unitNo">${i+1} of ${count}</div>
-      </div>
-      <div class="meta"><b>Price:</b> $${priceText}</div>
-      <div class="barcode">${svg||'<div class="missing">Barcode unavailable</div>'}</div>
-      <div class="digits">${esc(code)}</div>
-    </section>
-  `).join('');
+  const COLS=3;
+  const ROWS=6;
+  const PER_SHEET=COLS*ROWS; // 18 labels per sheet
+  const SHEET_WIDTH_CM=20.4; // 3 × 6.8 cm
+  const SHEET_HEIGHT_CM=27.4; // 1 cm top gap + 6 × 4.4 cm
+  const TOP_GAP_CM=1;
+  const LABEL_W_CM=6.8;
+  const LABEL_H_CM=4.4;
 
-  const win=window.open('','_blank','width=520,height=650');
+  const pages=Math.ceil(count/PER_SHEET);
+  let sheets='';
+
+  for(let page=0;page<pages;page++){
+    const startIndex=page*PER_SHEET;
+    const endIndex=Math.min(startIndex+PER_SHEET,count);
+    let cells='';
+
+    for(let slot=0;slot<PER_SHEET;slot++){
+      const itemIndex=startIndex+slot;
+      if(itemIndex<endIndex){
+        cells+=`
+          <section class="label">
+            <div class="name">${esc(p.name||'Product')}</div>
+            <div class="topline">
+              <div class="meta"><b>Color:</b> ${esc(colorText)}</div>
+              <div class="unitNo">${itemIndex+1} of ${count}</div>
+            </div>
+            <div class="meta"><b>Price:</b> $${priceText}</div>
+            <div class="barcode">${svg||'<div class="missing">Barcode unavailable</div>'}</div>
+            <div class="digits">${esc(code)}</div>
+          </section>`;
+      }else{
+        cells+='<section class="label blank"></section>';
+      }
+    }
+
+    sheets+=`
+      <div class="sheet">
+        <div class="top-gap"></div>
+        <div class="label-grid">${cells}</div>
+      </div>`;
+  }
+
+  const win=window.open('','_blank','width=900,height=1000');
   if(!win){toast('Allow pop-ups to print labels');return}
 
   win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>KCWHC Product Labels</title><style>
     @page{
-      size:6.8cm 4.4cm;
+      size:${SHEET_WIDTH_CM}cm ${SHEET_HEIGHT_CM}cm;
       margin:0;
     }
     *{box-sizing:border-box}
@@ -1058,80 +1088,102 @@ function printProductLabel(id){
       -webkit-print-color-adjust:exact;
       print-color-adjust:exact;
     }
-    .label{
-      width:6.8cm;
-      height:4.4cm;
-      padding:.16cm .22cm .12cm;
+    .sheet{
+      width:${SHEET_WIDTH_CM}cm;
+      height:${SHEET_HEIGHT_CM}cm;
       background:#fff;
       overflow:hidden;
       break-after:page;
       page-break-after:always;
+    }
+    .sheet:last-of-type{
+      break-after:auto;
+      page-break-after:auto;
+    }
+    .top-gap{
+      width:100%;
+      height:${TOP_GAP_CM}cm;
+      flex:0 0 ${TOP_GAP_CM}cm;
+    }
+    .label-grid{
+      width:${SHEET_WIDTH_CM}cm;
+      height:${ROWS*LABEL_H_CM}cm;
+      display:grid;
+      grid-template-columns:repeat(${COLS}, ${LABEL_W_CM}cm);
+      grid-template-rows:repeat(${ROWS}, ${LABEL_H_CM}cm);
+      gap:0;
+    }
+    .label{
+      width:${LABEL_W_CM}cm;
+      height:${LABEL_H_CM}cm;
+      padding:.15cm .20cm .10cm;
+      background:#fff;
+      overflow:hidden;
       display:flex;
       flex-direction:column;
       justify-content:flex-start;
     }
-    .label:last-child{
-      break-after:auto;
-      page-break-after:auto;
+    .label.blank{
+      visibility:hidden;
     }
     .name{
-      font-size:10pt;
-      line-height:1.04;
+      font-size:9.3pt;
+      line-height:1.03;
       font-weight:800;
       text-align:center;
-      margin:0 0 .05cm;
-      max-height:.68cm;
+      margin:0 0 .04cm;
+      max-height:.64cm;
       overflow:hidden;
     }
     .topline{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:.12cm;
+      gap:.1cm;
       min-width:0;
     }
     .meta{
-      font-size:8pt;
-      line-height:1.08;
-      margin:.015cm 0;
+      font-size:7.4pt;
+      line-height:1.06;
+      margin:.01cm 0;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
     .unitNo{
       flex:0 0 auto;
-      font-size:7.4pt;
+      font-size:6.8pt;
       font-weight:800;
       border:1px solid #000;
       border-radius:10px;
-      padding:.02cm .12cm;
+      padding:.015cm .1cm;
       line-height:1.2;
     }
     .barcode{
       width:100%;
-      height:1.55cm;
-      margin:.03cm auto 0;
+      height:1.45cm;
+      margin:.025cm auto 0;
       display:flex;
       align-items:center;
       justify-content:center;
       overflow:hidden;
     }
     .barcode svg{
-      width:6.1cm !important;
-      height:1.48cm !important;
+      width:5.95cm !important;
+      height:1.38cm !important;
       display:block;
     }
     .digits{
       text-align:center;
-      font:7.8pt monospace;
-      letter-spacing:.045cm;
+      font:7.2pt monospace;
+      letter-spacing:.04cm;
       line-height:1;
       margin-top:-.01cm;
     }
     .missing{
-      font-size:8pt;
+      font-size:7pt;
       text-align:center;
-      padding:.15cm;
+      padding:.12cm;
       border:1px dashed #999;
       width:100%;
     }
@@ -1163,32 +1215,30 @@ function printProductLabel(id){
         background:#eee;
         padding:12px 0 72px;
       }
-      .label{
-        margin:0 auto 12px;
+      .sheet{
+        margin:0 auto 16px;
         box-shadow:0 2px 12px rgba(0,0,0,.15);
       }
     }
     @media print{
       html,body{
-        width:6.8cm !important;
         margin:0 !important;
         padding:0 !important;
         background:#fff !important;
       }
       .toolbar{display:none !important}
-      .label{
-        width:6.8cm !important;
-        height:4.4cm !important;
+      .sheet{
+        width:${SHEET_WIDTH_CM}cm !important;
+        height:${SHEET_HEIGHT_CM}cm !important;
         margin:0 !important;
-        padding:.16cm .22cm .12cm !important;
         box-shadow:none !important;
       }
     }
   </style></head><body>
-    ${labels}
+    ${sheets}
     <div class="toolbar">
       <button onclick="window.print()">Print ${count} Label${count===1?'':'s'}</button>
-      <div class="summary">Paper size: 6.8 cm × 4.4 cm • Scale: 100%</div>
+      <div class="summary">3 across × 6 down • 18 labels per sheet • 1 cm top gap • Scale: 100%</div>
     </div>
   </body></html>`);
   win.document.close();
