@@ -86,6 +86,77 @@
 .imageZoomStage img{max-width:94vw;max-height:88vh;object-fit:contain;transform-origin:center center;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;touch-action:none}
 .imageZoomClose{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;z-index:4;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.55);background:rgba(0,0,0,.55);color:#fff;font-size:28px;line-height:1;font-weight:800}
 .imageZoomHint{position:absolute;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:4;color:white;background:rgba(0,0,0,.5);border-radius:20px;padding:7px 12px;font-size:11px;white-space:nowrap}
+
+/* Product Details layout: keep the larger image, prevent text overlap */
+.detailHero .heroTop{
+  grid-template-columns:144px minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+}
+.detailHero .detailImageWrap{
+  width:144px;
+  min-width:144px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+.detailHero .detailInfo{
+  min-width:0;
+  width:100%;
+  overflow:hidden;
+}
+.detailHero .pname,
+.detailHero .pnumber{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.detailHero .pname{
+  line-height:1.18;
+  margin-top:3px;
+}
+.detailHero .tags{
+  max-width:100%;
+}
+.detailHero .tag{
+  max-width:100%;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+.detailHero .detailsGrid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  width:100%;
+}
+.detailHero .detail b,
+.detailHero .detail small{
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+.detailHero .status{
+  float:none;
+  display:inline-flex;
+  margin-bottom:5px;
+}
+
+/* On narrow phones, stack the text under the image instead of squeezing it.
+   The image stays the same large size. */
+@media(max-width:430px){
+  .detailHero .heroTop{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .detailHero .detailImageWrap{
+    width:100%;
+    min-width:0;
+    justify-content:center;
+  }
+  .detailHero .detailInfo{
+    width:100%;
+  }
+  .detailHero .detailsGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
 </style>
 </head>
 <body>
@@ -761,13 +832,31 @@ function go(name){
   $(name).classList.add('active');
   document.querySelectorAll('.navb').forEach(n=>n.classList.toggle('active',n.dataset.go===name));
   window.scrollTo(0,0);
-  if(name==='add')buildAddForm();
+  if(name==='add'){const s=$('add')?.querySelector('.screenHeader div div');if(s)s.textContent='Add New Product';buildAddForm();}
   if(name==='sell'&&!currentProduct)$('sellBody').innerHTML='<div class="empty">Scan or select a product to sell.</div>';
 }
 function focusSearch(){go('home');setTimeout(()=>$('search').focus(),100)}
 function openProduct(id,edit=false){currentProduct=products.find(p=>p.id===id);if(!currentProduct)return;go('detail');renderDetail(edit)}
-function renderDetail(edit=false){const p=currentProduct,img=productImage(p),[status,cls]=stockLabel(p);$('detailBody').innerHTML=`<div class="detailHero"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:132px;height:166px;object-fit:contain" src="${img}" onclick="openImageZoom(this.src)">`:'<div class="placeholder" style="width:100px;height:125px">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${esc(p.name)}</div><div class="tags"><span class="tag">${esc(p.category||'Uncategorized')}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${p.quantity}</b><small>Quantity</small></div><div class="detail"><b>${p.reorder_level}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div></div></div></div><div class="barcode" style="margin:12px auto 0;max-width:240px">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'')}</div></div><div class="recommend ${p.risk_level==='High'?'red':p.risk_level==='Low'?'green':''}" style="margin-top:10px">${esc(p.recommendation||'Stock OK')} • Risk: ${esc(p.risk_level||'Low')} — ${esc(p.risk_reason||'')}</div><div class="tabs"><button class="tab active" onclick="detailTab('activity',this)">Activity</button><button class="tab" onclick="detailTab('details',this)">Details</button><button class="tab" onclick="detailTab('sales',this)">Sales</button><button class="tab" onclick="detailTab('risk',this)">Risk</button></div><div id="tabPanel" class="tabPanel"></div><div class="pcActions">${canDo('can_sell')?`<button class="smallbtn primary" onclick="prepareSell('${p.id}')">Sell Item</button>`:''}<button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="adjustStock('${p.id}')">Adjust Stock</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="enableEditCurrent()">Edit Product</button>`:''}${canDo('can_delete_products')?`<button class="smallbtn" style="color:#b21919" onclick="deleteProduct('${p.id}')">Delete Product</button>`:''}</div></div>`;detailTab('activity',document.querySelector('.tab'));if(edit&&canDo('can_edit_products'))enableEditCurrent()}
+function renderDetail(edit=false){const p=currentProduct,img=productImage(p),[status,cls]=stockLabel(p);$('detailBody').innerHTML=`<div class="detailHero"><div class="heroTop"><div class="detailImageWrap">${img?`<img class="prodImg" style="width:132px;height:166px;object-fit:contain" src="${img}" onclick="openImageZoom(this.src)">`:'<div class="placeholder" style="width:132px;height:166px">✦</div>'}</div><div class="detailInfo"><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${esc(p.name)}</div><div class="tags"><span class="tag">${esc(p.category||'Uncategorized')}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>$${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${p.quantity}</b><small>Quantity</small></div><div class="detail"><b>${p.reorder_level}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div></div></div></div><div class="barcode" style="margin:12px auto 0;max-width:240px">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'')}</div></div><div class="recommend ${p.risk_level==='High'?'red':p.risk_level==='Low'?'green':''}" style="margin-top:10px">${esc(p.recommendation||'Stock OK')} • Risk: ${esc(p.risk_level||'Low')} — ${esc(p.risk_reason||'')}</div><div class="tabs"><button class="tab active" onclick="detailTab('activity',this)">Activity</button><button class="tab" onclick="detailTab('details',this)">Details</button><button class="tab" onclick="detailTab('sales',this)">Sales</button><button class="tab" onclick="detailTab('risk',this)">Risk</button></div><div id="tabPanel" class="tabPanel"></div><div class="pcActions">${canDo('can_sell')?`<button class="smallbtn primary" onclick="prepareSell('${p.id}')">Sell Item</button>`:''}<button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="adjustStock('${p.id}')">Adjust Stock</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="enableEditCurrent()">Edit Product</button>`:''}${canDo('can_delete_products')?`<button class="smallbtn" style="color:#b21919" onclick="deleteProduct('${p.id}')">Delete Product</button>`:''}</div></div>`;detailTab('activity',document.querySelector('.tab'));if(edit&&canDo('can_edit_products'))enableEditCurrent()}
 async function detailTab(tab,btn){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');const p=currentProduct,panel=$('tabPanel');if(tab==='details'){panel.innerHTML=`<div class="listRow"><b>${esc(p.name)}</b><div class="sub">Category: ${esc(p.category||'—')} • Size: ${esc(p.size||'—')} • Color: ${esc(p.color||'—')}</div><div class="sub">Channel: ${esc(p.sales_channel)} • Status: ${esc(p.status||'Active')}</div></div>`;return}if(tab==='risk'){panel.innerHTML=`<div class="listRow"><b>${esc(p.risk_level||'Low')} Risk • ${p.risk_score||0}/100</b><div class="sub" style="margin-top:4px">${esc(p.risk_reason||'No major risk detected')}</div></div>`;return}if(profile.role!=='admin'){panel.innerHTML='<div class="sub">Admin access required for this history.</div>';return}if(tab==='activity'){panel.innerHTML='Loading…';const {data}=await sb.from('inventory_activity').select('*,profiles(full_name)').eq('product_id',p.id).order('created_at',{ascending:false}).limit(25);panel.innerHTML=(data||[]).length?(data||[]).map(a=>`<div class="activityRow"><b>${esc(a.action)}</b><div class="sub">${esc(a.profiles?.full_name||'User')} • ${a.quantity_before??'—'} → ${a.quantity_after??'—'} • ${new Date(a.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No activity yet.</div>';return}if(tab==='sales'){panel.innerHTML='Loading…';const {data}=await sb.from('orders').select('*').eq('product_id',p.id).eq('record_type','Sale').order('created_at',{ascending:false}).limit(25);panel.innerHTML=(data||[]).length?(data||[]).map(o=>`<div class="activityRow"><b>Sale × ${o.quantity}</b><div class="sub">$${Number(o.total_price||0).toFixed(2)} • ${new Date(o.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No sales yet.</div>'}}
+function enableEditCurrent(){
+  if(!currentProduct){toast('Product not found.');return}
+  if(!canDo('can_edit_products')){toast('Edit Products is not enabled for your account.');return}
+
+  // Open the form screen directly. Do NOT call go('add') here because go('add')
+  // automatically builds a blank "new product" form first.
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const addScreen=$('add');
+  if(!addScreen){toast('Edit screen could not open.');return}
+  addScreen.classList.add('active');
+  document.querySelectorAll('.navb').forEach(n=>n.classList.remove('active'));
+
+  const subtitle=addScreen.querySelector('.screenHeader div div');
+  if(subtitle)subtitle.textContent='Edit Product';
+
+  window.scrollTo(0,0);
+  buildAddForm(currentProduct);
+}
 function buildAddForm(p=null){
   const needed=p?'can_edit_products':'can_add_products';
   if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');go('home');return}
