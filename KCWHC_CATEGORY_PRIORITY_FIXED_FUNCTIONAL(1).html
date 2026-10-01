@@ -196,6 +196,13 @@
   }
 }
 
+
+.justSavedProduct{
+  outline:3px solid rgba(180,138,52,.72);
+  box-shadow:0 0 0 5px rgba(180,138,52,.16),0 8px 24px rgba(0,0,0,.14)!important;
+  transition:box-shadow .25s ease,outline-color .25s ease;
+}
+
 </style>
 </head>
 <body>
@@ -838,7 +845,7 @@ function filteredProducts(){const q=$('search').value.trim().toLowerCase();retur
 function productImage(p){return p.image_url||legacyEmbeddedImage(p)||EMBEDDED_IMAGES[p.storage_number]||''}
 function stockLabel(p){if((+p.quantity||0)<=0)return['Out of Stock','red'];if((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)return['Low Stock','amber'];return['In Stock','green']}
 function renderProducts(){if($('categoryButtons'))$('categoryButtons').innerHTML=categoryButtonsHtml(categoryFilter,'setCategory');if($('salesChannelButtons'))$('salesChannelButtons').innerHTML=salesChannelButtonsHtml(channelFilter);let rows=filteredProducts();rows=sortedByChannelPriority(rows);$('productCount').textContent=rows.length;$('products').innerHTML=rows.length?rows.map(productCard).join(''):'<div class="panel"><div class="empty">No products match this view.</div></div>';renderChannelPriorityPanel()}
-function productCard(p){const img=productImage(p),[status,cls]=stockLabel(p),rec=(p.recommendation||'Stock OK'),recCls=(+p.quantity||0)<=0?'red':((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)?'':'green';return `<article class="productCard"><div class="pcTop"><div>${img?`<img class="prodImg" src="${img}" alt="${esc(p.name)}" onclick="openImageZoom(this.src)">`:'<div class="placeholder">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number||'—')}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag">${esc(productCategory(p))}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel||'Online + Showroom')}</span></div><div class="detailsGrid"><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${+p.quantity||0}</b><small>Quantity</small></div><div class="detail"><b>${+p.reorder_level||0}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div><div class="detail"><b>${esc(p.sku||'—')}</b><small>SKU</small></div></div></div></div><div class="barcodeBox"><div class="recommend ${recCls}">💡 Recommendation: ${esc(rec)}</div><div class="barcode">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'No barcode')}</div></div></div><div class="pcActions"><button class="smallbtn primary" onclick="openProduct('${p.id}')">View</button><button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="adjustStock('${p.id}')">Adjust Stock</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="openProduct('${p.id}',true)">Edit</button>`:''}</div></article>`}
+function productCard(p){const img=productImage(p),[status,cls]=stockLabel(p),rec=(p.recommendation||'Stock OK'),recCls=(+p.quantity||0)<=0?'red':((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)?'':'green';return `<article class="productCard" data-product-id="${p.id}"><div class="pcTop"><div>${img?`<img class="prodImg" src="${img}" alt="${esc(p.name)}" onclick="openImageZoom(this.src)">`:'<div class="placeholder">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number||'—')}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag">${esc(productCategory(p))}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel||'Online + Showroom')}</span></div><div class="detailsGrid"><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${+p.quantity||0}</b><small>Quantity</small></div><div class="detail"><b>${+p.reorder_level||0}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div><div class="detail"><b>${esc(p.sku||'—')}</b><small>SKU</small></div></div></div></div><div class="barcodeBox"><div class="recommend ${recCls}">💡 Recommendation: ${esc(rec)}</div><div class="barcode">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'No barcode')}</div></div></div><div class="pcActions"><button class="smallbtn primary" onclick="openProduct('${p.id}')">View</button><button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="adjustStock('${p.id}')">Adjust Stock</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="openProduct('${p.id}',true)">Edit</button>`:''}</div></article>`}
 function captureInventoryView(){
   const home=$('home');
   if(!home?.classList.contains('active'))return savedInventoryView;
@@ -1170,10 +1177,39 @@ async function saveProduct(id){
   const q=id?sb.from('products').update(row).eq('id',id):sb.from('products').insert(row);
   const {error}=await q;
   if(error){toast(error.message);return}
-  toast(id?'Product updated':'Product added');
   await loadProducts();
   renderAll();
-  backToInventory();
+
+  // On mobile, always return to a clean inventory view after a successful save
+  // so a newly-added product cannot be hidden by an old search/filter/scroll state.
+  categoryFilter='All Products';
+  channelFilter='all';
+  stockFilter='all';
+  availablePriorityPage=1;
+  savedInventoryView=null;
+  if($('search'))$('search').value='';
+
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('home').classList.add('active');
+  document.querySelectorAll('.navb').forEach(n=>n.classList.toggle('active',n.dataset.go==='home'));
+  renderProducts();
+
+  // Find the just-saved product by its stable Storage Number after reloading from Supabase.
+  const savedProduct=products.find(p=>String(p.storage_number||'')===String(storage));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(savedProduct){
+      const card=document.querySelector(`[data-product-id="${savedProduct.id}"]`);
+      if(card){
+        card.scrollIntoView({behavior:'smooth',block:'center'});
+        card.classList.add('justSavedProduct');
+        setTimeout(()=>card.classList.remove('justSavedProduct'),1800);
+      }
+    }else{
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+  }));
+
+  toast(id?'Product updated':'Product added successfully');
 }
 function changeSellQty(d){const el=$('sellQty');let n=Math.max(1,Math.min(+currentProduct.quantity||0,(+el.textContent||1)+d));el.textContent=n}
 async function confirmSale(){if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}if(!currentProduct)return;const qty=+$('sellQty').textContent||1;if(qty>+currentProduct.quantity){toast('Not enough stock');return}const {error}=await sb.rpc('adjust_stock',{p_product_id:currentProduct.id,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});if(error){toast(error.message);return}toast('Sale recorded');await loadProducts();currentProduct=products.find(p=>p.id===currentProduct.id);renderAll();renderSell(currentProduct)}
