@@ -1048,63 +1048,31 @@ function ean13Svg(code){
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" aria-label="Barcode ${c}" style="width:100%;height:auto;display:block;background:#fff"><rect width="100%" height="100%" fill="#fff"/>${rects}</svg>`;
 }
-async function printProductLabel(id){
+function printProductLabel(id){
   const p=products.find(x=>x.id===id);
   if(!p)return;
+  const maxQty=Math.max(1,Number(p.quantity)||1);
+  const raw=prompt(`How many labels do you want to print for ${p.name}?\n\nCurrent quantity: ${maxQty}`,String(maxQty));
+  if(raw===null)return;
+  const count=Number(raw);
+  if(!Number.isInteger(count)||count<1){toast('Enter a whole number of labels to print.');return}
+  if(count>500){toast('Print 500 labels or fewer at one time.');return}
 
-  const {data,error}=await sb.rpc('get_label_print_status',{p_product_id:id});
-  if(error){toast(error.message);return}
-  const available=Math.max(0,Number(data?.available)||0);
-  const used=Math.max(0,Number(data?.used_credits)||0);
-  const extras=Math.max(0,Number(data?.approved_extra_credits)||0);
-  const qty=Math.max(0,Number(p.quantity)||0);
-  const suggested=Math.max(1,Math.min(qty||1,available||1));
-
-  openModal('Print Product Labels',`
-    <div class="note">
-      Label printing is protected. Printing consumes server-recorded label credits.
-      Extra labels require Admin approval.
-    </div>
-    <div class="stats" style="margin-top:10px">
-      <div class="stat"><div><small>Current Quantity</small><b>${qty}</b></div></div>
-      <div class="stat"><div><small>Labels Available</small><b>${available}</b></div></div>
-      <div class="stat"><div><small>Labels Already Printed</small><b>${used}</b></div></div>
-      <div class="stat"><div><small>Admin-Approved Extras</small><b>${extras}</b></div></div>
-    </div>
-    <div class="listRow"><b>${productNameWithLogo(p.name)}</b><div class="sub">${esc(p.storage_number||'')} • ${esc(p.barcode||'')}</div></div>
-    <div class="field full" style="margin-top:10px">
-      <label>Number of Labels to Print</label>
-      <input id="secureLabelCount" type="number" min="1" max="500" value="${suggested}">
-    </div>
-    <button class="saveBtn" onclick="executeSecureLabelPrint('${id}')">Print Labels</button>
-    <button class="smallbtn" style="width:100%;margin-top:8px" onclick="showExtraLabelRequest('${id}')">Request Extra Labels</button>
-    <div class="securitySmall" style="margin-top:8px">Each successful print is recorded in the Audit Log.</div>
-  `);
-}
-
-function buildLabelPrintHtml(p,count){
   const code=String(p.barcode||'');
   const svg=ean13Svg(code);
   const colorText=String(p.color||'—');
   const priceText=Number(p.selling_price||0).toFixed(2);
 
-  const COLS=3;
-  const ROWS=6;
-  const PER_SHEET=COLS*ROWS;
-  const SHEET_WIDTH_CM=20.4;
-  const SHEET_HEIGHT_CM=27.4;
-  const TOP_GAP_CM=1;
-  const LABEL_W_CM=6.8;
-  const LABEL_H_CM=4.4;
+  const COLS=3, ROWS=6, PER_SHEET=18;
+  const SHEET_WIDTH_CM=20.4, SHEET_HEIGHT_CM=27.4, TOP_GAP_CM=1;
+  const LABEL_W_CM=6.8, LABEL_H_CM=4.4;
 
   const pages=Math.ceil(count/PER_SHEET);
   let sheets='';
-
   for(let page=0;page<pages;page++){
     const startIndex=page*PER_SHEET;
     const endIndex=Math.min(startIndex+PER_SHEET,count);
     let cells='';
-
     for(let slot=0;slot<PER_SHEET;slot++){
       const itemIndex=startIndex+slot;
       if(itemIndex<endIndex){
@@ -1119,19 +1087,17 @@ function buildLabelPrintHtml(p,count){
             <div class="barcode">${svg||'<div class="missing">Barcode unavailable</div>'}</div>
             <div class="digits">${esc(code)}</div>
           </section>`;
-      }else{
+      } else {
         cells+='<section class="label blank"></section>';
       }
     }
-
-    sheets+=`
-      <div class="sheet">
-        <div class="top-gap"></div>
-        <div class="label-grid">${cells}</div>
-      </div>`;
+    sheets+=`<div class="sheet"><div class="top-gap"></div><div class="label-grid">${cells}</div></div>`;
   }
 
-  return `<!doctype html><html><head><meta charset="utf-8"><title>KCWHC Product Labels</title><style>
+  const win=window.open('','_blank','width=900,height=1000');
+  if(!win){toast('Allow pop-ups to print labels');return}
+
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>KCWHC Product Labels</title><style>
     @page{size:${SHEET_WIDTH_CM}cm ${SHEET_HEIGHT_CM}cm;margin:0}
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -1160,131 +1126,12 @@ function buildLabelPrintHtml(p,count){
   </style></head><body>
     ${sheets}
     <div class="toolbar">
-      <button id="physicalPrintBtn" onclick="window.print()">Print ${count} Label${count===1?'':'s'}</button>
+      <button onclick="window.print()">Print ${count} Label${count===1?'':'s'}</button>
       <div class="summary">3 across × 6 down • 18 labels per sheet • 1 cm top gap • Scale: 100%</div>
     </div>
-    <script>
-      window.addEventListener('afterprint',()=>{const b=document.getElementById('physicalPrintBtn');if(b){b.disabled=true;b.textContent='Print Session Used'}setTimeout(()=>window.close(),500)});
-    <\/script>
-  </body></html>`;
-}
-
-async function executeSecureLabelPrint(id){
-  const p=products.find(x=>x.id===id);
-  if(!p)return;
-  const count=Number($('secureLabelCount')?.value);
-  if(!Number.isInteger(count)||count<1){toast('Enter a whole number of labels.');return}
-  if(count>500){toast('Print 500 labels or fewer at one time.');return}
-
-  // Open immediately from the button tap so Safari/mobile browsers allow the print window.
-  const win=window.open('','_blank','width=900,height=1000');
-  if(!win){toast('Allow pop-ups to print labels');return}
-  win.document.write('<div style="font-family:Arial;padding:24px">Authorizing label print…</div>');
-  win.document.close();
-
-  const {data,error}=await sb.rpc('consume_label_print_credits',{p_product_id:id,p_count:count});
-  if(error){
-    win.close();
-    toast(error.message);
-    return;
-  }
-
-  if(!data?.ok){
-    win.close();
-    const available=Math.max(0,Number(data?.available)||0);
-    showExtraLabelRequest(id,count,available);
-    return;
-  }
-
-  closeModal();
-  win.document.open();
-  win.document.write(buildLabelPrintHtml(p,count));
+  </body></html>`);
   win.document.close();
 }
-
-function showExtraLabelRequest(id,attemptedCount=null,available=null){
-  const p=products.find(x=>x.id===id);
-  if(!p)return;
-  const attempted=Math.max(1,Number(attemptedCount)||1);
-  const avail=Math.max(0,Number(available)||0);
-  const needed=Math.max(1,attempted-avail);
-
-  openModal('Request Extra Labels',`
-    <div class="note">
-      This product does not have enough label credits for that print.
-      An Admin must approve additional labels before they can be printed.
-    </div>
-    <div class="listRow"><b>${productNameWithLogo(p.name)}</b><div class="sub">${esc(p.storage_number||'')} • Available now: ${avail}</div></div>
-    <div class="field full" style="margin-top:10px">
-      <label>Extra Labels Requested</label>
-      <input id="extraLabelCount" type="number" min="1" max="500" value="${needed}">
-    </div>
-    <div class="field full">
-      <label>Reason</label>
-      <textarea id="extraLabelReason" rows="3" placeholder="Example: damaged label, replacement label, reprint needed"></textarea>
-    </div>
-    <button class="saveBtn" onclick="submitExtraLabelRequest('${id}')">Send to Admin for Approval</button>
-  `);
-}
-
-async function submitExtraLabelRequest(id){
-  const count=Number($('extraLabelCount')?.value);
-  const reason=($('extraLabelReason')?.value||'').trim();
-  if(!Number.isInteger(count)||count<1||count>500){toast('Enter a valid label count.');return}
-  if(!reason){toast('Enter a reason for the extra labels.');return}
-
-  const {error}=await sb.rpc('request_extra_label_prints',{
-    p_product_id:id,
-    p_count:count,
-    p_reason:reason
-  });
-  if(error){toast(error.message);return}
-  closeModal();
-  toast('Extra label request sent to Admin.');
-}
-
-async function openLabelApprovals(){
-  if(profile?.role!=='admin')return;
-  closeModal();
-  const {data,error}=await sb.from('label_print_requests').select('*').eq('status','pending').order('created_at',{ascending:true});
-  if(error){toast(error.message);return}
-  if(!peopleCache.length)await loadPeople();
-
-  const rows=data||[];
-  openModal('Label Print Approvals',`
-    <div class="note">Approve or reject requests for labels beyond the normal quantity-based print allowance.</div>
-    <div style="margin:8px 0"><span class="pill ${rows.length?'amber':'green'}">${rows.length} Pending</span></div>
-    ${rows.length?rows.map(r=>{
-      const p=products.find(x=>x.id===r.product_id);
-      const person=peopleCache.find(x=>x.id===r.requested_by);
-      return `<div class="listRow">
-        <b>${p?productNameWithLogo(p.name):'Product'}</b>
-        <div class="sub">${esc(p?.storage_number||'')} • Requested: ${Number(r.requested_count)||0} extra label${Number(r.requested_count)===1?'':'s'}</div>
-        <div class="sub">Requested by: ${esc(person?.full_name||person?.email||'User')} • ${new Date(r.created_at).toLocaleString()}</div>
-        <div class="sub">Reason: ${esc(r.reason||'No reason provided')}</div>
-        <div class="peopleActions" style="margin-top:8px">
-          <button class="primary" onclick="approveLabelRequest(${r.id})">Approve</button>
-          <button class="danger" onclick="rejectLabelRequest(${r.id})">Reject</button>
-        </div>
-      </div>`;
-    }).join(''):'<div class="empty">No pending label requests.</div>'}
-  `);
-}
-
-async function approveLabelRequest(id){
-  const {error}=await sb.rpc('approve_label_print_request',{p_request_id:id});
-  if(error){toast(error.message);return}
-  toast('Extra labels approved.');
-  openLabelApprovals();
-}
-
-async function rejectLabelRequest(id){
-  const {error}=await sb.rpc('reject_label_print_request',{p_request_id:id});
-  if(error){toast(error.message);return}
-  toast('Label request rejected.');
-  openLabelApprovals();
-}
-
 async function saveProduct(id){
   const needed=id?'can_edit_products':'can_add_products';
   if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');return}
@@ -1569,7 +1416,7 @@ function openRisk(){
   openModal('Risk Assessment','<div id="riskDashboard"></div>');
   renderRiskDashboard();
 }
-function openMore(){let body=`<button class="listRow" style="width:100%;text-align:left" onclick="openAnnouncements()">🔔 Announcements</button><button class="listRow" style="width:100%;text-align:left" onclick="openTodos()">✅ To-Do</button>`;if(profile.role==='admin')body+=`<button class="listRow" style="width:100%;text-align:left" onclick="openPeopleManagement()">👥 People Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openAuditLog()">📋 Audit Log</button><button class="listRow" style="width:100%;text-align:left" onclick="openLabelApprovals()">🏷 Label Print Approvals</button><button class="listRow" style="width:100%;text-align:left" onclick="openSecurityCenter()">🔐 Security Center</button><button class="listRow" style="width:100%;text-align:left" onclick="openPendingEmployees()">👤 Pending Employees</button><button class="listRow" style="width:100%;text-align:left" onclick="openAdminManagement()">🛡 Admin Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openChangePassword()">🔐 Change My Password</button><button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button><button class="listRow" style="width:100%;text-align:left" onclick="openRevenue()">📊 Revenue</button><button class="listRow" style="width:100%;text-align:left" onclick="openActivity()">👥 Employee Activity</button><button class="listRow" style="width:100%;text-align:left" onclick="openRisk()">🛡 Risk Assessment</button>`;else if(canDo('can_add_products'))body+=`<button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button>`;body+=`<button class="listRow danger" style="width:100%;text-align:left" onclick="signOut()">Sign Out</button>`;openModal('More',body)}
+function openMore(){let body=`<button class="listRow" style="width:100%;text-align:left" onclick="openAnnouncements()">🔔 Announcements</button><button class="listRow" style="width:100%;text-align:left" onclick="openTodos()">✅ To-Do</button>`;if(profile.role==='admin')body+=`<button class="listRow" style="width:100%;text-align:left" onclick="openPeopleManagement()">👥 People Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openAuditLog()">📋 Audit Log</button><button class="listRow" style="width:100%;text-align:left" onclick="openSecurityCenter()">🔐 Security Center</button><button class="listRow" style="width:100%;text-align:left" onclick="openPendingEmployees()">👤 Pending Employees</button><button class="listRow" style="width:100%;text-align:left" onclick="openAdminManagement()">🛡 Admin Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openChangePassword()">🔐 Change My Password</button><button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button><button class="listRow" style="width:100%;text-align:left" onclick="openRevenue()">📊 Revenue</button><button class="listRow" style="width:100%;text-align:left" onclick="openActivity()">👥 Employee Activity</button><button class="listRow" style="width:100%;text-align:left" onclick="openRisk()">🛡 Risk Assessment</button>`;else if(canDo('can_add_products'))body+=`<button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button>`;body+=`<button class="listRow danger" style="width:100%;text-align:left" onclick="signOut()">Sign Out</button>`;openModal('More',body)}
 (async()=>{
   const recoveryUrl = /(?:#|\?|&)type=recovery(?:&|$)/.test(location.href);
   const {data:{session}}=await sb.auth.getSession();
