@@ -200,9 +200,7 @@
 .justSavedProduct{
   outline:3px solid rgba(180,138,52,.72);
   box-shadow:0 0 0 5px rgba(180,138,52,.16),0 8px 24px rgba(0,0,0,.14)!important;
-  transition:box-shadow .25s ease,outline-color .25s ease;
 }
-
 </style>
 </head>
 <body>
@@ -1142,74 +1140,114 @@ function printProductLabel(id){
 async function saveProduct(id){
   const needed=id?'can_edit_products':'can_add_products';
   if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');return}
-  if(!id&&(!$('fStorage').value.trim()||!$('fSku').value.trim()))refreshAutoProductCodes();
-  if(!id&&!$('fBarcode').value.trim())$('fBarcode').value=generateUniqueBarcode();
 
-  const name=$('fName').value.trim();
-  const storage=$('fStorage').value.trim();
-  const sku=$('fSku').value.trim();
-  if(!name||!storage||!sku){toast('Item Name, Storage Number and SKU are required');return}
+  // Snapshot ALL form values before any await. On mobile Safari the DOM can change
+  // while the image upload is in progress, which previously caused the save to stop
+  // after uploading the picture but before inserting the product.
+  if(!id&&(!$('fStorage')?.value.trim()||!$('fSku')?.value.trim()))refreshAutoProductCodes();
+  if(!id&&!$('fBarcode')?.value.trim())$('fBarcode').value=generateUniqueBarcode();
 
-  let image_url=id?currentProduct?.image_url:null;
-  try{
-    const file=$('fImage').files[0];
-    if(file)image_url=await uploadImage(file,storage);
-  }catch(e){toast(e.message);return}
-
-  const row={
-    name,
-    storage_number:storage,
-    sku,
-    barcode:$('fBarcode').value.trim()||null,
-    category:canonicalCategory($('fCategory').value,name)||null,
-    size:$('fSize').value.trim()||null,
-    color:$('fColor').value.trim()||null,
-    selling_price:+$('fPrice').value||0,
-    quantity:+$('fQty').value||0,
-    reorder_level:+$('fReorder').value||0,
-    storage_room:$('fRoom').value.trim()||null,
-    shelf_bin:$('fShelf').value.trim()||null,
-    status:$('fStatus').value,
-    sales_channel:$('fChannel').value,
-    image_url
+  const form={
+    name:$('fName')?.value.trim()||'',
+    storage:$('fStorage')?.value.trim()||'',
+    sku:$('fSku')?.value.trim()||'',
+    barcode:$('fBarcode')?.value.trim()||'',
+    category:$('fCategory')?.value||'',
+    size:$('fSize')?.value.trim()||'',
+    color:$('fColor')?.value.trim()||'',
+    price:$('fPrice')?.value||'0',
+    qty:$('fQty')?.value||'0',
+    reorder:$('fReorder')?.value||'0',
+    room:$('fRoom')?.value.trim()||'',
+    shelf:$('fShelf')?.value.trim()||'',
+    status:$('fStatus')?.value||'Active',
+    channel:$('fChannel')?.value||'Online + Showroom',
+    file:$('fImage')?.files?.[0]||null
   };
 
-  const q=id?sb.from('products').update(row).eq('id',id):sb.from('products').insert(row);
-  const {error}=await q;
-  if(error){toast(error.message);return}
-  await loadProducts();
-  renderAll();
+  if(!form.name||!form.storage||!form.sku){
+    toast('Item Name, Storage Number and SKU are required');
+    return;
+  }
 
-  // On mobile, always return to a clean inventory view after a successful save
-  // so a newly-added product cannot be hidden by an old search/filter/scroll state.
-  categoryFilter='All Products';
-  channelFilter='all';
-  stockFilter='all';
-  availablePriorityPage=1;
-  savedInventoryView=null;
-  if($('search'))$('search').value='';
+  const saveBtn=document.querySelector('#addForm .saveBtn');
+  const oldBtnText=saveBtn?.textContent||'Save Product';
+  if(saveBtn){
+    saveBtn.disabled=true;
+    saveBtn.textContent='Saving…';
+  }
 
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  $('home').classList.add('active');
-  document.querySelectorAll('.navb').forEach(n=>n.classList.toggle('active',n.dataset.go==='home'));
-  renderProducts();
+  try{
+    let image_url=id?currentProduct?.image_url:null;
+    if(form.file)image_url=await uploadImage(form.file,form.storage);
 
-  // Find the just-saved product by its stable Storage Number after reloading from Supabase.
-  const savedProduct=products.find(p=>String(p.storage_number||'')===String(storage));
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    if(savedProduct){
-      const card=document.querySelector(`[data-product-id="${savedProduct.id}"]`);
-      if(card){
-        card.scrollIntoView({behavior:'smooth',block:'center'});
-        card.classList.add('justSavedProduct');
-        setTimeout(()=>card.classList.remove('justSavedProduct'),1800);
-      }
+    const row={
+      name:form.name,
+      storage_number:form.storage,
+      sku:form.sku,
+      barcode:form.barcode||null,
+      category:canonicalCategory(form.category,form.name)||null,
+      size:form.size||null,
+      color:form.color||null,
+      selling_price:Number(form.price)||0,
+      quantity:Number(form.qty)||0,
+      reorder_level:Number(form.reorder)||0,
+      storage_room:form.room||null,
+      shelf_bin:form.shelf||null,
+      status:form.status,
+      sales_channel:form.channel,
+      image_url
+    };
+
+    let result;
+    if(id){
+      result=await sb.from('products').update(row).eq('id',id).select('id,storage_number').single();
     }else{
-      window.scrollTo({top:0,behavior:'smooth'});
+      result=await sb.from('products').insert(row).select('id,storage_number').single();
     }
-  }));
 
-  toast(id?'Product updated':'Product added successfully');
+    if(result.error)throw result.error;
+
+    await loadProducts();
+    renderAll();
+
+    // Return to a clean inventory view and show the saved item.
+    categoryFilter='All Products';
+    channelFilter='all';
+    stockFilter='all';
+    availablePriorityPage=1;
+    savedInventoryView=null;
+    if($('search'))$('search').value='';
+
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    $('home')?.classList.add('active');
+    document.querySelectorAll('.navb').forEach(n=>n.classList.toggle('active',n.dataset.go==='home'));
+    renderProducts();
+
+    const savedId=result.data?.id||id||null;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(savedId){
+        const card=document.querySelector(`[data-product-id="${savedId}"]`);
+        if(card){
+          card.scrollIntoView({behavior:'smooth',block:'center'});
+          card.classList.add('justSavedProduct');
+          setTimeout(()=>card.classList.remove('justSavedProduct'),1800);
+          return;
+        }
+      }
+      window.scrollTo({top:0,behavior:'smooth'});
+    }));
+
+    toast(id?'Product updated':'Product added successfully');
+  }catch(e){
+    console.error('Product save failed',e);
+    alert('Could not save product:\n'+(e?.message||String(e)));
+  }finally{
+    if(saveBtn){
+      saveBtn.disabled=false;
+      saveBtn.textContent=oldBtnText;
+    }
+  }
 }
 function changeSellQty(d){const el=$('sellQty');let n=Math.max(1,Math.min(+currentProduct.quantity||0,(+el.textContent||1)+d));el.textContent=n}
 async function confirmSale(){if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}if(!currentProduct)return;const qty=+$('sellQty').textContent||1;if(qty>+currentProduct.quantity){toast('Not enough stock');return}const {error}=await sb.rpc('adjust_stock',{p_product_id:currentProduct.id,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});if(error){toast(error.message);return}toast('Sale recorded');await loadProducts();currentProduct=products.find(p=>p.id===currentProduct.id);renderAll();renderSell(currentProduct)}
