@@ -910,8 +910,22 @@ function buildAddForm(p=null){
   const needed=p?'can_edit_products':'can_add_products';
   if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');go('home');return}
   const x=p||{};
-  $('addForm').innerHTML=`<div class="formGrid"><div class="field full"><label>Product Image</label><input id="fImage" type="file" accept="image/*"></div><div class="field full"><label>Item Name *</label><input id="fName" value="${esc(x.name||'')}"></div><div class="field"><label>Category</label><select id="fCategory" onchange="onProductCategoryChange()">${KC_CATEGORIES.map(c=>`<option value="${esc(c)}" ${productCategory(x)===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="field"><label>Size</label><input id="fSize" value="${esc(x.size||'')}"></div><div class="field"><label>Color</label><input id="fColor" value="${esc(x.color||'')}"></div><div class="field full"><label>Sales Channel *</label><div class="channelChoice"><button type="button" data-v="Online Only" onclick="pickFormChannel(this)">🌐<br>Online Only</button><button type="button" data-v="Showroom Only" onclick="pickFormChannel(this)">🏬<br>Showroom Only</button><button type="button" data-v="Online + Showroom" onclick="pickFormChannel(this)">◉<br>Online + Showroom</button><button type="button" data-v="Bazar" onclick="pickFormChannel(this)">◆<br>Bazar</button></div><input id="fChannel" type="hidden" value="${esc(x.sales_channel||'Online + Showroom')}"></div><div class="field"><label>Selling Price (₪)</label><input id="fPrice" type="number" step="0.01" value="${x.selling_price??0}"></div><div class="field"><label>Quantity</label><input id="fQty" type="number" min="0" value="${x.quantity??0}"></div><div class="field"><label>Reorder Level</label><input id="fReorder" type="number" min="0" value="${x.reorder_level??0}"></div><div class="field"><label>Storage Room</label><input id="fRoom" value="${esc(x.storage_room||'')}"></div><div class="field"><label>Shelf / Bin / Box</label><input id="fShelf" value="${esc(x.shelf_bin||'')}"></div><div class="field"><label>Storage Number *</label><input id="fStorage" value="${esc(x.storage_number||'')}"></div><div class="field"><label>SKU</label><input id="fSku" value="${esc(x.sku||'')}"></div><div class="field"><label>Barcode</label><input id="fBarcode" value="${esc(x.barcode||'')}"></div><div class="field"><label>Status</label><select id="fStatus"><option ${x.status==='Active'?'selected':''}>Active</option><option ${x.status==='Out of Stock'?'selected':''}>Out of Stock</option><option ${x.status==='Discontinued'?'selected':''}>Discontinued</option></select></div></div><button class="saveBtn" onclick="saveProduct('${x.id||''}')">${x.id?'Save Changes':'Save Product'}</button>`;
+  $('addForm').innerHTML=`<div class="formGrid"><div class="field full"><label>Product Image</label><input id="fImage" type="file" accept="image/*"></div><div class="field full"><label>Item Name *</label><input id="fName" value="${esc(x.name||'')}"></div><div class="field"><label>Category</label><select id="fCategory" onchange="onProductCategoryChange()">${KC_CATEGORIES.map(c=>`<option value="${esc(c)}" ${productCategory(x)===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="field"><label>Size</label><input id="fSize" value="${esc(x.size||'')}"></div><div class="field"><label>Color</label><input id="fColor" value="${esc(x.color||'')}"></div><div class="field full"><label>Sales Channel *</label><div class="channelChoice"><button type="button" data-v="Online Only" onclick="pickFormChannel(this)">🌐<br>Online Only</button><button type="button" data-v="Showroom Only" onclick="pickFormChannel(this)">🏬<br>Showroom Only</button><button type="button" data-v="Online + Showroom" onclick="pickFormChannel(this)">◉<br>Online + Showroom</button><button type="button" data-v="Bazar" onclick="pickFormChannel(this)">◆<br>Bazar</button></div><input id="fChannel" type="hidden" value="${esc(x.sales_channel||'Online + Showroom')}"></div><div class="field"><label>Selling Price (₪)</label><input id="fPrice" type="number" step="0.01" value="${x.selling_price??0}"></div><div class="field"><label>Quantity</label><input id="fQty" type="number" min="0" value="${x.quantity??0}"></div><div class="field"><label>Reorder Level</label><input id="fReorder" type="number" min="0" value="${x.reorder_level??0}"></div><div class="field"><label>Storage Room</label><input id="fRoom" value="${esc(x.storage_room||'')}"></div><div class="field"><label>Shelf / Bin / Box</label><input id="fShelf" value="${esc(x.shelf_bin||'')}"></div><div class="field"><label>Storage Number *</label><input id="fStorage" value="${esc(x.storage_number||'')}"></div><div class="field"><label>SKU</label><input id="fSku" value="${esc(x.sku||'')}"></div><div class="field"><label>Barcode</label><input id="fBarcode" value="${esc(x.barcode||'')}"></div><div class="field"><label>Status</label><select id="fStatus"><option ${x.status==='Active'?'selected':''}>Active</option><option ${x.status==='Out of Stock'?'selected':''}>Out of Stock</option><option ${x.status==='Discontinued'?'selected':''}>Discontinued</option></select></div></div><button id="saveProductBtn" type="button" class="saveBtn" data-product-id="${esc(x.id||'')}">${x.id?'Save Changes':'Save Product'}</button>`;
   setTimeout(()=>{
+    const saveButton=$('saveProductBtn');
+    if(saveButton){
+      let saveTapLocked=false;
+      const runSave=()=>{
+        if(saveTapLocked)return;
+        saveTapLocked=true;
+        saveProduct(saveButton.dataset.productId||'').finally(()=>{saveTapLocked=false});
+      };
+      saveButton.addEventListener('click',runSave,{passive:true});
+      saveButton.addEventListener('touchend',e=>{
+        e.preventDefault();
+        runSave();
+      },{passive:false});
+    }
     document.querySelectorAll('.channelChoice button').forEach(b=>b.classList.toggle('selected',b.dataset.v===$('fChannel').value));
     if(!x.id){
       refreshAutoProductCodes();
@@ -1139,7 +1153,12 @@ function printProductLabel(id){
 }
 async function saveProduct(id){
   const needed=id?'can_edit_products':'can_add_products';
-  if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');return}
+  if(!canDo(needed)){
+    alert(profile?.role==='admin'
+      ? 'Your Admin session is not being recognized correctly. Please sign out and back in.'
+      : 'Your Admin has not enabled this product permission.');
+    return;
+  }
 
   // Snapshot ALL form values before any await. On mobile Safari the DOM can change
   // while the image upload is in progress, which previously caused the save to stop
