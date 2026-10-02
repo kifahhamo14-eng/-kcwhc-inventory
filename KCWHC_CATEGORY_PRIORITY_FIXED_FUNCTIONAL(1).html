@@ -514,6 +514,101 @@
   .employeeMiniStats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
+
+/* ===== STOCK COUNT + BOX TRACKING ===== */
+.stockCenterHero{
+  background:linear-gradient(135deg,#064d3a,#00382b);
+  color:#fff;border:1px solid #d7aa3a;border-radius:16px;
+  padding:14px;margin-bottom:10px;box-shadow:0 8px 22px rgba(0,52,39,.16)
+}
+.stockCenterHero h3{margin:0;color:#f4cf68;font-size:16px}
+.stockCenterHero p{margin:4px 0 0;font-size:9px;opacity:.86;line-height:1.4}
+.stockActionGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+.stockActionCard{
+  border:1px solid #e4d8bf;background:#fff;border-radius:14px;padding:12px 10px;
+  text-align:left;min-height:96px;box-shadow:0 4px 14px rgba(22,54,43,.06)
+}
+.stockActionCard .ico{font-size:22px}
+.stockActionCard b{display:block;font-size:11px;color:#153c31;margin-top:5px}
+.stockActionCard small{display:block;font-size:8px;color:#776f63;line-height:1.3;margin-top:3px}
+.stockRoomGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.stockRoomBtn{
+  border:1px solid #dfd1b5;background:#fff;border-radius:12px;padding:10px;text-align:left;
+  box-shadow:0 3px 10px rgba(22,54,43,.05)
+}
+.stockRoomBtn b{display:block;font-size:11px;color:#075b46}
+.stockRoomBtn small{font-size:8px;color:#776f63}
+.countTopbar{
+  position:sticky;top:-1px;z-index:3;background:#fffaf0;border:1px solid #e4d8bf;
+  border-radius:13px;padding:9px;margin-bottom:8px
+}
+.countProgressTrack{height:10px;border-radius:999px;background:#ece5d8;overflow:hidden;margin:6px 0}
+.countProgressFill{height:100%;background:linear-gradient(90deg,#075b46,#e1b94e);border-radius:999px}
+.countKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.countKpi{background:#fff;border:1px solid #e5d9c0;border-radius:10px;padding:7px 4px;text-align:center}
+.countKpi b{display:block;font-size:13px;color:#075b46}
+.countKpi small{font-size:6.5px;color:#777067;font-weight:850}
+.countScanPanel{background:#fff;border:1px solid #e2d5ba;border-radius:14px;padding:10px;margin:8px 0}
+.countScanRow{display:grid;grid-template-columns:1fr auto;gap:6px}
+.countScanRow input{width:100%;border:1px solid #d9ccb1;border-radius:10px;padding:10px}
+.countScanRow button{border:0;border-radius:10px;padding:0 12px;background:#075b46;color:#fff;font-weight:900}
+.countCameraBtn{width:100%;border:none;border-radius:10px;padding:9px;background:#0b644c;color:#fff;font-weight:900;margin-top:7px}
+#countReader{width:100%;overflow:hidden;border-radius:11px;margin-top:8px}
+.countFeedback{
+  margin-top:7px;border-radius:10px;padding:8px;font-size:9px;font-weight:850;line-height:1.35
+}
+.countFeedback.ok{background:#e5f7e9;color:#176a32;border:1px solid #c8e6ce}
+.countFeedback.warn{background:#fff5da;color:#946400;border:1px solid #efdca0}
+.countFeedback.bad{background:#fff0ed;color:#9b382f;border:1px solid #efcbc5}
+.countList{display:grid;gap:7px;margin-top:8px}
+.countItem{
+  background:#fff;border:1px solid #e5d9c0;border-radius:13px;padding:9px;
+  display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center
+}
+.countItem img,.countItem .ph{
+  width:52px;height:60px;border-radius:9px;object-fit:contain;background:#f2ecdf;border:1px solid #e5d8bf
+}
+.countItem .ph{display:grid;place-items:center;font-size:17px}
+.countItemName{font-size:9.5px;font-weight:950;line-height:1.25}
+.countItemMeta{font-size:7.5px;color:#777067;margin-top:3px;line-height:1.35}
+.countNums{text-align:right}
+.countNums b{display:block;font-size:14px;color:#075b46}
+.countNums small{font-size:6.5px;color:#777067}
+.countBadge{display:inline-block;margin-top:4px;border-radius:999px;padding:3px 6px;font-size:6.5px;font-weight:950}
+.countBadge.match{background:#dff3df;color:#176a32}
+.countBadge.missing{background:#ffe6e1;color:#a13e34}
+.countBadge.extra{background:#fff0c9;color:#8b6200}
+.countBadge.pending{background:#eee8dc;color:#776f63}
+.boxCard{
+  background:#fff;border:1px solid #e3d6bb;border-radius:14px;padding:10px;margin:7px 0;
+  box-shadow:0 3px 12px rgba(22,54,43,.05)
+}
+.boxHead{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.boxCode{font-size:12px;font-weight:950;color:#075b46}
+.boxMeta{font-size:8px;color:#777067;margin-top:3px;line-height:1.4}
+.boxActions{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.boxActions button{border:1px solid #d8cbaa;background:#fff;border-radius:8px;padding:6px 8px;font-size:8px;font-weight:900}
+.boxActions button.primary{background:#075b46;color:#fff;border-color:#075b46}
+.boxContentRow{
+  display:grid;grid-template-columns:42px 1fr auto;gap:7px;align-items:center;
+  padding:7px 0;border-bottom:1px solid #eee5d3
+}
+.boxContentRow:last-child{border-bottom:0}
+.boxContentRow img,.boxContentRow .ph{width:42px;height:48px;border-radius:8px;object-fit:contain;background:#f3ede2}
+.boxContentRow .ph{display:grid;place-items:center}
+.historyRow{
+  background:#fff;border:1px solid #e5d9c0;border-radius:12px;padding:9px;margin:6px 0
+}
+.historyTop{display:flex;justify-content:space-between;gap:8px}
+.historyTop b{font-size:10px;color:#075b46}
+.historyMeta{font-size:7.5px;color:#777067;line-height:1.4;margin-top:4px}
+.historyBadge{font-size:7px;font-weight:950;border-radius:999px;padding:3px 6px;background:#ece6da}
+.boxLabelPreview{background:#fff;border:1px dashed #b6a989;border-radius:12px;padding:10px;text-align:center;margin-top:8px}
+@media(max-width:380px){
+  .stockActionGrid,.stockRoomGrid{grid-template-columns:1fr}
+  .countKpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
 </style>
 </head>
 <body>
@@ -2024,7 +2119,402 @@ function openRisk(){
   openModal('Risk Assessment','<div id="riskDashboard"></div>');
   renderRiskDashboard();
 }
-function openMore(){let body=`<button class="listRow" style="width:100%;text-align:left" onclick="openAnnouncements()">🔔 Announcements</button><button class="listRow" style="width:100%;text-align:left" onclick="openTodos()">✅ To-Do</button>`;if(profile.role==='admin')body+=`<button class="listRow" style="width:100%;text-align:left" onclick="openPeopleManagement()">👥 People Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openAuditLog()">📋 Audit Log</button><button class="listRow" style="width:100%;text-align:left" onclick="openSecurityCenter()">🔐 Security Center</button><button class="listRow" style="width:100%;text-align:left" onclick="openPendingEmployees()">👤 Pending Employees</button><button class="listRow" style="width:100%;text-align:left" onclick="openAdminManagement()">🛡 Admin Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openChangePassword()">🔐 Change My Password</button><button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button><button class="listRow" style="width:100%;text-align:left" onclick="openRevenue()">📊 Revenue</button><button class="listRow" style="width:100%;text-align:left" onclick="openActivity()">👥 Employee Activity</button><button class="listRow" style="width:100%;text-align:left" onclick="openRisk()">🛡 Risk Assessment</button>`;else if(canDo('can_add_products'))body+=`<button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button>`;body+=`<button class="listRow danger" style="width:100%;text-align:left" onclick="signOut()">Sign Out</button>`;openModal('More',body)}
+
+let stockCountScanner=null;
+let activeCountSession=null;
+let activeCountLines=[];
+let storageBoxesCache=[];
+let storageBoxContentsCache=[];
+
+function countStatus(expected,counted){
+  expected=Number(expected)||0;counted=Number(counted)||0;
+  if(counted===expected)return ['Verified','match'];
+  if(counted<expected)return [counted===0?'Not Counted':'Missing','missing'];
+  return ['Extra','extra'];
+}
+function makeBoxEan13(){
+  const existing=new Set([
+    ...products.map(p=>String(p.barcode||'')),
+    ...storageBoxesCache.map(b=>String(b.barcode||''))
+  ]);
+  for(let tries=0;tries<100;tries++){
+    const base='29'+String(Date.now()).slice(-9)+String(Math.floor(Math.random()*10));
+    let digits=base.replace(/\D/g,'').slice(0,12).padEnd(12,'0');
+    let sum=0;
+    for(let i=0;i<12;i++)sum+=Number(digits[i])*(i%2===0?1:3);
+    const check=(10-(sum%10))%10;
+    const code=digits+check;
+    if(!existing.has(code))return code;
+  }
+  return generateUniqueBarcode();
+}
+async function loadStorageBoxes(){
+  const [{data:boxes,error:be},{data:contents,error:ce}]=await Promise.all([
+    sb.from('storage_boxes').select('*').order('storage_room').order('box_code'),
+    sb.from('storage_box_contents').select('id,box_id,product_id,expected_quantity,products(id,name,storage_number,sku,barcode,image_url,color,size,quantity,storage_room)').order('id')
+  ]);
+  if(be)throw be;if(ce)throw ce;
+  storageBoxesCache=boxes||[];storageBoxContentsCache=contents||[];
+}
+function roomList(){
+  return [...new Set(products.map(p=>String(p.storage_room||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+}
+async function openStockCountCenter(){
+  if(!canDo('can_count_stock')){toast('Count Stock is not enabled for your account.');return}
+  try{await loadStorageBoxes()}catch(e){toast(e.message);return}
+  const rooms=roomList();
+  const boxCount=storageBoxesCache.filter(b=>b.status==='active').length;
+  openModal('Stock Count & Boxes',`
+    <div class="stockCenterHero"><h3>Stock Count & Box Tracking</h3><p>Count an entire storage room, scan a box to see exactly what belongs inside, and keep a permanent count history.</p></div>
+    <div class="stockActionGrid">
+      <button class="stockActionCard" onclick="openRoomCountPicker()"><div class="ico">🏬</div><b>Count a Storage Room</b><small>Choose Room A, Room B, or another room and scan every product.</small></button>
+      <button class="stockActionCard" onclick="openScanBoxLookup()"><div class="ico">📦</div><b>Scan a Box</b><small>Scan a box barcode to view contents or start a box count.</small></button>
+      <button class="stockActionCard" onclick="openBoxManagement()"><div class="ico">🏷️</div><b>Box Management</b><small>${boxCount} active box${boxCount===1?'':'es'} • Create, assign products and print labels.</small></button>
+      <button class="stockActionCard" onclick="openCountHistory()"><div class="ico">📋</div><b>Count History</b><small>See completed counts, shortages, extras and who counted them.</small></button>
+    </div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>Storage Rooms</span><span class="sub">${rooms.length} rooms</span></div>
+      ${rooms.length?`<div class="stockRoomGrid">${rooms.map(r=>{
+        const ps=products.filter(p=>String(p.storage_room||'').trim()===r);
+        const units=ps.reduce((s,p)=>s+(Number(p.quantity)||0),0);
+        return `<button class="stockRoomBtn" onclick="startRoomCount('${esc(r).replace(/'/g,"\\'")}')"><b>${esc(r)}</b><small>${ps.length} products • ${units} expected units</small></button>`;
+      }).join('')}</div>`:'<div class="sub">No storage rooms are assigned yet.</div>'}
+    </div>`);
+}
+function openRoomCountPicker(){
+  const rooms=roomList();
+  $('modalTitle').textContent='Choose Storage Room';
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>Room Stock Count</h3><p>Select a room. The app will load every product expected there before scanning begins.</p></div>${rooms.length?`<div class="stockRoomGrid">${rooms.map(r=>{
+    const ps=products.filter(p=>String(p.storage_room||'').trim()===r);
+    return `<button class="stockRoomBtn" onclick="startRoomCount('${esc(r).replace(/'/g,"\\'")}')"><b>${esc(r)}</b><small>${ps.length} products • ${ps.reduce((s,p)=>s+(+p.quantity||0),0)} units</small></button>`;
+  }).join('')}</div>`:'<div class="empty">No products have a Storage Room assigned.</div>'}`;
+}
+async function startRoomCount(room){
+  const expected=products.filter(p=>String(p.storage_room||'').trim()===String(room).trim());
+  if(!expected.length){toast('No products are assigned to this room.');return}
+  await createCountSession('room',room,null,expected.map(p=>({product_id:p.id,expected_quantity:+p.quantity||0})));
+}
+async function startBoxCount(boxId){
+  const box=storageBoxesCache.find(b=>b.id===boxId);
+  if(!box)return;
+  const rows=storageBoxContentsCache.filter(x=>x.box_id===boxId);
+  if(!rows.length){toast('This box has no products assigned yet.');return}
+  await createCountSession('box',box.storage_room,boxId,rows.map(x=>({product_id:x.product_id,expected_quantity:+x.expected_quantity||0})));
+}
+async function createCountSession(type,room,boxId,lines){
+  if(!profile?.id)return;
+  const {data:s,error}=await sb.from('stock_count_sessions').insert({
+    count_type:type,storage_room:room||null,box_id:boxId||null,started_by:profile.id,status:'in_progress'
+  }).select('*').single();
+  if(error){alert('Could not start count:\n'+error.message);return}
+  const payload=lines.map(x=>({session_id:s.id,product_id:x.product_id,expected_quantity:x.expected_quantity,counted_quantity:0}));
+  const {data:l,error:le}=await sb.from('stock_count_lines').insert(payload).select('*');
+  if(le){alert('Could not prepare count:\n'+le.message);return}
+  activeCountSession=s;activeCountLines=l||[];
+  renderActiveCount();
+}
+function activeCountTitle(){
+  if(!activeCountSession)return 'Stock Count';
+  if(activeCountSession.count_type==='box'){
+    const b=storageBoxesCache.find(x=>x.id===activeCountSession.box_id);
+    return b?`${b.box_code} • ${b.storage_room}`:'Box Count';
+  }
+  return activeCountSession.storage_room||'Room Count';
+}
+function renderActiveCount(){
+  if(!activeCountSession)return;
+  const rows=activeCountLines.map(l=>({line:l,p:products.find(p=>p.id===l.product_id)})).filter(x=>x.p);
+  const expectedTotal=rows.reduce((s,x)=>s+(+x.line.expected_quantity||0),0);
+  const countedTotal=rows.reduce((s,x)=>s+(+x.line.counted_quantity||0),0);
+  const verified=rows.filter(x=>(+x.line.expected_quantity||0)===(+x.line.counted_quantity||0)).length;
+  const missing=rows.filter(x=>(+x.line.counted_quantity||0)<(+x.line.expected_quantity||0)).length;
+  const extra=rows.filter(x=>(+x.line.counted_quantity||0)>(+x.line.expected_quantity||0)).length;
+  const progress=expectedTotal?Math.min(100,Math.round(countedTotal/expectedTotal*100)):0;
+  $('modalTitle').textContent='Counting • '+activeCountTitle();
+  $('modalBody').innerHTML=`
+    <div class="countTopbar">
+      <b style="font-size:12px;color:#075b46">${esc(activeCountTitle())}</b>
+      <div class="sub">${activeCountSession.count_type==='box'?'Box count':'Storage room count'} • Started ${new Date(activeCountSession.started_at).toLocaleString()}</div>
+      <div class="countProgressTrack"><div class="countProgressFill" style="width:${progress}%"></div></div>
+      <div class="countKpis"><div class="countKpi"><b>${countedTotal}/${expectedTotal}</b><small>Units Scanned</small></div><div class="countKpi"><b>${verified}</b><small>Verified</small></div><div class="countKpi"><b>${missing}</b><small>Missing / Pending</small></div><div class="countKpi"><b>${extra}</b><small>Extra</small></div></div>
+    </div>
+    <div class="countScanPanel">
+      <div class="countScanRow"><input id="countCode" inputmode="numeric" autocomplete="off" placeholder="Scan or type product barcode / storage number"><button onclick="processCountCode()">Count</button></div>
+      <button class="countCameraBtn" onclick="startStockCountCamera()">▥ Open Barcode Scanner</button>
+      <div id="countReader" class="hidden"></div>
+      <div id="countFeedback"></div>
+    </div>
+    <div class="field"><label>Search this count</label><input id="countSearch" placeholder="Product name, storage number, color…" oninput="renderCountItems()"></div>
+    <div id="countItems" class="countList"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+      <button class="smallbtn" onclick="cancelActiveCount()">Cancel Count</button>
+      <button class="saveBtn" style="margin:0" onclick="finishActiveCount()">Finish Count</button>
+    </div>`;
+  renderCountItems();
+  setTimeout(()=>$('countCode')?.focus(),100);
+}
+function renderCountItems(){
+  const box=$('countItems');if(!box)return;
+  const q=($('countSearch')?.value||'').trim().toLowerCase();
+  let rows=activeCountLines.map(l=>({line:l,p:products.find(p=>p.id===l.product_id)})).filter(x=>x.p);
+  if(q)rows=rows.filter(({p})=>[p.name,p.storage_number,p.sku,p.barcode,p.color,p.size].filter(Boolean).join(' ').toLowerCase().includes(q));
+  rows.sort((a,b)=>{
+    const as=countStatus(a.line.expected_quantity,a.line.counted_quantity)[1],bs=countStatus(b.line.expected_quantity,b.line.counted_quantity)[1];
+    const rank={missing:0,extra:1,match:2};return rank[as]-rank[bs]||String(a.p.storage_number||'').localeCompare(String(b.p.storage_number||''));
+  });
+  box.innerHTML=rows.map(({line,p})=>{
+    const img=productImage(p),[label,cls]=countStatus(line.expected_quantity,line.counted_quantity);
+    return `<div class="countItem">${img?`<img src="${img}">`:'<div class="ph">✦</div>'}<div><div class="countItemName">${productNameWithLogo(p.name)}</div><div class="countItemMeta">${esc(p.storage_number||'')} • ${esc(p.color||'No color')} • Expected ${line.expected_quantity}</div></div><div class="countNums"><b>${line.counted_quantity}/${line.expected_quantity}</b><small>Counted</small><div class="countBadge ${cls}">${label}</div></div></div>`;
+  }).join('')||'<div class="empty">No products match this search.</div>';
+}
+function showCountFeedback(message,type='ok'){
+  const el=$('countFeedback');if(!el)return;
+  el.className='countFeedback '+type;el.textContent=message;
+}
+async function processCountCode(codeOverride=null){
+  if(!activeCountSession)return;
+  const input=$('countCode');
+  const code=String(codeOverride??input?.value??'').trim();
+  if(!code)return;
+  if(input)input.value='';
+  const p=products.find(x=>String(x.barcode||'')===code||String(x.storage_number||'').toLowerCase()===code.toLowerCase()||String(x.sku||'').toLowerCase()===code.toLowerCase());
+  if(!p){
+    await sb.from('stock_count_scans').insert({session_id:activeCountSession.id,product_id:null,scanned_code:code,scan_result:'unknown',scanned_by:profile.id});
+    showCountFeedback(`Unknown barcode: ${code}`,'bad');navigator.vibrate?.([120,80,120]);return;
+  }
+  const line=activeCountLines.find(l=>l.product_id===p.id);
+  if(!line){
+    await sb.from('stock_count_scans').insert({session_id:activeCountSession.id,product_id:p.id,scanned_code:code,scan_result:'wrong_location',scanned_by:profile.id});
+    const expectedPlace=activeCountSession.count_type==='box'
+      ? (storageBoxesCache.find(b=>storageBoxContentsCache.some(c=>c.box_id===b.id&&c.product_id===p.id))?.box_code||p.storage_room||'another location')
+      : (p.storage_room||'another room');
+    showCountFeedback(`${p.name} is not assigned to this count. Expected location: ${expectedPlace}`,'warn');navigator.vibrate?.([180,80,180]);return;
+  }
+  const now=new Date().toISOString();
+  const next=(+line.counted_quantity||0)+1;
+  const {data,error}=await sb.from('stock_count_lines').update({
+    counted_quantity:next,
+    first_scanned_at:line.first_scanned_at||now,
+    last_scanned_at:now
+  }).eq('id',line.id).select('*').single();
+  if(error){showCountFeedback(error.message,'bad');return}
+  Object.assign(line,data);
+  await sb.from('stock_count_scans').insert({session_id:activeCountSession.id,product_id:p.id,scanned_code:code,scan_result:'matched',scanned_by:profile.id});
+  const [status]=countStatus(line.expected_quantity,line.counted_quantity);
+  showCountFeedback(`✓ ${p.name}: ${line.counted_quantity}/${line.expected_quantity} • ${status}`,(+line.counted_quantity||0)>(+line.expected_quantity||0)?'warn':'ok');
+  navigator.vibrate?.(60);
+  renderCountItems();
+  updateCountTopbarOnly();
+}
+function updateCountTopbarOnly(){
+  const oldSearch=$('countSearch')?.value||'';
+  const oldFeedback=$('countFeedback')?.outerHTML||'';
+  // Keep the scan experience simple: refresh the full view only after every 10 scans is unnecessary.
+  // KPI values are refreshed by replacing their text directly.
+  const rows=activeCountLines;
+  const expected=rows.reduce((s,x)=>s+(+x.expected_quantity||0),0),counted=rows.reduce((s,x)=>s+(+x.counted_quantity||0),0);
+  const kpis=document.querySelectorAll('.countKpi b');
+  if(kpis.length>=4){
+    kpis[0].textContent=`${counted}/${expected}`;
+    kpis[1].textContent=rows.filter(x=>+x.expected_quantity===+x.counted_quantity).length;
+    kpis[2].textContent=rows.filter(x=>+x.counted_quantity<+x.expected_quantity).length;
+    kpis[3].textContent=rows.filter(x=>+x.counted_quantity>+x.expected_quantity).length;
+  }
+  const fill=document.querySelector('.countProgressFill');if(fill)fill.style.width=(expected?Math.min(100,Math.round(counted/expected*100)):0)+'%';
+}
+async function startStockCountCamera(){
+  if(stockCountScanner){try{await stockCountScanner.stop()}catch(_e){}try{await stockCountScanner.clear()}catch(_e){}stockCountScanner=null}
+  const reader=$('countReader');if(!reader)return;
+  reader.classList.remove('hidden');
+  stockCountScanner=new Html5Qrcode('countReader',{formatsToSupport:[Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.CODE_128]});
+  try{
+    await stockCountScanner.start({facingMode:'environment'},{fps:12,qrbox:{width:270,height:130},aspectRatio:1.777778},async code=>{
+      await processCountCode(code);
+      try{await stockCountScanner.stop()}catch(_e){}
+      try{await stockCountScanner.clear()}catch(_e){}
+      stockCountScanner=null;reader.classList.add('hidden');
+      setTimeout(()=>$('countCode')?.focus(),100);
+    });
+  }catch(e){reader.classList.add('hidden');showCountFeedback('Camera could not start. Use manual barcode entry.','bad')}
+}
+async function finishActiveCount(){
+  if(!activeCountSession)return;
+  if(stockCountScanner){try{await stockCountScanner.stop()}catch(_e){}stockCountScanner=null}
+  const missing=activeCountLines.filter(x=>+x.counted_quantity<+x.expected_quantity).length;
+  const extra=activeCountLines.filter(x=>+x.counted_quantity>+x.expected_quantity).length;
+  const msg=(missing||extra)
+    ?`Finish this count with ${missing} missing/pending product line(s) and ${extra} extra product line(s)?\n\nInventory quantities will NOT change yet. An Admin can review and apply the count later.`
+    :'Everything matches. Finish and mark this count verified?';
+  if(!confirm(msg))return;
+  const {data,error}=await sb.from('stock_count_sessions').update({status:'completed',completed_at:new Date().toISOString()}).eq('id',activeCountSession.id).select('*').single();
+  if(error){alert(error.message);return}
+  activeCountSession=data;
+  await showCountResult(activeCountSession.id);
+}
+async function cancelActiveCount(){
+  if(!activeCountSession)return;
+  if(!confirm('Cancel this stock count? The scan history will remain recorded.'))return;
+  await sb.from('stock_count_sessions').update({status:'cancelled',completed_at:new Date().toISOString()}).eq('id',activeCountSession.id);
+  activeCountSession=null;activeCountLines=[];
+  openStockCountCenter();
+}
+async function showCountResult(sessionId){
+  const [{data:s,error:se},{data:lines,error:le}]=await Promise.all([
+    sb.from('stock_count_sessions').select('*,storage_boxes(box_code,box_name,storage_room)').eq('id',sessionId).single(),
+    sb.from('stock_count_lines').select('*,products(id,name,storage_number,image_url,color,size,quantity)').eq('session_id',sessionId).order('id')
+  ]);
+  if(se||le){alert(se?.message||le?.message);return}
+  const bad=(lines||[]).filter(x=>+x.expected_quantity!==+x.counted_quantity);
+  const expected=(lines||[]).reduce((a,x)=>a+(+x.expected_quantity||0),0),counted=(lines||[]).reduce((a,x)=>a+(+x.counted_quantity||0),0);
+  $('modalTitle').textContent='Count Results';
+  $('modalBody').innerHTML=`
+    <div class="stockCenterHero"><h3>${bad.length?'Count Completed — Review Differences':'✓ Count Verified'}</h3><p>${s.count_type==='box'?esc(s.storage_boxes?.box_code||'Box'):esc(s.storage_room||'Storage Room')} • ${expected} expected units • ${counted} counted units</p></div>
+    <div class="countKpis"><div class="countKpi"><b>${(lines||[]).length}</b><small>Product Lines</small></div><div class="countKpi"><b>${(lines||[]).filter(x=>+x.expected_quantity===+x.counted_quantity).length}</b><small>Verified</small></div><div class="countKpi"><b>${(lines||[]).filter(x=>+x.counted_quantity<+x.expected_quantity).length}</b><small>Missing</small></div><div class="countKpi"><b>${(lines||[]).filter(x=>+x.counted_quantity>+x.expected_quantity).length}</b><small>Extra</small></div></div>
+    <div class="countList">${(lines||[]).map(l=>{const p=l.products,[label,cls]=countStatus(l.expected_quantity,l.counted_quantity),img=productImage(p||{});return `<div class="countItem">${img?`<img src="${img}">`:'<div class="ph">✦</div>'}<div><div class="countItemName">${productNameWithLogo(p?.name||'Product')}</div><div class="countItemMeta">${esc(p?.storage_number||'')} • Expected ${l.expected_quantity}</div></div><div class="countNums"><b>${l.counted_quantity}/${l.expected_quantity}</b><div class="countBadge ${cls}">${label}</div></div></div>`}).join('')}</div>
+    ${profile?.role==='admin'&&s.status==='completed'?`<button class="saveBtn" onclick="applyCountAdjustments('${s.id}')">Apply Count Adjustments to Inventory</button><div class="sub" style="text-align:center;margin-top:5px">This changes official inventory quantities to the counted quantities.</div>`:''}
+    <button class="smallbtn" style="width:100%;margin-top:8px" onclick="openCountHistory()">View Count History</button>`;
+  activeCountSession=null;activeCountLines=[];
+}
+async function applyCountAdjustments(sessionId){
+  if(profile?.role!=='admin')return;
+  if(!confirm('Apply this physical count to official inventory quantities?\n\nThis will replace the current quantities with the counted quantities.'))return;
+  const {error}=await sb.rpc('apply_stock_count_session',{p_session_id:sessionId});
+  if(error){alert(error.message);return}
+  toast('Inventory quantities updated from count');
+  await loadProducts();renderAll();showCountResult(sessionId);
+}
+async function openCountHistory(){
+  openModal('Count History','<div class="empty">Loading count history…</div>');
+  const {data,error}=await sb.from('stock_count_sessions').select('*,storage_boxes(box_code,box_name,storage_room),profiles!stock_count_sessions_started_by_fkey(full_name,email,photo_url)').order('started_at',{ascending:false}).limit(100);
+  if(error){$('modalBody').innerHTML=`<div class="empty">${esc(error.message)}</div>`;return}
+  const rows=data||[];
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>Count History</h3><p>Every room and box count is recorded with the person who performed it and its final status.</p></div>${rows.map(s=>{
+    const who=s.profiles?.full_name||s.profiles?.email||'User';
+    const where=s.count_type==='box'?(s.storage_boxes?.box_code||'Box'):(s.storage_room||'Quick Count');
+    return `<div class="historyRow"><div class="historyTop"><b>${esc(where)}</b><span class="historyBadge">${esc(prettyAction(s.status))}</span></div><div class="historyMeta">${esc(prettyAction(s.count_type))} • Counted by ${esc(who)}<br>${new Date(s.started_at).toLocaleString()}${s.completed_at?` • Finished ${new Date(s.completed_at).toLocaleString()}`:''}</div><button class="smallbtn" style="margin-top:7px" onclick="showCountResult('${s.id}')">View Results</button></div>`;
+  }).join('')||'<div class="empty">No stock counts yet.</div>'}`;
+}
+async function openScanBoxLookup(){
+  try{await loadStorageBoxes()}catch(e){toast(e.message);return}
+  $('modalTitle').textContent='Scan a Box';
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>Scan Box Barcode</h3><p>Scan the label on a physical box. The app will show exactly what is assigned inside it.</p></div>
+  <div class="countScanPanel"><div class="countScanRow"><input id="boxLookupCode" inputmode="numeric" placeholder="Box barcode or box code"><button onclick="lookupBoxCode()">Open</button></div><button class="countCameraBtn" onclick="startBoxLookupCamera()">▥ Open Barcode Scanner</button><div id="boxLookupReader" class="hidden"></div><div id="boxLookupFeedback"></div></div>
+  <div class="field"><label>Or search boxes</label><input id="boxSearch" placeholder="Box code, room, name…" oninput="renderBoxLookupList()"></div><div id="boxLookupList"></div>`;
+  renderBoxLookupList();
+}
+function renderBoxLookupList(){
+  const el=$('boxLookupList');if(!el)return;
+  const q=($('boxSearch')?.value||'').trim().toLowerCase();
+  const rows=storageBoxesCache.filter(b=>b.status==='active'&&(!q||[b.box_code,b.box_name,b.storage_room,b.barcode].filter(Boolean).join(' ').toLowerCase().includes(q)));
+  el.innerHTML=rows.map(b=>`<div class="boxCard"><div class="boxHead"><div><div class="boxCode">${esc(b.box_code)}</div><div class="boxMeta">${esc(b.storage_room)}${b.box_name?` • ${esc(b.box_name)}`:''}</div></div><span class="historyBadge">${storageBoxContentsCache.filter(x=>x.box_id===b.id).reduce((s,x)=>s+(+x.expected_quantity||0),0)} units</span></div><div class="boxActions"><button class="primary" onclick="openBoxDetails('${b.id}')">View Contents</button><button onclick="startBoxCount('${b.id}')">Count Box</button></div></div>`).join('')||'<div class="empty">No matching boxes.</div>';
+}
+async function lookupBoxCode(codeOverride=null){
+  const code=String(codeOverride??$('boxLookupCode')?.value??'').trim();
+  const b=storageBoxesCache.find(x=>String(x.barcode)===code||String(x.box_code).toLowerCase()===code.toLowerCase());
+  if(!b){const f=$('boxLookupFeedback');if(f){f.className='countFeedback bad';f.textContent='No box found for this barcode.'}return}
+  openBoxDetails(b.id);
+}
+async function startBoxLookupCamera(){
+  const reader=$('boxLookupReader');if(!reader)return;
+  reader.classList.remove('hidden');
+  if(stockCountScanner){try{await stockCountScanner.stop()}catch(_e){}try{await stockCountScanner.clear()}catch(_e){}}
+  stockCountScanner=new Html5Qrcode('boxLookupReader',{formatsToSupport:[Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.CODE_128]});
+  try{
+    await stockCountScanner.start({facingMode:'environment'},{fps:12,qrbox:{width:270,height:130},aspectRatio:1.777778},async code=>{
+      try{await stockCountScanner.stop()}catch(_e){}try{await stockCountScanner.clear()}catch(_e){}stockCountScanner=null;
+      await lookupBoxCode(code);
+    });
+  }catch(e){reader.classList.add('hidden');toast('Camera could not start.')}
+}
+function openBoxDetails(boxId){
+  const b=storageBoxesCache.find(x=>x.id===boxId);if(!b)return;
+  const rows=storageBoxContentsCache.filter(x=>x.box_id===boxId);
+  $('modalTitle').textContent=b.box_code;
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>${esc(b.box_code)}</h3><p>${esc(b.storage_room)}${b.box_name?` • ${esc(b.box_name)}`:''} • Barcode ${esc(b.barcode)}</p></div>
+    <div class="metricGrid"><div class="metricCard"><small>Products</small><b>${rows.length}</b></div><div class="metricCard gold"><small>Expected Units</small><b>${rows.reduce((s,x)=>s+(+x.expected_quantity||0),0)}</b></div></div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>Box Contents</span><span class="sub">${rows.length} product lines</span></div>${rows.map(x=>{const p=x.products||products.find(y=>y.id===x.product_id),img=productImage(p||{});return `<div class="boxContentRow">${img?`<img src="${img}">`:'<div class="ph">✦</div>'}<div><b style="font-size:9px">${productNameWithLogo(p?.name||'Product')}</b><div class="sub">${esc(p?.storage_number||'')} • ${esc(p?.color||'')}</div></div><b>${x.expected_quantity}</b></div>`}).join('')||'<div class="sub">No products assigned.</div>'}</div>
+    <div class="boxActions"><button class="primary" onclick="startBoxCount('${b.id}')">▥ Count This Box</button><button onclick="printBoxLabel('${b.id}')">🏷 Print Box Label</button>${profile?.role==='admin'?`<button onclick="editBoxContents('${b.id}')">✎ Edit Contents</button>`:''}</div>`;
+}
+async function openBoxManagement(){
+  if(profile?.role!=='admin'){openScanBoxLookup();return}
+  try{await loadStorageBoxes()}catch(e){toast(e.message);return}
+  $('modalTitle').textContent='Box Management';
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>Box Management</h3><p>Create a physical box, print its barcode label, then assign the products and quantities that belong inside.</p></div>
+    <button class="saveBtn" onclick="openCreateBox()">＋ Create New Box</button>
+    <div class="field" style="margin-top:8px"><label>Search Boxes</label><input id="manageBoxSearch" placeholder="Box code, room, name…" oninput="renderManagedBoxes()"></div><div id="managedBoxes"></div>`;
+  renderManagedBoxes();
+}
+function renderManagedBoxes(){
+  const el=$('managedBoxes');if(!el)return;
+  const q=($('manageBoxSearch')?.value||'').trim().toLowerCase();
+  const rows=storageBoxesCache.filter(b=>!q||[b.box_code,b.box_name,b.storage_room,b.barcode].filter(Boolean).join(' ').toLowerCase().includes(q));
+  el.innerHTML=rows.map(b=>`<div class="boxCard"><div class="boxHead"><div><div class="boxCode">${esc(b.box_code)}</div><div class="boxMeta">${esc(b.storage_room)}${b.box_name?` • ${esc(b.box_name)}`:''}<br>${esc(b.barcode)}</div></div><span class="historyBadge">${esc(b.status)}</span></div><div class="boxActions"><button class="primary" onclick="openBoxDetails('${b.id}')">View</button><button onclick="editBoxContents('${b.id}')">Assign Products</button><button onclick="printBoxLabel('${b.id}')">Print Label</button></div></div>`).join('')||'<div class="empty">No boxes yet.</div>';
+}
+function openCreateBox(){
+  const rooms=roomList();
+  $('modalTitle').textContent='Create Box';
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>New Storage Box</h3><p>The app will create a unique box barcode automatically.</p></div><div class="formGrid">
+    <div class="field"><label>Box Code *</label><input id="newBoxCode" placeholder="ROOM-A-BOX-01"></div>
+    <div class="field"><label>Storage Room *</label><input id="newBoxRoom" list="roomOptions" placeholder="Storage Room A"><datalist id="roomOptions">${rooms.map(r=>`<option value="${esc(r)}">`).join('')}</datalist></div>
+    <div class="field full"><label>Box Name</label><input id="newBoxName" placeholder="Shawls - Red / Black"></div>
+    <div class="field full"><label>Notes</label><textarea id="newBoxNotes"></textarea></div>
+  </div><button class="saveBtn" onclick="createStorageBox()">Create Box & Barcode</button>`;
+}
+async function createStorageBox(){
+  const code=$('newBoxCode')?.value.trim(),room=$('newBoxRoom')?.value.trim();
+  if(!code||!room){toast('Box Code and Storage Room are required.');return}
+  const barcode=makeBoxEan13();
+  const {data,error}=await sb.from('storage_boxes').insert({box_code:code,barcode,storage_room:room,box_name:$('newBoxName')?.value.trim()||null,notes:$('newBoxNotes')?.value.trim()||null,created_by:profile.id}).select('*').single();
+  if(error){alert(error.message);return}
+  await loadStorageBoxes();toast('Box created');
+  openBoxDetails(data.id);
+}
+function editBoxContents(boxId){
+  const b=storageBoxesCache.find(x=>x.id===boxId);if(!b)return;
+  const assigned=new Map(storageBoxContentsCache.filter(x=>x.box_id===boxId).map(x=>[x.product_id,+x.expected_quantity||0]));
+  const roomProducts=products.filter(p=>String(p.storage_room||'').trim()===String(b.storage_room||'').trim());
+  $('modalTitle').textContent='Assign Products • '+b.box_code;
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>${esc(b.box_code)}</h3><p>Set the expected quantity for each product inside this box. Use 0 for products that do not belong in the box.</p></div>
+  <div class="field"><label>Search Products</label><input id="boxProductSearch" placeholder="Name, storage number, barcode…" oninput="filterBoxAssignRows()"></div>
+  <div id="boxAssignRows">${roomProducts.map(p=>{const img=productImage(p);return `<div class="countItem boxAssignRow" data-hay="${esc([p.name,p.storage_number,p.barcode,p.color].filter(Boolean).join(' ').toLowerCase())}">${img?`<img src="${img}">`:'<div class="ph">✦</div>'}<div><div class="countItemName">${productNameWithLogo(p.name)}</div><div class="countItemMeta">${esc(p.storage_number||'')} • Inventory qty ${p.quantity}</div></div><input class="boxQtyInput" data-product-id="${p.id}" type="number" min="0" value="${assigned.get(p.id)||0}" style="width:62px;padding:8px;border:1px solid #d8cbaa;border-radius:8px;text-align:center"></div>`}).join('')||'<div class="empty">No products are assigned to this storage room.</div>'}</div>
+  <button class="saveBtn" onclick="saveBoxContents('${b.id}')">Save Box Contents</button>`;
+}
+function filterBoxAssignRows(){
+  const q=($('boxProductSearch')?.value||'').trim().toLowerCase();
+  document.querySelectorAll('.boxAssignRow').forEach(r=>r.style.display=!q||String(r.dataset.hay||'').includes(q)?'grid':'none');
+}
+async function saveBoxContents(boxId){
+  const inputs=[...document.querySelectorAll('.boxQtyInput')];
+  const desired=inputs.map(i=>({product_id:i.dataset.productId,qty:Math.max(0,parseInt(i.value||'0',10)||0)}));
+  const current=storageBoxContentsCache.filter(x=>x.box_id===boxId);
+  for(const d of desired){
+    const existing=current.find(x=>x.product_id===d.product_id);
+    if(d.qty>0){
+      if(existing){
+        const {error}=await sb.from('storage_box_contents').update({expected_quantity:d.qty,updated_at:new Date().toISOString()}).eq('id',existing.id);
+        if(error){alert(error.message);return}
+      }else{
+        const {error}=await sb.from('storage_box_contents').insert({box_id:boxId,product_id:d.product_id,expected_quantity:d.qty});
+        if(error){alert(error.message);return}
+      }
+    }else if(existing){
+      const {error}=await sb.from('storage_box_contents').delete().eq('id',existing.id);
+      if(error){alert(error.message);return}
+    }
+  }
+  await loadStorageBoxes();toast('Box contents saved');openBoxDetails(boxId);
+}
+function printBoxLabel(boxId){
+  const b=storageBoxesCache.find(x=>x.id===boxId);if(!b)return;
+  const svg=ean13Svg(b.barcode);
+  const rows=storageBoxContentsCache.filter(x=>x.box_id===boxId);
+  const win=window.open('','_blank','width=700,height=600');
+  if(!win){toast('Allow pop-ups to print box labels');return}
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(b.box_code)} Box Label</title><style>
+  @page{size:10cm 7cm;margin:0}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:#000}.label{width:10cm;height:7cm;padding:.5cm;display:flex;flex-direction:column;justify-content:center;text-align:center}.brand{font-size:11pt;font-weight:900}.box{font-size:20pt;font-weight:900;margin:.12cm 0}.room{font-size:11pt;font-weight:700}.barcode{height:2.1cm;margin:.18cm auto 0;width:8.5cm}.barcode svg{width:100%;height:100%}.digits{font:10pt monospace;letter-spacing:.05cm}.meta{font-size:9pt;margin-top:.08cm}.toolbar{position:fixed;bottom:0;left:0;right:0;padding:10px;background:#eee;text-align:center}@media print{.toolbar{display:none}}</style></head><body><div class="label"><div class="brand">KCWHC STORAGE BOX</div><div class="box">${esc(b.box_code)}</div><div class="room">${esc(b.storage_room)}${b.box_name?' • '+esc(b.box_name):''}</div><div class="barcode">${svg}</div><div class="digits">${esc(b.barcode)}</div><div class="meta">${rows.length} product lines • ${rows.reduce((s,x)=>s+(+x.expected_quantity||0),0)} expected units</div></div><div class="toolbar"><button onclick="window.print()">Print Box Label</button></div></body></html>`);
+  win.document.close();
+}
+
+function openMore(){let body=`<button class="listRow" style="width:100%;text-align:left" onclick="openAnnouncements()">🔔 Announcements</button><button class="listRow" style="width:100%;text-align:left" onclick="openTodos()">✅ To-Do</button><button class="listRow" style="width:100%;text-align:left" onclick="openStockCountCenter()">📦 Stock Count & Boxes</button>`;if(profile.role==='admin')body+=`<button class="listRow" style="width:100%;text-align:left" onclick="openPeopleManagement()">👥 People Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openAuditLog()">📋 Audit Log</button><button class="listRow" style="width:100%;text-align:left" onclick="openSecurityCenter()">🔐 Security Center</button><button class="listRow" style="width:100%;text-align:left" onclick="openPendingEmployees()">👤 Pending Employees</button><button class="listRow" style="width:100%;text-align:left" onclick="openAdminManagement()">🛡 Admin Management</button><button class="listRow" style="width:100%;text-align:left" onclick="openChangePassword()">🔐 Change My Password</button><button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button><button class="listRow" style="width:100%;text-align:left" onclick="openRevenue()">📊 Revenue</button><button class="listRow" style="width:100%;text-align:left" onclick="openActivity()">👥 Employee Activity</button><button class="listRow" style="width:100%;text-align:left" onclick="openRisk()">🛡 Risk Assessment</button>`;else if(canDo('can_add_products'))body+=`<button class="listRow" style="width:100%;text-align:left" onclick="go('add');closeModal()">＋ Add Product</button>`;body+=`<button class="listRow danger" style="width:100%;text-align:left" onclick="signOut()">Sign Out</button>`;openModal('More',body)}
 (async()=>{
   const recoveryUrl = /(?:#|\?|&)type=recovery(?:&|$)/.test(location.href);
   const {data:{session}}=await sb.auth.getSession();
