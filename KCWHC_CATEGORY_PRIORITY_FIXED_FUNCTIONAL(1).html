@@ -201,6 +201,319 @@
   outline:3px solid rgba(180,138,52,.72);
   box-shadow:0 0 0 5px rgba(180,138,52,.16),0 8px 24px rgba(0,0,0,.14)!important;
 }
+
+/* ===== KCWHC ANALYTICS / ACTIVITY VISUAL UPGRADE ===== */
+#categoryButtons.channels{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  overflow:visible;
+  padding:8px 0 4px;
+}
+#categoryButtons .chan{
+  width:100%;
+  white-space:normal;
+  min-height:42px;
+  padding:7px 5px;
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  text-align:center;
+  line-height:1.15;
+  box-shadow:0 2px 7px rgba(0,0,0,.04);
+}
+#salesChannelButtons.channels{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  overflow:visible;
+  padding:5px 0 4px;
+}
+#salesChannelButtons .chan{
+  width:100%;
+  white-space:normal;
+  min-height:36px;
+  padding:6px 4px;
+  border-radius:10px;
+  text-align:center;
+  line-height:1.12;
+}
+.analyticsHero{
+  background:linear-gradient(135deg,#064d3a,#003a2c);
+  color:white;
+  border:1px solid #d7aa3a;
+  border-radius:16px;
+  padding:14px;
+  margin:6px 0 10px;
+  box-shadow:0 8px 22px rgba(0,52,39,.16);
+}
+.analyticsHero h3{margin:0;color:#f4cf68;font-size:16px}
+.analyticsHero p{margin:4px 0 0;font-size:9px;opacity:.82;line-height:1.35}
+.metricGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+  margin:8px 0;
+}
+.metricCard{
+  background:#fff;
+  border:1px solid #e5d9c0;
+  border-radius:13px;
+  padding:10px;
+  min-width:0;
+  box-shadow:0 4px 14px rgba(22,54,43,.06);
+}
+.metricCard .metricIcon{font-size:18px;margin-bottom:4px}
+.metricCard small{
+  display:block;
+  color:#7b7469;
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.35px;
+}
+.metricCard b{
+  display:block;
+  color:#183a30;
+  font-size:19px;
+  line-height:1.1;
+  margin-top:3px;
+  overflow-wrap:anywhere;
+}
+.metricCard .metricSub{font-size:8px;color:#777067;margin-top:4px;line-height:1.3}
+.metricCard.good{background:#f2fbf5;border-color:#cee8d5}
+.metricCard.gold{background:#fff9e8;border-color:#ead390}
+.metricCard.blue{background:#f1f7fc;border-color:#cedfed}
+.metricCard.red{background:#fff4f1;border-color:#efcfc7}
+.analyticsSection{
+  background:#fff;
+  border:1px solid #e5d9c0;
+  border-radius:14px;
+  padding:11px;
+  margin:8px 0;
+  box-shadow:0 4px 14px rgba(22,54,43,.05);
+}
+.analyticsTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-weight:950;
+  font-size:11px;
+  color:#153c31;
+  margin-bottom:8px;
+}
+.analyticsTitle .sub{font-weight:700}
+.chartBars{
+  display:flex;
+  align-items:flex-end;
+  gap:5px;
+  height:126px;
+  padding:8px 2px 2px;
+  border-bottom:1px solid #e8dfce;
+}
+.chartCol{
+  flex:1;
+  min-width:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+  gap:3px;
+}
+.chartValue{
+  font-size:7px;
+  color:#5d675f;
+  font-weight:900;
+  white-space:nowrap;
+}
+.chartBar{
+  width:72%;
+  min-height:3px;
+  background:linear-gradient(180deg,#d9b34f,#0a5a44);
+  border-radius:6px 6px 2px 2px;
+}
+.chartLabel{
+  font-size:7px;
+  color:#81786b;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  width:100%;
+  text-align:center;
+}
+.rankRow{
+  display:grid;
+  grid-template-columns:24px 1fr auto;
+  gap:8px;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid #f0e7d5;
+}
+.rankRow:last-child{border-bottom:0}
+.rankNo{
+  width:24px;height:24px;border-radius:8px;
+  display:grid;place-items:center;
+  background:#075b46;color:#fff;font-size:9px;font-weight:950;
+}
+.rankName{font-size:10px;font-weight:900;line-height:1.25;min-width:0}
+.rankMeta{font-size:8px;color:#7b7469;margin-top:2px}
+.rankValue{text-align:right;font-size:10px;font-weight:950;color:#075b46}
+.breakdownRow{margin:8px 0}
+.breakdownTop{display:flex;justify-content:space-between;gap:8px;font-size:9px;font-weight:850}
+.breakdownTrack{height:8px;background:#eee7da;border-radius:999px;overflow:hidden;margin-top:4px}
+.breakdownFill{height:100%;background:linear-gradient(90deg,#0a5d46,#e4bd58);border-radius:999px}
+.recentSale{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  padding:8px 0;
+  border-bottom:1px solid #f0e7d5;
+}
+.recentSale:last-child{border-bottom:0}
+.recentSale b{font-size:10px;display:block}
+.recentSale .sub{font-size:8px}
+.recentSaleMoney{font-weight:950;color:#075b46;font-size:10px;text-align:right}
+.employeeSummaryGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  margin:8px 0;
+}
+.employeeSummaryCard{
+  background:#fff;
+  border:1px solid #e5d9c0;
+  border-radius:12px;
+  padding:8px 6px;
+  text-align:center;
+}
+.employeeSummaryCard b{display:block;font-size:16px;color:#075b46}
+.employeeSummaryCard small{font-size:7px;color:#777067;font-weight:900;line-height:1.2}
+.employeeCards{display:grid;gap:8px}
+.employeeActivityCard{
+  background:linear-gradient(180deg,#fff,#fffdf8);
+  border:1px solid #e4d7bd;
+  border-radius:15px;
+  padding:11px;
+  box-shadow:0 4px 14px rgba(22,54,43,.06);
+}
+.employeeActivityHead{
+  display:grid;
+  grid-template-columns:52px 1fr auto;
+  gap:9px;
+  align-items:center;
+}
+.activityUserPhoto,.activityUserPh,.auditUserPhoto,.auditUserPh{
+  width:52px;height:52px;border-radius:50%;
+  object-fit:cover;
+  border:2px solid #e0b84e;
+  background:#eee6d7;
+}
+.activityUserPh,.auditUserPh{
+  display:grid;place-items:center;
+  color:#075b46;font-weight:950;font-size:16px;
+}
+.employeeActivityName{font-size:12px;font-weight:950}
+.employeeActivityRole{font-size:8px;color:#746d61;margin-top:2px}
+.activityStatus{
+  font-size:7px;font-weight:950;padding:4px 6px;border-radius:999px;
+  background:#dff3df;color:#176a32;
+}
+.activityStatus.off{background:#ece8df;color:#81786c}
+.employeeMiniStats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:5px;margin-top:9px
+}
+.employeeMiniStat{
+  border-radius:9px;background:#f6f0e4;padding:7px 4px;text-align:center;
+  border:1px solid #ece0c9;
+}
+.employeeMiniStat b{display:block;font-size:11px;color:#173e33}
+.employeeMiniStat small{display:block;font-size:6.5px;color:#81786c;font-weight:850;margin-top:2px}
+.employeeActivityBtn{
+  width:100%;margin-top:8px;border:none;border-radius:9px;
+  padding:8px;background:#075b46;color:white;font-size:9px;font-weight:900;
+}
+.activityEvent{
+  display:grid;
+  grid-template-columns:34px 1fr;
+  gap:8px;
+  padding:8px 0;
+  border-bottom:1px solid #eee4d1;
+}
+.activityEvent:last-child{border-bottom:0}
+.activityEventIcon{
+  width:34px;height:34px;border-radius:10px;
+  background:#f1eadb;display:grid;place-items:center;font-size:15px
+}
+.activityEvent b{font-size:9.5px;display:block}
+.activityEvent .sub{font-size:8px;line-height:1.35;margin-top:2px}
+.activityBackBtn{
+  border:1px solid #d9ccb1;background:#fff;border-radius:9px;
+  padding:7px 9px;font-size:9px;font-weight:900;margin-bottom:8px;
+}
+.auditDashboard{margin-top:8px}
+.auditKpis{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;margin:8px 0;
+}
+.auditKpi{
+  background:#fff;border:1px solid #e5d9c0;border-radius:11px;padding:9px;
+}
+.auditKpi b{display:block;font-size:17px;color:#075b46}
+.auditKpi small{font-size:7px;color:#777067;font-weight:900;text-transform:uppercase}
+.auditRowVisual{
+  background:#fff;
+  border:1px solid #e5d9c0;
+  border-radius:14px;
+  padding:10px;
+  margin:7px 0;
+  box-shadow:0 3px 12px rgba(22,54,43,.05);
+}
+.auditVisualTop{
+  display:grid;
+  grid-template-columns:44px 1fr auto;
+  gap:8px;
+  align-items:center;
+}
+.auditVisualTop .auditUserPhoto,.auditVisualTop .auditUserPh{width:44px;height:44px}
+.auditVisualName{font-size:10.5px;font-weight:950}
+.auditVisualAction{font-size:9px;font-weight:900;color:#075b46;margin-top:2px}
+.auditVisualTime{font-size:7px;color:#7d766a;text-align:right}
+.auditIconBadge{
+  display:inline-flex;align-items:center;gap:4px;
+  border-radius:999px;padding:4px 7px;
+  font-size:7px;font-weight:900;background:#f1eadb;color:#4c514d;margin-top:6px;
+}
+.auditContext{
+  background:#faf6ed;border:1px solid #eee2cd;border-radius:9px;
+  padding:7px;margin-top:7px;font-size:8px;line-height:1.45;color:#4f5b55;
+}
+.auditChanges{margin-top:7px;display:grid;gap:5px}
+.auditChange{
+  display:grid;grid-template-columns:74px 1fr;gap:6px;
+  font-size:8px;border-radius:8px;background:#f7f2e8;padding:6px;
+}
+.auditChange b{color:#5c554a}
+.auditOld{color:#9a4b43;text-decoration:line-through;margin-right:4px}
+.auditNew{color:#176a32;font-weight:850}
+.auditGraphWrap{margin:8px 0}
+.auditToolbar{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  background:#fff;border:1px solid #e6dbc6;border-radius:12px;padding:8px;
+}
+@media(max-width:380px){
+  #categoryButtons.channels{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #salesChannelButtons.channels{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .employeeSummaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .employeeMiniStats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
 </style>
 </head>
 <body>
@@ -534,34 +847,62 @@ async function setPersonStatus(id,status){const labels={suspended:'suspend acces
 async function approvePerson(id){const {error}=await sb.rpc('approve_employee',{p_user_id:id});if(error){toast(error.message);return}toast('Employee approved');await loadPeople();openPersonProfile(id)}
 async function rejectPerson(id){if(!confirm('Reject this employee login request?'))return;const {error}=await sb.rpc('reject_employee',{p_user_id:id});if(error){toast(error.message);return}toast('Employee rejected');await loadPeople();openPersonProfile(id)}
 async function loadPersonActivity(id){const box=$('personActivity');if(!box)return;const {data,error}=await sb.from('people_activity_log').select('id,actor_id,subject_user_id,product_id,action,note,created_at,products(name,storage_number)').or(`actor_id.eq.${id},subject_user_id.eq.${id}`).order('created_at',{ascending:false}).limit(50);if(error){box.innerHTML=`<div class="sub">${esc(error.message)}</div>`;return}box.innerHTML=(data||[]).length?(data||[]).map(a=>`<div class="personActivityRow"><b>${esc(prettyAction(a.action))}</b>${a.products?`<div>${esc(a.products.storage_number||'')} ${esc(a.products.name||'')}</div>`:''}<div class="sub">${esc(a.note||'')} • ${new Date(a.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No activity recorded yet.</div>'}
+
 async function openAuditLog(){
   if(profile?.role!=='admin')return;
   if(!peopleCache.length)await loadPeople();
-  openModal('Audit Log',`<div class="note">One place to review activity across every Admin and Employee. Filter by person, action, date, or search.</div>
+  openModal('Audit Log',`<div class="analyticsHero"><h3>Audit & Monitoring</h3><p>See who did what, when it happened, what changed, and which product or person was affected.</p></div>
     <div class="auditToolbar">
       <div class="field"><label>Person</label><select id="auditPerson" onchange="renderAuditLog()"><option value="all">Everyone</option>${peopleCache.map(p=>`<option value="${p.id}">${esc(p.full_name||p.email||'User')}</option>`).join('')}</select></div>
       <div class="field"><label>Action</label><select id="auditAction" onchange="renderAuditLog()"><option value="all">All Actions</option></select></div>
       <div class="field"><label>Date</label><select id="auditDate" onchange="renderAuditLog()"><option value="all">All Time</option><option value="today">Today</option><option value="7">Last 7 Days</option><option value="30">Last 30 Days</option></select></div>
       <div class="field"><label>Search</label><input id="auditSearch" placeholder="Product, note, action…" oninput="renderAuditLog()"></div>
     </div>
-    <div id="auditSummary" class="auditSummary"></div><div id="auditRows">Loading audit activity…</div>`);
+    <div id="auditDashboard" class="auditDashboard"></div>
+    <div id="auditRows">Loading audit activity…</div>`);
   await loadAuditLogData();
 }
 let auditCache=[];
 async function loadAuditLogData(){
-  const {data,error}=await sb.from('people_activity_log').select('id,actor_id,subject_user_id,product_id,action,before_data,after_data,note,created_at,products(name,storage_number)').order('created_at',{ascending:false}).limit(500);
+  const {data,error}=await sb.from('people_activity_log').select('id,actor_id,subject_user_id,product_id,action,before_data,after_data,note,created_at,products(name,storage_number)').order('created_at',{ascending:false}).limit(700);
   if(error){const box=$('auditRows');if(box)box.innerHTML=`<div class="auditEmpty">${esc(error.message)}</div>`;return}
   auditCache=data||[];
   const actions=[...new Set(auditCache.map(x=>x.action).filter(Boolean))].sort();
   const sel=$('auditAction');if(sel)sel.innerHTML='<option value="all">All Actions</option>'+actions.map(a=>`<option value="${esc(a)}">${esc(prettyAction(a))}</option>`).join('');
   renderAuditLog();
 }
-function auditPersonName(id){const p=peopleCache.find(x=>x.id===id);return p?.full_name||p?.email||'Unknown user'}
+function auditPersonProfile(id){return peopleCache.find(x=>String(x.id)===String(id))||null}
+function auditPersonName(id){const p=auditPersonProfile(id);return p?.full_name||p?.email||'Unknown user'}
+function auditActionIcon(action){
+  const a=String(action||'').toLowerCase();
+  if(a.includes('login'))return '🔐 Login';
+  if(a.includes('product'))return '📦 Product';
+  if(a.includes('permission'))return '🔑 Permission';
+  if(a.includes('admin')||a.includes('employee')||a.includes('role'))return '👤 Role';
+  if(a.includes('profile'))return '🪪 Profile';
+  if(a.includes('label'))return '🏷 Label';
+  if(a.includes('stock')||a.includes('count'))return '▦ Inventory';
+  return '• Activity';
+}
+function auditDisplayValue(v){
+  if(v===null||v===undefined||v==='')return '—';
+  if(typeof v==='object')return JSON.stringify(v);
+  return String(v);
+}
+function auditChangesHtml(a){
+  const before=a.before_data&&typeof a.before_data==='object'?a.before_data:{};
+  const after=a.after_data&&typeof a.after_data==='object'?a.after_data:{};
+  const skip=new Set(['updated_at','created_at']);
+  const keys=[...new Set([...Object.keys(before),...Object.keys(after)])].filter(k=>!skip.has(k)&&JSON.stringify(before[k])!==JSON.stringify(after[k])).slice(0,8);
+  if(!keys.length)return '';
+  return `<div class="auditChanges">${keys.map(k=>`<div class="auditChange"><b>${esc(prettyAction(k))}</b><div><span class="auditOld">${esc(auditDisplayValue(before[k]))}</span><span>→</span> <span class="auditNew">${esc(auditDisplayValue(after[k]))}</span></div></div>`).join('')}</div>`;
+}
 function auditRowHtml(a){
-  const actor=auditPersonName(a.actor_id),subject=a.subject_user_id&&a.subject_user_id!==a.actor_id?auditPersonName(a.subject_user_id):'';
+  const actorP=auditPersonProfile(a.actor_id),actor=auditPersonName(a.actor_id);
+  const subject=a.subject_user_id&&a.subject_user_id!==a.actor_id?auditPersonName(a.subject_user_id):'';
   const prod=a.products?`${a.products.storage_number||''} ${a.products.name||''}`.trim():'';
-  const detail=[a.note,prod?`Product: ${prod}`:'',subject?`Person affected: ${subject}`:''].filter(Boolean).join(' • ');
-  return `<div class="auditRow"><div class="auditRowTop"><div><div class="auditWho">${esc(actor)}</div><div class="auditAction">${esc(prettyAction(a.action))}</div></div><div class="auditMeta">${new Date(a.created_at).toLocaleString()}</div></div>${detail?`<div class="auditDetails">${esc(detail)}</div>`:''}</div>`;
+  const context=[a.note,prod?`Product: ${prod}`:'',subject?`Person affected: ${subject}`:''].filter(Boolean).join(' • ');
+  return `<div class="auditRowVisual"><div class="auditVisualTop">${dashboardPersonPhoto(actorP,'auditUserPhoto')}<div><div class="auditVisualName">${esc(actor)}</div><div class="auditVisualAction">${esc(prettyAction(a.action))}</div><div class="auditIconBadge">${auditActionIcon(a.action)}</div></div><div class="auditVisualTime">${new Date(a.created_at).toLocaleDateString()}<br>${new Date(a.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div></div>${context?`<div class="auditContext">${esc(context)}</div>`:''}${auditChangesHtml(a)}</div>`;
 }
 function renderAuditLog(){
   const person=$('auditPerson')?.value||'all',action=$('auditAction')?.value||'all',date=$('auditDate')?.value||'all',q=($('auditSearch')?.value||'').trim().toLowerCase();
@@ -571,16 +912,26 @@ function renderAuditLog(){
     if(action!=='all'&&a.action!==action)return false;
     if(date!=='all'){
       const ts=new Date(a.created_at).getTime();
-      if(date==='today'){const d=new Date();const start=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();if(ts<start)return false}
+      if(date==='today'){if(ts<dayStart())return false}
       else if(now-ts>Number(date)*86400000)return false;
     }
-    if(q){const hay=[auditPersonName(a.actor_id),auditPersonName(a.subject_user_id),a.action,a.note,a.products?.name,a.products?.storage_number].filter(Boolean).join(' ').toLowerCase();if(!hay.includes(q))return false}
+    if(q){const hay=[auditPersonName(a.actor_id),auditPersonName(a.subject_user_id),a.action,a.note,a.products?.name,a.products?.storage_number,JSON.stringify(a.before_data||{}),JSON.stringify(a.after_data||{})].filter(Boolean).join(' ').toLowerCase();if(!hay.includes(q))return false}
     return true;
   });
-  const uniquePeople=new Set(rows.map(x=>x.actor_id).filter(Boolean)).size;
-  const summary=$('auditSummary');if(summary)summary.innerHTML=`<span class="pill green"><span class="auditCount">${rows.length}</span> Actions</span><span class="pill amber">${uniquePeople} People</span>`;
+  const today=rows.filter(a=>new Date(a.created_at).getTime()>=dayStart()).length;
+  const productChanges=rows.filter(a=>/product/i.test(a.action||'')).length;
+  const peopleChanges=rows.filter(a=>/profile|role|admin|employee|permission/i.test(a.action||'')).length;
+  const logins=rows.filter(a=>/login/i.test(a.action||'')).length;
+  const daily=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);
+    const s=d.getTime(),e=s+86400000;
+    daily.push({label:d.toLocaleDateString(undefined,{weekday:'short'}),value:rows.filter(x=>{const t=new Date(x.created_at).getTime();return t>=s&&t<e}).length});
+  }
+  const dash=$('auditDashboard');if(dash)dash.innerHTML=`<div class="auditKpis"><div class="auditKpi"><b>${rows.length}</b><small>Matching Actions</small></div><div class="auditKpi"><b>${today}</b><small>Today</small></div><div class="auditKpi"><b>${productChanges}</b><small>Product Changes</small></div><div class="auditKpi"><b>${peopleChanges}</b><small>People / Access</small></div><div class="auditKpi"><b>${logins}</b><small>Logins</small></div><div class="auditKpi"><b>${new Set(rows.map(x=>x.actor_id).filter(Boolean)).size}</b><small>People Active</small></div></div><div class="analyticsSection auditGraphWrap"><div class="analyticsTitle"><span>Activity — Last 7 Days</span><span class="sub">${daily.reduce((s,x)=>s+x.value,0)} actions</span></div>${analyticsBarsHtml(daily)}</div>`;
   const box=$('auditRows');if(box)box.innerHTML=rows.length?rows.map(auditRowHtml).join(''):'<div class="auditEmpty">No activity matches these filters.</div>';
 }
+
 async function openSecurityCenter(){if(profile?.role!=='admin')return;const [{data:factors},{data:aal}]=await Promise.all([sb.auth.mfa.listFactors(),sb.auth.mfa.getAuthenticatorAssuranceLevel()]);const verified=(factors?.totp||[]).find(f=>f.status==='verified');openModal('Security Center',`<div class="securityCard"><b>Admin Two-Step Verification</b><div class="securitySmall">${verified?'Enabled on this Admin account. A code from your authenticator app is required after password sign-in.':'Not enabled yet. You can add an authenticator app for stronger Admin login security.'}</div><div class="peopleActions">${verified?`<button class="danger" onclick="disableAdminMfa('${verified.id}')">Disable 2-Step Verification</button>`:`<button class="primary" onclick="startAdminMfa()">Enable 2-Step Verification</button>`}</div></div><div class="securityCard"><b>Session Security</b><div class="securitySmall">Current assurance: ${esc(aal?.currentLevel||'aal1')}<br>Automatic sign-out after 30 minutes of inactivity is enabled.</div></div><div class="securityCard"><b>Sign Out Devices</b><div class="securitySmall">Sign this Admin account out from every device and browser session.</div><div class="peopleActions"><button class="danger" onclick="signOutAllDevices()">Sign Out All Devices</button></div></div><div class="securityCard"><b>Login Protection</b><div class="securitySmall">Password sign-in and email confirmation are handled by Supabase Auth, including server-side rate limiting. Login timestamps are recorded in People Management.</div></div>`)}
 async function startAdminMfa(){const {data,error}=await sb.auth.mfa.enroll({factorType:'totp',friendlyName:'KCWHC Admin'});if(error){toast(error.message);return}mfaEnrollFactorId=data.id;openModal('Set Up 2-Step Verification',`<div class="note">Scan this QR code using Google Authenticator, Microsoft Authenticator, 1Password, or another TOTP app. Then enter the 6-digit code below.</div><img class="mfaQr" src="${data.totp.qr_code}" alt="Authenticator QR code"><div class="securitySmall" style="word-break:break-all">Manual secret: ${esc(data.totp.secret||'')}</div><div class="field full" style="margin-top:10px"><label>6-Digit Code</label><input id="mfaSetupCode" inputmode="numeric" autocomplete="one-time-code" placeholder="123456"></div><button class="saveBtn" onclick="verifyAdminMfaSetup()">Verify & Enable</button>`)}
 async function verifyAdminMfaSetup(){const code=$('mfaSetupCode')?.value.trim();if(!mfaEnrollFactorId||!code){toast('Enter the 6-digit code');return}const {error}=await sb.auth.mfa.challengeAndVerify({factorId:mfaEnrollFactorId,code});if(error){toast(error.message);return}mfaEnrollFactorId=null;toast('Two-step verification enabled');openSecurityCenter()}
@@ -697,19 +1048,30 @@ function canonicalCategory(value,name=''){
 }
 function productCategory(p){return canonicalCategory(p?.category,p?.name)}
 function categoryButtonsHtml(active,handler){
-  const cats=['All Products',...KC_CATEGORIES];
-  return cats.map(c=>`<button class="chan ${active===c?'active':''}" onclick="${handler}('${c.replace(/'/g,"\\'")}',this)">${c}</button>`).join('');
+  const rows=[
+    ['All Products','▦'],
+    ['Shawls','🧣'],
+    ['Thobe','👗'],
+    ['Pillows','▭'],
+    ['Jackets','🧥'],
+    ['Bags / Wallet / Pouch','👜'],
+    ['Accessories','✦'],
+    ['Gifts','🎁'],
+    ['Hangers','⌂'],
+    ['Bazar','◈']
+  ];
+  return rows.map(([c,icon])=>`<button class="chan ${active===c?'active':''}" onclick="${handler}('${c.replace(/'/g,"\\'")}',this)"><span>${icon}</span><span>${c}</span></button>`).join('');
 }
 
 function salesChannelButtonsHtml(active){
   const rows=[
-    ['all','All Channels'],
-    ['Online Only','Online Only'],
-    ['Showroom Only','Showroom Only'],
-    ['Online + Showroom','Online + Showroom'],
-    ['Bazar','Bazar']
+    ['all','◉ All Channels'],
+    ['Online Only','⌁ Online'],
+    ['Showroom Only','⌂ Showroom'],
+    ['Online + Showroom','⇄ Online + Showroom'],
+    ['Bazar','◈ Bazar']
   ];
-  return rows.map(([value,label])=>`<button class="chan ${active===value?'active':''}" onclick="setChannel('${value.replace(/'/g,"\'")}',this)">${label}</button>`).join('');
+  return rows.map(([value,label])=>`<button class="chan ${active===value?'active':''}" onclick="setChannel('${value.replace(/'/g,"\\'")}',this)">${label}</button>`).join('');
 }
 
 const CHANNEL_PRIORITY_KEY='kcwhc_channel_priorities_v1';
@@ -1290,8 +1652,161 @@ async function deleteAnnouncement(id){await sb.from('announcements').delete().eq
 function openTodos(){let html=(todos.length?todos.map(t=>`<div class="listRow"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" ${t.completed?'checked':''} onchange="toggleTodo('${t.id}',this.checked)"><span><b>${esc(t.task)}</b><div class="sub">${esc(t.priority||'Normal')} • ${t.due_date?dueText(t.due_date):'No due date'} • Risk ${esc(t.risk_level||'Low')}</div></span></label>${profile.role==='admin'?`<button class="smallbtn" style="margin-top:6px" onclick="deleteTodo('${t.id}')">Delete</button>`:''}</div>`).join(''):'<div class="empty">No tasks.</div>');if(profile.role==='admin')html=`<div class="formGrid"><div class="field full"><label>Task</label><input id="todoTask"></div><div class="field"><label>Priority</label><select id="todoPriority"><option>Normal</option><option>Medium</option><option>High</option></select></div><div class="field"><label>Due Date</label><input id="todoDue" type="date"></div></div><button class="saveBtn" onclick="addTodo()">Add Task</button><hr style="border:none;border-top:1px solid #ddd2bd;margin:12px 0">`+html;openModal('To-Do',html)}
 async function addTodo(){const task=$('todoTask').value.trim();if(!task)return;const {error}=await sb.from('todos').insert({task,priority:$('todoPriority').value,due_date:$('todoDue').value||null});if(error){toast(error.message);return}await loadTodos();renderCommand();openTodos()}
 async function deleteTodo(id){await sb.from('todos').delete().eq('id',id);await loadTodos();renderCommand();openTodos()}
-async function openRevenue(){const {data,error}=await sb.rpc('get_revenue_summary');if(error){toast(error.message);return}openModal('Revenue',`<div class="stats"><div class="stat"><div><small>Today</small><b class="money">₪${Number(data.today||0).toLocaleString()}</b></div></div><div class="stat"><div><small>This Week</small><b class="money">₪${Number(data.week||0).toLocaleString()}</b></div></div><div class="stat"><div><small>This Month</small><b class="money">₪${Number(data.month||0).toLocaleString()}</b></div></div><div class="stat"><div><small>All Time</small><b class="money">₪${Number(data.all_time||0).toLocaleString()}</b></div></div></div><div class="listRow"><b>${data.units_sold||0} units sold</b><div class="sub">${data.sales_count||0} completed sales</div></div>`)}
-async function openActivity(){const {data,error}=await sb.from('inventory_activity').select('*,profiles(full_name),products(name,storage_number)').order('created_at',{ascending:false}).limit(100);if(error){toast(error.message);return}openModal('Employee Activity',(data||[]).map(a=>`<div class="listRow"><b>${esc(a.profiles?.full_name||'User')} • ${esc(a.action)}</b><div>${esc(a.products?.storage_number||'')} ${esc(a.products?.name||'')}</div><div class="sub">${a.quantity_before??'—'} → ${a.quantity_after??'—'} • ${new Date(a.created_at).toLocaleString()}</div></div>`).join('')||'<div class="empty">No activity yet.</div>')}
+
+function dashMoney(v){return '₪'+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}
+function dayStart(d=new Date()){return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()}
+function activityInitials(p){const s=(p?.full_name||p?.email||'U').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();return s||'U'}
+function dashboardPersonPhoto(p,cls='activityUserPhoto'){
+  return p?.photo_url?`<img class="${cls}" src="${esc(p.photo_url)}" alt="${esc(p.full_name||p.email||'User')}">`:`<div class="${cls.replace('Photo','Ph')}">${esc(activityInitials(p))}</div>`;
+}
+function analyticsBarsHtml(items,valueFormatter=v=>String(v)){
+  const max=Math.max(1,...items.map(x=>Math.max(0,+x.value||0)));
+  return `<div class="chartBars">${items.map(x=>{
+    const h=Math.max(3,Math.round((Math.max(0,+x.value||0)/max)*88));
+    return `<div class="chartCol"><div class="chartValue">${esc(valueFormatter(x.value))}</div><div class="chartBar" style="height:${h}px"></div><div class="chartLabel">${esc(x.label)}</div></div>`;
+  }).join('')}</div>`;
+}
+function analyticsBreakdownHtml(rows){
+  const total=Math.max(1,rows.reduce((s,x)=>s+(+x.value||0),0));
+  return rows.map(x=>`<div class="breakdownRow"><div class="breakdownTop"><span>${esc(x.label)}</span><span>${esc(x.display??x.value)}</span></div><div class="breakdownTrack"><div class="breakdownFill" style="width:${Math.max(2,Math.round((+x.value||0)/total*100))}%"></div></div></div>`).join('');
+}
+async function openRevenue(){
+  if(profile?.role!=='admin')return;
+  openModal('Revenue','<div class="empty">Loading revenue dashboard…</div>');
+  const [{data:summary,error:sumErr},{data:sales,error:salesErr}]=await Promise.all([
+    sb.rpc('get_revenue_summary'),
+    sb.from('orders').select('id,product_id,product_name,quantity,total_price,record_type,created_at').eq('record_type','Sale').order('created_at',{ascending:false}).limit(2000)
+  ]);
+  if(sumErr||salesErr){$('modalBody').innerHTML=`<div class="auditEmpty">${esc(sumErr?.message||salesErr?.message||'Could not load revenue')}</div>`;return}
+  const rows=sales||[],now=Date.now(),todayStart=dayStart(),d7=7*86400000,d30=30*86400000,d60=60*86400000;
+  const amount=r=>Number(r.total_price||0),qty=r=>Math.max(0,+r.quantity||0),ts=r=>new Date(r.created_at).getTime();
+  const current30=rows.filter(r=>now-ts(r)<=d30).reduce((s,r)=>s+amount(r),0);
+  const prev30=rows.filter(r=>now-ts(r)>d30&&now-ts(r)<=d60).reduce((s,r)=>s+amount(r),0);
+  const trend=prev30>0?Math.round(((current30-prev30)/prev30)*100):(current30>0?100:0);
+  const monthRows=rows.filter(r=>now-ts(r)<=d30);
+  const monthUnits=monthRows.reduce((s,r)=>s+qty(r),0);
+  const avgSale=monthRows.length?monthRows.reduce((s,r)=>s+amount(r),0)/monthRows.length:0;
+
+  const dayItems=[];
+  for(let i=13;i>=0;i--){
+    const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);
+    const start=d.getTime(),end=start+86400000;
+    dayItems.push({label:d.toLocaleDateString(undefined,{month:'numeric',day:'numeric'}),value:rows.filter(r=>{const t=ts(r);return t>=start&&t<end}).reduce((s,r)=>s+amount(r),0)});
+  }
+
+  const productMap={};
+  rows.forEach(r=>{
+    const key=r.product_id||r.product_name||'Unknown';
+    if(!productMap[key])productMap[key]={name:r.product_name||products.find(p=>p.id===r.product_id)?.name||'Unknown Product',revenue:0,units:0};
+    productMap[key].revenue+=amount(r);productMap[key].units+=qty(r);
+  });
+  const topProducts=Object.values(productMap).sort((a,b)=>b.revenue-a.revenue).slice(0,5);
+
+  const channelMap={};
+  rows.forEach(r=>{
+    const prod=products.find(p=>String(p.id)===String(r.product_id));
+    const ch=prod?.sales_channel||'Unassigned';
+    channelMap[ch]=(channelMap[ch]||0)+amount(r);
+  });
+  const channelRows=Object.entries(channelMap).map(([label,value])=>({label,value,display:dashMoney(value)})).sort((a,b)=>b.value-a.value);
+
+  const recent=rows.slice(0,8);
+  $('modalBody').innerHTML=`
+    <div class="analyticsHero"><h3>Revenue Performance</h3><p>Sales totals, recent movement, top products and channel mix in one easy-to-read view.</p></div>
+    <div class="metricGrid">
+      <div class="metricCard good"><div class="metricIcon">☀️</div><small>Today</small><b>${dashMoney(summary?.today||0)}</b><div class="metricSub">${rows.filter(r=>ts(r)>=todayStart).length} sales today</div></div>
+      <div class="metricCard blue"><div class="metricIcon">📅</div><small>This Week</small><b>${dashMoney(summary?.week||0)}</b><div class="metricSub">Last 7 days</div></div>
+      <div class="metricCard gold"><div class="metricIcon">◈</div><small>This Month</small><b>${dashMoney(summary?.month||0)}</b><div class="metricSub">${monthUnits} units • ${monthRows.length} sales</div></div>
+      <div class="metricCard"><div class="metricIcon">Σ</div><small>All Time</small><b>${dashMoney(summary?.all_time||0)}</b><div class="metricSub">${summary?.sales_count||0} completed sales</div></div>
+      <div class="metricCard"><div class="metricIcon">◎</div><small>Average Sale</small><b>${dashMoney(avgSale)}</b><div class="metricSub">Average transaction, last 30 days</div></div>
+      <div class="metricCard ${trend>=0?'good':'red'}"><div class="metricIcon">${trend>=0?'↗':'↘'}</div><small>30-Day Trend</small><b>${trend>=0?'+':''}${trend}%</b><div class="metricSub">Compared with previous 30 days</div></div>
+    </div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>📈 Revenue — Last 14 Days</span><span class="sub">${dashMoney(dayItems.reduce((s,x)=>s+x.value,0))}</span></div>${analyticsBarsHtml(dayItems,v=>v?Math.round(v):'0')}</div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>🏆 Top Products by Revenue</span><span class="sub">All recorded sales</span></div>${topProducts.length?topProducts.map((p,i)=>`<div class="rankRow"><div class="rankNo">${i+1}</div><div><div class="rankName">${esc(p.name)}</div><div class="rankMeta">${p.units} units sold</div></div><div class="rankValue">${dashMoney(p.revenue)}</div></div>`).join(''):'<div class="sub">No sales recorded yet.</div>'}</div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>◉ Revenue by Current Sales Channel</span><span class="sub">Based on each product’s current channel</span></div>${channelRows.length?analyticsBreakdownHtml(channelRows):'<div class="sub">No channel data yet.</div>'}</div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>🧾 Recent Sales</span><span class="sub">Latest ${recent.length}</span></div>${recent.length?recent.map(r=>`<div class="recentSale"><div><b>${esc(r.product_name||products.find(p=>p.id===r.product_id)?.name||'Product')}</b><div class="sub">${qty(r)} unit${qty(r)===1?'':'s'} • ${new Date(r.created_at).toLocaleString()}</div></div><div class="recentSaleMoney">${dashMoney(amount(r))}</div></div>`).join(''):'<div class="sub">No sales recorded yet.</div>'}</div>`;
+}
+
+let employeeActivityCache=[];
+function activityIcon(action){
+  const a=String(action||'').toLowerCase();
+  if(a.includes('login'))return '🔐';
+  if(a.includes('sale')||a.includes('sell'))return '💳';
+  if(a.includes('count'))return '🔢';
+  if(a.includes('stock')||a.includes('quantity'))return '📦';
+  if(a.includes('add'))return '＋';
+  if(a.includes('edit')||a.includes('update'))return '✎';
+  if(a.includes('delete'))return '🗑';
+  if(a.includes('role')||a.includes('admin')||a.includes('employee'))return '👤';
+  return '•';
+}
+function activityProfile(id){return peopleCache.find(p=>String(p.id)===String(id))||null}
+function employeeActionStats(id){
+  const rows=employeeActivityCache.filter(x=>String(x.user_id)===String(id));
+  const start=dayStart();
+  return {
+    rows,
+    today:rows.filter(x=>new Date(x.created_at).getTime()>=start).length,
+    sales:rows.filter(x=>/sale|sell/i.test(x.action||'')).length,
+    stock:rows.filter(x=>/stock|quantity|count/i.test(x.action||'')).length,
+    product:rows.filter(x=>/product_(added|edited|deleted)|add.*product|edit.*product|delete.*product/i.test(x.action||'')).length
+  };
+}
+function renderEmployeeActivityDashboard(){
+  const body=$('modalBody');if(!body)return;
+  const today=dayStart(),activePeople=peopleCache.filter(p=>p.employment_status==='active');
+  const todayActions=employeeActivityCache.filter(x=>new Date(x.created_at).getTime()>=today).length;
+  const saleActions=employeeActivityCache.filter(x=>/sale|sell/i.test(x.action||'')).length;
+  const productActions=employeeActivityCache.filter(x=>/product_(added|edited|deleted)|add.*product|edit.*product|delete.*product/i.test(x.action||'')).length;
+  const stockActions=employeeActivityCache.filter(x=>/stock|quantity|count/i.test(x.action||'')).length;
+
+  const daily=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);
+    const s=d.getTime(),e=s+86400000;
+    daily.push({label:d.toLocaleDateString(undefined,{weekday:'short'}),value:employeeActivityCache.filter(x=>{const t=new Date(x.created_at).getTime();return t>=s&&t<e}).length});
+  }
+  const actionCounts={};
+  employeeActivityCache.forEach(x=>{const k=prettyAction(x.action||'Other');actionCounts[k]=(actionCounts[k]||0)+1});
+  const actionRows=Object.entries(actionCounts).map(([label,value])=>({label,value,display:value})).sort((a,b)=>b.value-a.value).slice(0,6);
+
+  const cards=[...peopleCache].sort((a,b)=>{
+    const aa=employeeActionStats(a.id).rows[0]?.created_at||a.last_activity_at||'',bb=employeeActionStats(b.id).rows[0]?.created_at||b.last_activity_at||'';
+    return String(bb).localeCompare(String(aa));
+  }).map(p=>{
+    const s=employeeActionStats(p.id),last=s.rows[0]?.created_at||p.last_activity_at||p.last_login_at;
+    return `<div class="employeeActivityCard"><div class="employeeActivityHead">${dashboardPersonPhoto(p)}<div><div class="employeeActivityName">${esc(p.full_name||p.email||'User')}</div><div class="employeeActivityRole">${esc([p.role,p.job_title,p.department].filter(Boolean).join(' • ')||'Team member')}</div></div><div class="activityStatus ${p.employment_status==='active'?'':'off'}">${esc(p.employment_status||'active')}</div></div><div class="employeeMiniStats"><div class="employeeMiniStat"><b>${s.rows.length}</b><small>Total Actions</small></div><div class="employeeMiniStat"><b>${s.today}</b><small>Today</small></div><div class="employeeMiniStat"><b>${s.stock}</b><small>Stock / Counts</small></div><div class="employeeMiniStat"><b>${s.product}</b><small>Product Changes</small></div></div><div class="sub" style="margin-top:7px">Last activity: ${last?new Date(last).toLocaleString():'No recorded activity'}</div><button class="employeeActivityBtn" onclick="openEmployeeActivityDetail('${p.id}')">View Full Activity ›</button></div>`;
+  }).join('');
+
+  body.innerHTML=`<div class="analyticsHero"><h3>Employee Activity Center</h3><p>Monitor each team member, recent actions, stock work, product changes and login activity.</p></div>
+  <div class="employeeSummaryGrid"><div class="employeeSummaryCard"><b>${activePeople.length}</b><small>Active Team</small></div><div class="employeeSummaryCard"><b>${todayActions}</b><small>Actions Today</small></div><div class="employeeSummaryCard"><b>${saleActions}</b><small>Sale Actions</small></div><div class="employeeSummaryCard"><b>${stockActions}</b><small>Stock / Counts</small></div><div class="employeeSummaryCard"><b>${productActions}</b><small>Product Changes</small></div><div class="employeeSummaryCard"><b>${employeeActivityCache.length}</b><small>Loaded Activity</small></div></div>
+  <div class="analyticsSection"><div class="analyticsTitle"><span>📊 Activity — Last 7 Days</span><span class="sub">${daily.reduce((s,x)=>s+x.value,0)} actions</span></div>${analyticsBarsHtml(daily)}</div>
+  <div class="analyticsSection"><div class="analyticsTitle"><span>◫ Activity Breakdown</span><span class="sub">Top action types</span></div>${actionRows.length?analyticsBreakdownHtml(actionRows):'<div class="sub">No activity yet.</div>'}</div>
+  <div class="analyticsTitle" style="margin:12px 2px 7px"><span>👥 Team Monitoring</span><span class="sub">${peopleCache.length} profiles</span></div>
+  <div class="employeeCards">${cards||'<div class="auditEmpty">No employee profiles found.</div>'}</div>`;
+}
+async function openActivity(){
+  if(profile?.role!=='admin')return;
+  if(!peopleCache.length)await loadPeople();
+  openModal('Employee Activity','<div class="empty">Loading employee activity…</div>');
+  const [{data:inv,error:invErr},{data:ppl,error:pplErr}]=await Promise.all([
+    sb.from('inventory_activity').select('id,product_id,user_id,action,quantity_before,quantity_after,change_amount,note,created_at,products(name,storage_number)').order('created_at',{ascending:false}).limit(500),
+    sb.from('people_activity_log').select('id,actor_id,subject_user_id,product_id,action,before_data,after_data,note,created_at,products(name,storage_number)').order('created_at',{ascending:false}).limit(500)
+  ]);
+  if(invErr||pplErr){$('modalBody').innerHTML=`<div class="auditEmpty">${esc(invErr?.message||pplErr?.message||'Could not load employee activity')}</div>`;return}
+  const a=(inv||[]).map(x=>({...x,source:'inventory',user_id:x.user_id,subject_user_id:null}));
+  const b=(ppl||[]).map(x=>({...x,source:'audit',user_id:x.actor_id}));
+  employeeActivityCache=[...a,...b].sort((x,y)=>new Date(y.created_at)-new Date(x.created_at));
+  renderEmployeeActivityDashboard();
+}
+function openEmployeeActivityDetail(id){
+  const p=activityProfile(id);if(!p)return;
+  const s=employeeActionStats(id);
+  const rows=s.rows.slice(0,150);
+  $('modalBody').innerHTML=`<button class="activityBackBtn" onclick="renderEmployeeActivityDashboard()">‹ Back to Team</button>
+    <div class="employeeActivityCard"><div class="employeeActivityHead">${dashboardPersonPhoto(p)}<div><div class="employeeActivityName">${esc(p.full_name||p.email||'User')}</div><div class="employeeActivityRole">${esc([p.role,p.job_title,p.department].filter(Boolean).join(' • ')||'Team member')}</div><div class="sub">${esc(p.email||'')}</div></div><div class="activityStatus ${p.employment_status==='active'?'':'off'}">${esc(p.employment_status||'active')}</div></div><div class="employeeMiniStats"><div class="employeeMiniStat"><b>${s.rows.length}</b><small>Total Actions</small></div><div class="employeeMiniStat"><b>${s.today}</b><small>Today</small></div><div class="employeeMiniStat"><b>${s.stock}</b><small>Stock / Counts</small></div><div class="employeeMiniStat"><b>${s.product}</b><small>Product Changes</small></div></div><div class="sub" style="margin-top:7px">Last login: ${p.last_login_at?new Date(p.last_login_at).toLocaleString():'—'}<br>Last activity: ${p.last_activity_at?new Date(p.last_activity_at).toLocaleString():'—'}</div></div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>Activity Timeline</span><span class="sub">${rows.length} recent events</span></div>${rows.length?rows.map(x=>`<div class="activityEvent"><div class="activityEventIcon">${activityIcon(x.action)}</div><div><b>${esc(prettyAction(x.action))}</b>${x.products?`<div class="sub">${esc(x.products.storage_number||'')} ${esc(x.products.name||'')}</div>`:''}<div class="sub">${x.quantity_before!=null||x.quantity_after!=null?`Quantity ${x.quantity_before??'—'} → ${x.quantity_after??'—'} • `:''}${esc(x.note||'')}${x.note?' • ':''}${new Date(x.created_at).toLocaleString()}</div></div></div>`).join(''):'<div class="auditEmpty">No recorded activity for this user.</div>'}</div>`;
+}
 
 let scaleMetricsCache=[],scaleFilter='All';
 
