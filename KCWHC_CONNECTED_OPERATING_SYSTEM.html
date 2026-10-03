@@ -2090,7 +2090,11 @@ async function submitInventoryAction(id){
   toast('Inventory action recorded');await loadProducts();try{await loadStorageBoxes()}catch(_e){}renderAll();closeModal();currentProduct=products.find(x=>x.id===id);if(currentProduct){go('detail');renderDetail()}
 }
 async function deleteProduct(id){if(!canDo('can_delete_products')){toast('Delete Products is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;if(!confirm(`Delete ${p.name}?\n\nThis removes it from inventory. The employee activity log will keep a record.`))return;const {error}=await sb.from('products').delete().eq('id',id);if(error){toast(error.message);return}toast('Product deleted');currentProduct=null;await loadProducts();renderAll();backToInventory()}
-function openScannerScreen(){go('scan');setTimeout(()=>startScanner(),120)}
+async function openScannerScreen(){
+  go('scan');
+  try{await loadStorageBoxes()}catch(_e){}
+  setTimeout(()=>startScanner(),120)
+}
 async function startScanner(){
   if(scanner)await stopScanner();
   const prompt=$('scannerPrompt');if(prompt)prompt.classList.add('hidden');
@@ -2128,7 +2132,27 @@ async function startScanner(){
 }
 async function stopScanner(){if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}$('scannerPrompt')?.classList.remove('hidden')}
 function onScanned(code){$('manualBarcode').value=code;manualLookup()}
-function manualLookup(){const v=$('manualBarcode').value.trim();const p=products.find(x=>x.barcode===v||x.storage_number?.toLowerCase()===v.toLowerCase()||x.sku?.toLowerCase()===v.toLowerCase());if(!p){$('scanResult').innerHTML='<div class="empty">No product found.</div>';return}currentProduct=p;const img=productImage(p);$('scanResult').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span>${p.color?`<span class="tag">${esc(p.color)}</span>`:''}</div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Box / Shelf</small></div></div></div></div><div class="pcActions" style="margin-top:12px"><button class="smallbtn primary" onclick="openProduct('${p.id}')">Open Product</button>${canDo('can_edit_products')?`<button class="smallbtn" onclick="openScannedProductEdit('${p.id}')">Edit Product</button>`:''}${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}</div></div>`}
+function manualLookup(){
+  const v=$('manualBarcode').value.trim();
+  const key=v.toLowerCase();
+  const p=products.find(x=>x.barcode===v||x.storage_number?.toLowerCase()===key||x.sku?.toLowerCase()===key);
+  if(p){
+    currentProduct=p;
+    const img=productImage(p);
+    $('scanResult').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span>${p.color?`<span class="tag">${esc(p.color)}</span>`:''}</div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Box / Shelf</small></div></div></div></div><div class="pcActions" style="margin-top:12px"><button class="smallbtn primary" onclick="openProduct('${p.id}')">Open Product</button>${canDo('can_edit_products')?`<button class="smallbtn" onclick="openScannedProductEdit('${p.id}')">Edit Product</button>`:''}${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}</div></div>`;
+    return;
+  }
+
+  const b=storageBoxesCache.find(x=>String(x.barcode||'')===v||String(x.box_code||'').toLowerCase()===key);
+  if(b){
+    const rows=storageBoxContentsCache.filter(x=>x.box_id===b.id);
+    const productRows=rows.map(x=>`<div style="padding:8px 0;border-bottom:1px solid #eadfc9"><b>${esc(x.products?.name||'Unnamed product')}</b>${x.products?.color?`<div class="sub">${esc(x.products.color)}</div>`:''}</div>`).join('')||'<div class="empty">No products assigned to this box.</div>';
+    $('scanResult').innerHTML=`<div class="sellCard"><div class="pnumber">BOX</div><div class="pname">${esc(b.box_name||b.box_code)}</div><div class="tags"><span class="tag channel">${esc(b.storage_room||'—')}</span><span class="tag">${esc(b.box_code||'')}</span></div><div style="margin-top:10px;font-weight:900">Products in this box</div><div style="margin-top:5px">${productRows}</div><div class="pcActions" style="margin-top:12px"><button class="smallbtn primary" onclick="openBoxDetails('${b.id}')">Open Box</button><button class="smallbtn" onclick="printBoxLabel('${b.id}')">Print Box Label</button>${canDo('can_count_stock')?`<button class="smallbtn" onclick="startBoxCount('${b.id}')">Count Box</button>`:''}</div></div>`;
+    return;
+  }
+
+  $('scanResult').innerHTML='<div class="empty">No product or storage box found.</div>';
+}
 function openScannedProductEdit(id){
   const p=products.find(x=>x.id===id);
   if(!p){toast('Product not found.');return}
