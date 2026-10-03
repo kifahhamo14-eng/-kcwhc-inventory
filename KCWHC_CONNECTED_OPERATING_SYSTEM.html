@@ -2122,7 +2122,7 @@ async function submitInventoryAction(id){
   if(error){alert(error.message);return}
   toast('Inventory action recorded');await loadProducts();try{await loadStorageBoxes()}catch(_e){}renderAll();closeModal();currentProduct=products.find(x=>x.id===id);if(currentProduct){go('detail');renderDetail()}
 }
-async function deleteProduct(id){if(!canDo('can_delete_products')){toast('Delete Products is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;if(!confirm(`Delete ${p.name}?\n\nThis removes it from inventory. The employee activity log will keep a record.`))return;const {error}=await sb.from('products').delete().eq('id',id);if(error){toast(error.message);return}toast('Product deleted');currentProduct=null;await loadProducts();renderAll();backToInventory()}
+async function deleteProduct(id){if(!canDo('can_delete_products')){toast('Delete Products is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;if(!confirm(`Delete ${p.name}?\n\nThis removes it from inventory. The employee activity log will keep a record.`))return;const {error}=await sb.rpc('delete_product_from_dashboard',{p_product_id:id});if(error){toast(error.message);return}toast('Product deleted');currentProduct=null;await loadProducts();try{await loadStorageBoxes()}catch(_e){}renderAll();backToInventory()}
 function openScannerScreen(){
   go('scan');
   loadStorageBoxes().catch(()=>{});
