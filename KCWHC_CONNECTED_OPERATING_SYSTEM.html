@@ -2005,7 +2005,24 @@ async function saveProduct(id){
 
     let result;
     if(id){
-      result=await sb.from('products').update(row).eq('id',id).select('id,storage_number').single();
+      result=await sb.rpc('update_product_from_dashboard',{
+        p_id:id,
+        p_name:row.name,
+        p_storage_number:row.storage_number,
+        p_sku:row.sku,
+        p_barcode:row.barcode||'',
+        p_category:row.category||'',
+        p_size:row.size||'',
+        p_color:row.color||'',
+        p_selling_price:row.selling_price,
+        p_quantity:row.quantity,
+        p_reorder_level:row.reorder_level,
+        p_storage_room:row.storage_room||'',
+        p_shelf_bin:row.shelf_bin||'',
+        p_status:row.status,
+        p_sales_channel:row.sales_channel,
+        p_image_url:row.image_url||''
+      });
     }else{
       result=await sb.from('products').insert(row).select('id,storage_number').single();
     }
@@ -2028,7 +2045,7 @@ async function saveProduct(id){
     document.querySelectorAll('.navb').forEach(n=>n.classList.toggle('active',n.dataset.go==='home'));
     renderProducts();
 
-    const savedId=result.data?.id||id||null;
+    const savedId=(Array.isArray(result.data)?result.data[0]?.id:result.data?.id)||id||null;
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(savedId){
         const card=document.querySelector(`[data-product-id="${savedId}"]`);
