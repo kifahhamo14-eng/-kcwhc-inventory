@@ -808,7 +808,7 @@
 
   <div id="add" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Add New Product</div></div><span></span></div><div class="formCard"><div id="addForm"></div></div></div>
   <div id="detail" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Product Details</div></div><button id="editHeaderBtn" class="iconbtn hidden" onclick="enableEditCurrent()">✓ Edit</button></div><div id="detailBody"></div></div>
-  <div id="scan" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="stopScanner();backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Scan Barcode</div></div><span></span></div><div class="scannerBox"><div id="reader"></div><div id="scannerPrompt" style="color:white;text-align:center;padding:30px"><div style="font-size:48px">▣</div><b>Opening camera…</b></div></div><div class="manualScan"><div class="searchWrap" style="margin-top:9px"><input id="manualBarcode" placeholder="Or enter barcode / storage number" onkeydown="if(event.key==='Enter'){event.preventDefault();manualLookup()}"/><button onclick="manualLookup()" style="border:none;background:none;font-weight:900">Find</button></div></div><div id="scanResult"></div></div>
+  <div id="scan" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="stopScanner();backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Scan Barcode</div></div><span></span></div><div class="scannerBox"><div id="reader"></div><div id="scannerPrompt" style="color:white;text-align:center;padding:30px"><div style="font-size:48px">▣</div><b>Opening camera…</b></div></div><div class="manualScan"><div class="searchWrap" style="margin-top:9px"><input id="manualBarcode" placeholder="Or enter barcode / storage number" onkeydown="if(event.key==='Enter'){event.preventDefault();manualLookup()}"/><button onclick="manualLookup()" style="border:none;background:none;font-weight:900">Find</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button class="smallbtn primary" onclick="startScanner()">Live Scan</button><button class="smallbtn" onclick="document.getElementById('barcodePhotoInput').click()">Take Barcode Photo</button></div><input id="barcodePhotoInput" type="file" accept="image/*" capture="environment" class="hidden" onchange="scanBarcodePhoto(this)"></div><div id="scanResult"></div></div>
   <div id="sell" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Sell Item</div></div><span></span></div><div id="sellBody"><div class="empty">Scan or select a product to sell.</div></div></div>
  </div>
  
@@ -2123,7 +2123,7 @@ async function startScanner(){
   try{
     await scanner.start(
       {facingMode:'environment'},
-      {fps:12,qrbox:{width:280,height:140},aspectRatio:1.777778},
+      {fps:15,qrbox:{width:300,height:180},aspectRatio:1.777778,disableFlip:false},
       code=>{onScanned(String(code||'').trim());stopScanner()}
     );
   }catch(e){
@@ -2138,6 +2138,25 @@ async function startScanner(){
 }
 async function stopScanner(){if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}$('scannerPrompt')?.classList.remove('hidden')}
 function onScanned(code){$('manualBarcode').value=code;manualLookup()}
+async function scanBarcodePhoto(input){
+  const file=input?.files?.[0];
+  if(!file)return;
+  const prompt=$('scannerPrompt');
+  try{
+    await stopScanner();
+    if(prompt){prompt.classList.remove('hidden');prompt.innerHTML='<div style="font-size:42px">▣</div><b>Reading barcode photo…</b>'}
+    const photoScanner=new Html5Qrcode('reader',{formatsToSupport:[Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.UPC_E,Html5QrcodeSupportedFormats.CODE_128,Html5QrcodeSupportedFormats.CODE_39,Html5QrcodeSupportedFormats.QR_CODE]});
+    const code=await photoScanner.scanFile(file,true);
+    try{await photoScanner.clear()}catch(_e){}
+    if(prompt)prompt.classList.add('hidden');
+    onScanned(String(code||'').trim());
+  }catch(e){
+    if(prompt){prompt.classList.remove('hidden');prompt.innerHTML='<div style="font-size:42px">▣</div><b>Barcode not detected</b><div style="font-size:11px;margin-top:6px">Retake the photo closer, keep the whole barcode visible, and avoid glare.</div>'}
+    toast('Could not read that barcode photo. Try again closer and straight-on.');
+  }finally{
+    input.value='';
+  }
+}
 function manualLookup(){
   const v=$('manualBarcode').value.trim();
   const key=v.toLowerCase();
