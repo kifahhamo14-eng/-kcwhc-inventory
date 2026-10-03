@@ -2092,43 +2092,69 @@ async function submitInventoryAction(id){
 async function deleteProduct(id){if(!canDo('can_delete_products')){toast('Delete Products is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;if(!confirm(`Delete ${p.name}?\n\nThis removes it from inventory. The employee activity log will keep a record.`))return;const {error}=await sb.from('products').delete().eq('id',id);if(error){toast(error.message);return}toast('Product deleted');currentProduct=null;await loadProducts();renderAll();backToInventory()}
 async function openScannerScreen(){
   go('scan');
-  try{await loadStorageBoxes()}catch(_e){}
-  setTimeout(()=>startScanner(),120)
+  // Do not block camera startup on database/network work. Load box data in the background.
+  loadStorageBoxes().catch(()=>{});
+  requestAnimationFrame(()=>startScanner());
 }
 async function startScanner(){
   if(scanner)await stopScanner();
-  const prompt=$('scannerPrompt');if(prompt)prompt.classList.add('hidden');
-  scanner=new Html5Qrcode('reader',{formatsToSupport:[
-    Html5QrcodeSupportedFormats.EAN_13,
-    Html5QrcodeSupportedFormats.EAN_8,
-    Html5QrcodeSupportedFormats.UPC_A,
-    Html5QrcodeSupportedFormats.UPC_E,
-    Html5QrcodeSupportedFormats.CODE_128,
-    Html5QrcodeSupportedFormats.CODE_39,
-    Html5QrcodeSupportedFormats.QR_CODE
-  ]});
-  const config={fps:12,qrbox:{width:280,height:140},aspectRatio:1.777778};
-  const success=code=>{onScanned(String(code||'').trim());stopScanner()};
-  const fail=()=>{};
+  const prompt=$('scannerPrompt');
+  if(prompt){prompt.classList.remove('hidden');prompt.innerHTML='<div style="font-size:48px">▣</div><b>Opening camera…</b>'}
   try{
-    // Best choice on phones.
-    await scanner.start({facingMode:{ideal:'environment'}},config,success,fail);
-    return;
-  }catch(e1){
+    scanner=new Html5Qrcode('reader',{formatsToSupport:[
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.CODE_128,
+      Html5QrcodeSupportedFormats.CODE_39,
+      Html5QrcodeSupportedFormats.QR_CODE
+    ]});
+    const config={fps:10,qrbox:{width:260,height:130},aspectRatio:1.777778};
+    const success=code=>{onScanned(String(code||'').trim());stopScanner()};
+    const fail=()=>{};
+    const attempts=[
+      {facingMode:'environment'},
+      {facingMode:{exact:'environment'}},
+      {facingMode:{ideal:'environment'}},
+      {facingMode:'user'}
+    ];
+    let lastError=null;
+    for(const cameraConfig of attempts){
+      try{
+        await scanner.start(cameraConfig,config,success,fail);
+        if(prompt)prompt.classList.add('hidden');
+        return;
+      }catch(err){lastError=err}
+    }
     try{
-      // Fallback for laptops/desktops where no "environment" camera exists.
       const cams=await Html5Qrcode.getCameras();
       if(cams&&cams.length){
         const preferred=cams.find(c=>/back|rear|environment/i.test(c.label||''))||cams[0];
         await scanner.start(preferred.id,config,success,fail);
+        if(prompt)prompt.classList.add('hidden');
         return;
       }
-    }catch(e2){}
+    }catch(err){lastError=err}
+    throw lastError||new Error('No camera available');
+  }catch(e){
+    try{await scanner?.clear()}catch(_e){}
+    scanner=null;
+    const name=String(e?.name||'');
+    const msg=String(e?.message||e||'');
+    const denied=/NotAllowed|Permission|denied/i.test(name+' '+msg);
+    const busy=/NotReadable|TrackStart|could not start video source/i.test(name+' '+msg);
+    const detail=denied
+      ? 'Camera permission is blocked for this website.'
+      : busy
+        ? 'The camera is busy in another app or browser tab.'
+        : 'Safari could not start the camera.';
+    if(prompt){
+      prompt.classList.remove('hidden');
+      prompt.innerHTML=`<div style="font-size:42px">▣</div><b>Camera unavailable</b><div style="font-size:11px;margin-top:6px">${detail}</div><button onclick="startScanner()" style="margin-top:14px;border:none;border-radius:10px;padding:10px 16px;font-weight:900">Try Camera Again</button>`;
+    }
+    toast(detail+' You can still use the barcode field below.');
   }
-  try{await scanner.clear()}catch(_e){}
-  scanner=null;
-  if(prompt){prompt.classList.remove('hidden');prompt.innerHTML='<div style="font-size:42px">▣</div><b>Camera unavailable</b><div style="font-size:11px;margin-top:6px">Allow camera access or use the barcode field below.</div>'}
-  toast('Camera could not start. Check camera permission or use manual/USB barcode entry.');
 }
 async function stopScanner(){if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}$('scannerPrompt')?.classList.remove('hidden')}
 function onScanned(code){$('manualBarcode').value=code;manualLookup()}
