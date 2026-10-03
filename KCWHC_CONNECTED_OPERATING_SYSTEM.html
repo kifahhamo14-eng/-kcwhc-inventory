@@ -808,7 +808,7 @@
 
   <div id="add" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Add New Product</div></div><span></span></div><div class="formCard"><div id="addForm"></div></div></div>
   <div id="detail" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Product Details</div></div><button id="editHeaderBtn" class="iconbtn hidden" onclick="enableEditCurrent()">✓ Edit</button></div><div id="detailBody"></div></div>
-  <div id="scan" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="stopScanner();backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Scan Barcode</div></div><span></span></div><div class="scannerBox"><div id="reader"></div><div id="scannerPrompt" style="color:white;text-align:center;padding:30px"><div style="font-size:48px">▣</div><b>Opening camera…</b></div></div><div class="manualScan"><div class="searchWrap" style="margin-top:9px"><input id="manualBarcode" placeholder="Or enter barcode / storage number"/><button onclick="manualLookup()" style="border:none;background:none;font-weight:900">Find</button></div></div><div id="scanResult"></div></div>
+  <div id="scan" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="stopScanner();backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Scan Barcode</div></div><span></span></div><div class="scannerBox"><div id="reader"></div><div id="scannerPrompt" style="color:white;text-align:center;padding:30px"><div style="font-size:48px">▣</div><b>Opening camera…</b></div></div><div class="manualScan"><div class="searchWrap" style="margin-top:9px"><input id="manualBarcode" placeholder="Or enter barcode / storage number" onkeydown="if(event.key==='Enter'){event.preventDefault();manualLookup()}"/><button onclick="manualLookup()" style="border:none;background:none;font-weight:900">Find</button></div></div><div id="scanResult"></div></div>
   <div id="sell" class="screen creamScreen"><div class="screenHeader"><button class="back" onclick="backToInventory()">‹</button><div><strong>KCWHC</strong><div style="font-size:10px;text-align:center">Sell Item</div></div><span></span></div><div id="sellBody"><div class="empty">Scan or select a product to sell.</div></div></div>
  </div>
  
@@ -2091,10 +2091,41 @@ async function submitInventoryAction(id){
 }
 async function deleteProduct(id){if(!canDo('can_delete_products')){toast('Delete Products is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;if(!confirm(`Delete ${p.name}?\n\nThis removes it from inventory. The employee activity log will keep a record.`))return;const {error}=await sb.from('products').delete().eq('id',id);if(error){toast(error.message);return}toast('Product deleted');currentProduct=null;await loadProducts();renderAll();backToInventory()}
 function openScannerScreen(){go('scan');setTimeout(()=>startScanner(),120)}
-async function startScanner(){if(scanner)await stopScanner();$('scannerPrompt').classList.add('hidden');scanner=new Html5Qrcode('reader',{formatsToSupport:[
-  Html5QrcodeSupportedFormats.EAN_13,
-  Html5QrcodeSupportedFormats.CODE_128
-]});try{await scanner.start({facingMode:'environment'},{fps:12,qrbox:{width:280,height:140},aspectRatio:1.777778},code=>{onScanned(code);stopScanner()})}catch(e){$('scannerPrompt').classList.remove('hidden');toast('Camera could not start. Use manual barcode entry.') }}
+async function startScanner(){
+  if(scanner)await stopScanner();
+  const prompt=$('scannerPrompt');if(prompt)prompt.classList.add('hidden');
+  scanner=new Html5Qrcode('reader',{formatsToSupport:[
+    Html5QrcodeSupportedFormats.EAN_13,
+    Html5QrcodeSupportedFormats.EAN_8,
+    Html5QrcodeSupportedFormats.UPC_A,
+    Html5QrcodeSupportedFormats.UPC_E,
+    Html5QrcodeSupportedFormats.CODE_128,
+    Html5QrcodeSupportedFormats.CODE_39,
+    Html5QrcodeSupportedFormats.QR_CODE
+  ]});
+  const config={fps:12,qrbox:{width:280,height:140},aspectRatio:1.777778};
+  const success=code=>{onScanned(String(code||'').trim());stopScanner()};
+  const fail=()=>{};
+  try{
+    // Best choice on phones.
+    await scanner.start({facingMode:{ideal:'environment'}},config,success,fail);
+    return;
+  }catch(e1){
+    try{
+      // Fallback for laptops/desktops where no "environment" camera exists.
+      const cams=await Html5Qrcode.getCameras();
+      if(cams&&cams.length){
+        const preferred=cams.find(c=>/back|rear|environment/i.test(c.label||''))||cams[0];
+        await scanner.start(preferred.id,config,success,fail);
+        return;
+      }
+    }catch(e2){}
+  }
+  try{await scanner.clear()}catch(_e){}
+  scanner=null;
+  if(prompt){prompt.classList.remove('hidden');prompt.innerHTML='<div style="font-size:42px">▣</div><b>Camera unavailable</b><div style="font-size:11px;margin-top:6px">Allow camera access or use the barcode field below.</div>'}
+  toast('Camera could not start. Check camera permission or use manual/USB barcode entry.');
+}
 async function stopScanner(){if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}$('scannerPrompt')?.classList.remove('hidden')}
 function onScanned(code){$('manualBarcode').value=code;manualLookup()}
 function manualLookup(){const v=$('manualBarcode').value.trim();const p=products.find(x=>x.barcode===v||x.storage_number?.toLowerCase()===v.toLowerCase()||x.sku?.toLowerCase()===v.toLowerCase());if(!p){$('scanResult').innerHTML='<div class="empty">No product found.</div>';return}currentProduct=p;const img=productImage(p);$('scanResult').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span>${p.color?`<span class="tag">${esc(p.color)}</span>`:''}</div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Box / Shelf</small></div></div></div></div><div class="pcActions" style="margin-top:12px"><button class="smallbtn primary" onclick="openProduct('${p.id}')">Open Product</button>${canDo('can_edit_products')?`<button class="smallbtn" onclick="openScannedProductEdit('${p.id}')">Edit Product</button>`:''}${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}</div></div>`}
