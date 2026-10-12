@@ -1728,7 +1728,65 @@ function buildAddForm(p=null){
   },0);
 }
 function pickFormChannel(b){$('fChannel').value=b.dataset.v;document.querySelectorAll('.channelChoice button').forEach(x=>x.classList.toggle('selected',x===b))}
-async function uploadImage(file,storage){if(!file)return null;const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`${storage||'product'}-${Date.now()}.${ext}`;const {error}=await sb.storage.from('product-images').upload(path,file,{upsert:false});if(error)throw error;return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl}
+// Keep original inventory records small: upload a resized image to Supabase Storage,
+// then store only its public URL on the product. Avoid full-resolution iPhone uploads.
+async function prepareProductPhoto(file){
+  if(!file)return null;
+  if(!String(file.type||'').startsWith('image/') && !/\.(heic|heif|jpe?g|png|webp)$/i.test(file.name||'')){
+    throw new Error('Please select a picture (JPG, PNG, HEIC or WebP).');
+  }
+  const url=URL.createObjectURL(file);
+  let img;
+  try{
+    img=await new Promise((resolve,reject)=>{
+      const element=new Image();
+      element.onload=()=>resolve(element);
+      element.onerror=()=>reject(new Error('This picture could not be opened. Please try a JPG photo.'));
+      element.src=url;
+    });
+    const largest=Math.max(img.naturalWidth||0,img.naturalHeight||0);
+    if(!largest)throw new Error('This picture has no readable dimensions.');
+    const scale=Math.min(1,1600/largest);
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+    canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+    const ctx=canvas.getContext('2d');
+    if(!ctx)throw new Error('Your browser could not process the picture.');
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    let blob=null;
+    for(const quality of [0.82,0.68,0.54,0.42]){
+      blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+      if(!blob)throw new Error('Unable to compress this picture. Please try another image.');
+      if(blob.size<=900*1024)break;
+    }
+    // Further reduce dimensions for exceptionally detailed photos.
+    if(blob.size>900*1024){
+      const smaller=document.createElement('canvas');
+      const ratio=Math.min(1,1100/Math.max(canvas.width,canvas.height));
+      smaller.width=Math.max(1,Math.round(canvas.width*ratio));
+      smaller.height=Math.max(1,Math.round(canvas.height*ratio));
+      smaller.getContext('2d').drawImage(canvas,0,0,smaller.width,smaller.height);
+      blob=await new Promise(resolve=>smaller.toBlob(resolve,'image/jpeg',0.65));
+      if(!blob)throw new Error('Unable to prepare this picture for upload.');
+    }
+    return blob;
+  }finally{URL.revokeObjectURL(url);}
+}
+async function uploadImage(file,storage){
+  if(!file)return null;
+  const prepared=await prepareProductPhoto(file);
+  const safeStorage=String(storage||'product').replace(/[^a-zA-Z0-9_-]/g,'-').slice(0,60)||'product';
+  const path=`${safeStorage}-${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;
+  const {error}=await sb.storage.from('product-images').upload(path,prepared,{upsert:false,contentType:'image/jpeg',cacheControl:'3600'});
+  if(error){
+    if(/maximum allowed size|exceeded|too large|payload too large|413/i.test(error.message||''))
+      throw new Error('Picture upload is over the Supabase Storage limit even after compression. Please check the product-images bucket file size limit.');
+    throw error;
+  }
+  return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+}
 async function repairLegacyImagesToStorage(){
   if(profile?.role!=='admin')return;
   const targets=products.filter(p=>!String(p.image_url||'').trim()&&legacyEmbeddedImage(p));
@@ -1867,9 +1925,9 @@ function printProductLabel(id){
   const colorText=String(p.color||'—');
   const priceText=Number(p.selling_price||0).toFixed(2);
 
-  const COLS=3, ROWS=6, PER_SHEET=18;
-  const SHEET_WIDTH_CM=20.4, SHEET_HEIGHT_CM=27.4, TOP_GAP_CM=1;
-  const LABEL_W_CM=6.8, LABEL_H_CM=4.4;
+  const COLS=2, ROWS=8, PER_SHEET=16;
+  const SHEET_WIDTH_CM=21, SHEET_HEIGHT_CM=29.7, TOP_GAP_CM=0.9;
+  const LABEL_W_CM=10.5, LABEL_H_CM=3.5;
 
   const pages=Math.ceil(count/PER_SHEET);
   let sheets='';
@@ -1909,17 +1967,17 @@ function printProductLabel(id){
     .sheet:last-of-type{break-after:auto;page-break-after:auto}
     .top-gap{width:100%;height:${TOP_GAP_CM}cm}
     .label-grid{width:${SHEET_WIDTH_CM}cm;height:${ROWS*LABEL_H_CM}cm;display:grid;grid-template-columns:repeat(${COLS},${LABEL_W_CM}cm);grid-template-rows:repeat(${ROWS},${LABEL_H_CM}cm);gap:0}
-    .label{width:${LABEL_W_CM}cm;height:${LABEL_H_CM}cm;padding:.15cm .20cm .10cm;background:#fff;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+    .label{width:${LABEL_W_CM}cm;height:${LABEL_H_CM}cm;padding:.12cm .28cm .08cm;background:#fff;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
     .label.blank{visibility:hidden}
-    .name{font-size:9.3pt;line-height:1.03;font-weight:800;text-align:center;margin:0 0 .04cm;max-height:.64cm;overflow:hidden}
+    .name{font-size:10pt;line-height:1.03;font-weight:800;text-align:center;margin:0 0 .04cm;max-height:.54cm;overflow:hidden}
     .printBrand{display:inline-flex;align-items:baseline;justify-content:center;gap:.03cm;width:100%;line-height:1.03}
     .printBrand .productNameLogo{width:.34cm;height:.34cm;object-fit:contain;flex:0 0 .34cm;transform:translateY(.025cm)}
     .printBrand .productNameText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:inherit;font-weight:inherit;line-height:inherit}
     .topline{display:flex;align-items:center;justify-content:space-between;gap:.1cm;min-width:0}
     .meta{font-size:7.4pt;line-height:1.06;margin:.01cm 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .unitNo{flex:0 0 auto;font-size:6.8pt;font-weight:800;border:1px solid #000;border-radius:10px;padding:.015cm .1cm;line-height:1.2}
-    .barcode{width:100%;height:1.45cm;margin:.025cm auto 0;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .barcode svg{width:5.95cm!important;height:1.38cm!important;display:block}
+    .barcode{width:100%;height:1.14cm;margin:.025cm auto 0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .barcode svg{width:8.6cm!important;height:1.10cm!important;display:block}
     .digits{text-align:center;font:7.2pt monospace;letter-spacing:.04cm;line-height:1;margin-top:-.01cm}
     .missing{font-size:7pt;text-align:center;padding:.12cm;border:1px dashed #999;width:100%}
     .toolbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#f3f3f3;padding:10px;text-align:center;border-top:1px solid #ccc}
@@ -1931,7 +1989,7 @@ function printProductLabel(id){
     ${sheets}
     <div class="toolbar">
       <button onclick="window.print()">Print ${count} Label${count===1?'':'s'}</button>
-      <div class="summary">3 across × 6 down • 18 labels per sheet • 1 cm top gap • Scale: 100%</div>
+      <div class="summary">2 across × 8 down • 16 labels per sheet • 0.9 cm top gap • Scale: 100%</div>
     </div>
   </body></html>`);
   win.document.close();
