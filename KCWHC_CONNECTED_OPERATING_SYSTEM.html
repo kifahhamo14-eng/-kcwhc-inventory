@@ -1942,14 +1942,16 @@ function printKCWHCLabelSheet(items){
         const priceText=Number(p.selling_price||0).toFixed(2);
         cells+=`
           <section class="label">
-            <div class="name">${productNameWithLogo(p.name,'print')}</div>
-            <div class="topline">
-              <div class="meta"><b>Color:</b> ${esc(colorText)}</div>
-              <div class="unitNo">${itemIndex+1} of ${items.length}</div>
+            <div class="label-content">
+              <div class="name">${productNameWithLogo(p.name,'print')}</div>
+              <div class="topline">
+                <div class="meta"><b>Color:</b> ${esc(colorText)}</div>
+                <div class="unitNo">${itemIndex+1} of ${items.length}</div>
+              </div>
+              <div class="meta"><b>Price:</b> ₪${priceText}</div>
+              <div class="barcode">${svg||'<div class="missing">Barcode unavailable</div>'}</div>
+              <div class="digits">${esc(code)}</div>
             </div>
-            <div class="meta"><b>Price:</b> ₪${priceText}</div>
-            <div class="barcode">${svg||'<div class="missing">Barcode unavailable</div>'}</div>
-            <div class="digits">${esc(code)}</div>
           </section>`;
       } else {
         cells+='<section class="label blank"></section>';
@@ -1969,7 +1971,8 @@ function printKCWHCLabelSheet(items){
     .sheet:last-of-type{break-after:auto;page-break-after:auto}
     .top-gap{width:100%;height:${TOP_GAP_CM}cm}
     .label-grid{width:${SHEET_WIDTH_CM}cm;height:${ROWS*LABEL_H_CM}cm;display:grid;grid-template-columns:repeat(${COLS},${LABEL_W_CM}cm);grid-template-rows:repeat(${ROWS},${LABEL_H_CM}cm);gap:0}
-    .label{width:${LABEL_W_CM}cm;height:${LABEL_H_CM}cm;padding:.12cm .28cm .08cm;background:#fff;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+    .label{width:${LABEL_W_CM}cm;height:${LABEL_H_CM}cm;padding:.12cm .28cm .08cm;background:#fff;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;position:relative}
+    .label-content{width:100%;min-width:0}
     .label.blank{visibility:hidden}
     .name{font-size:10pt;line-height:1.03;font-weight:800;text-align:center;margin:0 0 .04cm;max-height:.54cm;overflow:hidden}
     .printBrand{display:inline-flex;align-items:baseline;justify-content:center;gap:.03cm;width:100%;line-height:1.03}
@@ -1979,7 +1982,7 @@ function printKCWHCLabelSheet(items){
     .meta{font-size:7.4pt;line-height:1.06;margin:.01cm 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .unitNo{flex:0 0 auto;font-size:6.8pt;font-weight:800;border:1px solid #000;border-radius:10px;padding:.015cm .1cm;line-height:1.2}
     .barcode{width:100%;height:1.14cm;margin:.025cm auto 0;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .barcode svg{width:8.6cm!important;height:1.10cm!important;display:block}
+    .barcode svg{width:8.6cm!important;max-width:100%!important;height:1.10cm!important;display:block}
     .digits{text-align:center;font:7.2pt monospace;letter-spacing:.04cm;line-height:1;margin-top:-.01cm}
     .missing{font-size:7pt;text-align:center;padding:.12cm;border:1px dashed #999;width:100%}
     .toolbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#f3f3f3;padding:10px;text-align:center;border-top:1px solid #ccc}
@@ -2028,7 +2031,8 @@ function kcRenderLabelPickerList(){
  const q=(document.getElementById('kcLabelSearch')?.value||'').toLowerCase();
  const matches=products.filter(p=>[p.name,p.barcode,p.storage_number,p.color].some(v=>String(v||'').toLowerCase().includes(q)));
  root.innerHTML=matches.map(p=>{const id=String(p.id);const checked=kcLabelSelection.has(id);const count=kcLabelSelection.get(id)||1;
- return `<div style="display:flex;align-items:center;gap:9px;padding:9px 3px;border-bottom:1px solid #ddd"><input aria-label="Select ${esc(p.name)}" type="checkbox" ${checked?'checked':''} onchange="kcToggleLabelPick('${id}',this.checked);kcRenderLabelPickerList()" style="height:20px;width:20px;flex-shrink:0"><div style="flex:1;min-width:0"><div style="font-weight:750;font-size:13px">${esc(p.name||'Unnamed')}</div><div style="font-size:11px;color:#555">${esc(p.color||'')} • ${esc(p.barcode||'No barcode')}</div></div><label style="font-size:11px">Copies <input type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)" style="width:57px;padding:6px;border:1px solid #aaa;border-radius:6px"></label></div>`;
+ const photo=productImage(p);
+ return `<div style="display:flex;align-items:center;gap:9px;padding:9px 3px;border-bottom:1px solid #ddd"><input aria-label="Select ${esc(p.name)}" type="checkbox" ${checked?'checked':''} onchange="kcToggleLabelPick('${id}',this.checked);kcRenderLabelPickerList()" style="height:20px;width:20px;flex-shrink:0">${photo?`<img src="${esc(photo)}" alt="" loading="lazy" style="width:46px;height:52px;object-fit:contain;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;flex-shrink:0">`:'<div aria-hidden="true" style="width:46px;height:52px;flex-shrink:0;background:#f5f5f5;border:1px solid #ddd;border-radius:6px"></div>'}<div style="flex:1;min-width:0"><div style="font-weight:750;font-size:13px">${esc(p.name||'Unnamed')}</div><div style="font-size:11px;color:#555">${esc(p.color||'')} • ${esc(p.barcode||'No barcode')}</div></div><label style="font-size:11px">Copies <input type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)" style="width:57px;padding:6px;border:1px solid #aaa;border-radius:6px"></label></div>`;
  }).join('')||'<p>No matching products.</p>';
  let total=0;for(const v of kcLabelSelection.values())total+=v;
  const sheets=Math.ceil(total/16),spare=(sheets*16-total);
