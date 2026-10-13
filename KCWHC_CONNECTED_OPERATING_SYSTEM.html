@@ -2492,6 +2492,37 @@ function employeeActionStats(id){
     product:rows.filter(x=>/product_(added|edited|deleted)|add.*product|edit.*product|delete.*product/i.test(x.action||'')).length
   };
 }
+
+/* KCWHC Workforce Intelligence — based on verified recorded actions, not personality labels. */
+let kcWIWindow=30,kcWICompareA='',kcWICompareB='';
+function kcWIProfiles(){return peopleCache.filter(p=>p.role!=='admin'&&p.employment_status!=='inactive')}
+function kcWIRows(p,days=kcWIWindow){const since=Date.now()-days*86400000;return employeeActivityCache.filter(x=>String(x.user_id)===String(p.id)&&new Date(x.created_at).getTime()>=since)}
+function kcWIStats(p,days=kcWIWindow){
+ const rows=kcWIRows(p,days),half=Date.now()-days*86400000/2;
+ const recent=rows.filter(x=>new Date(x.created_at).getTime()>=half).length,earlier=rows.length-recent;
+ const kinds={sales:0,stock:0,products:0,other:0};
+ rows.forEach(x=>{let a=String(x.action||'').toLowerCase();if(/sale|sell/.test(a))kinds.sales++;else if(/stock|quantity|count/.test(a))kinds.stock++;else if(/product|add|edit|delete/.test(a))kinds.products++;else kinds.other++});
+ return {p,rows,n:rows.length,recent,earlier,kinds,days};
+}
+function kcWISetWindow(n){kcWIWindow=n;const el=$('kcWIContent');if(el)el.innerHTML=kcWIHtml()}
+function kcWICompare(){kcWICompareA=$('kcWILeft')?.value||'';kcWICompareB=$('kcWIRight')?.value||'';const el=$('kcWIContent');if(el)el.innerHTML=kcWIHtml()}
+function kcWIBar(v,max,color){return '<div style="background:#ebeee9;height:10px;border-radius:20px;overflow:hidden;flex:1"><div style="height:100%;width:'+Math.max(0,Math.min(100,Math.round(v/Math.max(1,max)*100)))+'%;background:'+color+';border-radius:20px"></div></div>'}
+function kcWIHtml(){
+ const all=kcWIProfiles().map(p=>kcWIStats(p)).sort((a,b)=>b.n-a.n),max=Math.max(1,...all.map(x=>x.n));
+ if(!kcWICompareA||!all.some(x=>String(x.p.id)===String(kcWICompareA)))kcWICompareA=String(all[0]?.p.id||'');
+ if(!kcWICompareB||!all.some(x=>String(x.p.id)===String(kcWICompareB)))kcWICompareB=String(all[1]?.p.id||all[0]?.p.id||'');
+ const select=(id,key)=>'<select id="'+id+'" onchange="kcWICompare()" style="min-width:0;width:100%;padding:10px;border:1px solid #dcd6c6;border-radius:10px;background:white;color:#16473b">'+all.map(x=>'<option value="'+esc(String(x.p.id))+'" '+(String(x.p.id)===String(key)?'selected':'')+'>'+esc(x.p.full_name||x.p.email||'Team member')+'</option>').join('')+'</select>';
+ const a=all.find(x=>String(x.p.id)===kcWICompareA),b=all.find(x=>String(x.p.id)===kcWICompareB);
+ const panel='border:1px solid #e4d9c5;border-radius:14px;background:#fff;padding:12px;box-shadow:0 5px 16px #102f2410';
+ const field=(k,label)=>'<div style="display:grid;gap:5px;margin:8px 0"><div style="font-size:11px;font-weight:800;color:#345b50">'+label+'</div><div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:26px;text-align:right">'+(a?.kinds[k]||0)+'</span>'+kcWIBar(a?.kinds[k]||0,Math.max(1,a?.kinds[k]||0,b?.kinds[k]||0),'#087666')+'<span style="width:26px;text-align:right">'+(b?.kinds[k]||0)+'</span>'+kcWIBar(b?.kinds[k]||0,Math.max(1,a?.kinds[k]||0,b?.kinds[k]||0),'#b18c43')+'</div></div>';
+ const active=all.filter(x=>x.n>0).length,downs=all.filter(x=>x.earlier>=5&&x.recent<=Math.floor(x.earlier*.5));
+ const comparison=a&&b?'<div style="'+panel+'"><div style="font-weight:950;color:#145341;margin-bottom:8px">Side-by-side activity comparison</div><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px">'+select('kcWILeft',kcWICompareA)+select('kcWIRight',kcWICompareB)+'</div><div style="display:flex;gap:10px;margin:10px 0;font-size:10px;color:#536359"><span>🟢 Left: '+a.n+' logged actions</span><span>🟡 Right: '+b.n+' logged actions</span></div>'+field('sales','Sale events')+field('stock','Stock / count events')+field('products','Product operations')+field('other','Other events')+'<div style="font-size:10px;color:#857968;margin-top:10px">Raw event counts, not employee performance ratings. Compare colleagues with similar responsibilities and working hours.</div></div>':'';
+ const trends=all.map(x=>{const delta=x.recent-x.earlier;const color=delta<0?'#b47832':'#087666';return '<div style="display:grid;grid-template-columns:minmax(90px,1fr) minmax(80px,2fr) 46px;gap:8px;align-items:center;margin:9px 0"><span style="font-size:11px;font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(x.p.full_name||x.p.email||'Employee')+'</span>'+kcWIBar(x.n,max,'#087666')+'<b style="font-size:11px;text-align:right">'+x.n+'</b></div>'}).join('');
+ const warning=downs.map(x=>'<div style="background:#fff9ea;border-left:3px solid #c49c47;padding:10px;border-radius:8px;margin:8px 0;font-size:11px"><b>'+esc(x.p.full_name||x.p.email||'Employee')+'</b> — recorded activity fell from '+x.earlier+' to '+x.recent+' events between the two halves of the selected period. <b>Review workload, leave and assigned duties before drawing conclusions.</b> <button style="margin-left:5px;border:0;background:none;color:#086753;text-decoration:underline;cursor:pointer" onclick="openEmployeeActivityDetail('+JSON.stringify(String(x.p.id)).replace(/"/g,"'")+')">View records</button></div>').join('');
+ const cards='<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px">'+[['Team members',all.length],['With activity',active],['Review signals',downs.length]].map(x=>'<div style="background:#f5f8f5;border:1px solid #e1e7df;border-radius:10px;padding:10px;text-align:center"><b style="font-size:22px;color:#0a6652;display:block">'+x[1]+'</b><small style="font-size:9px;color:#646c65">'+x[0]+'</small></div>').join('')+'</div>';
+ return '<div style="display:grid;gap:12px;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><b style="font-size:17px;color:#075b46">◆ Workforce Intelligence</b><div style="font-size:10px;color:#756d60">Verified audit activity · Management review</div></div><div style="display:flex;gap:5px"><button onclick="kcWISetWindow(7)" style="padding:7px;border-radius:9px;border:1px solid #d6d0bd;background:'+(kcWIWindow===7?'#075b46':'white')+';color:'+(kcWIWindow===7?'white':'#075b46')+'">7d</button><button onclick="kcWISetWindow(30)" style="padding:7px;border-radius:9px;border:1px solid #d6d0bd;background:'+(kcWIWindow===30?'#075b46':'white')+';color:'+(kcWIWindow===30?'white':'#075b46')+'">30d</button></div></div>'+cards+'<div style="'+panel+'"><b style="color:#165844">Team activity distribution</b><div style="font-size:10px;color:#827b70">Last '+kcWIWindow+' days · available logged events</div>'+ (trends||'<p style="font-size:11px">No team data available.</p>')+'</div>'+comparison+'<div style="'+panel+'"><b style="color:#165844">⚑ Review signals</b><p style="font-size:10px;color:#746f64;margin:5px 0">Signals identify changes in recorded work, not negative traits or disciplinary findings.</p>'+(warning||'<div style="color:#20735b;font-size:11px;padding:8px">No substantial activity declines detected in the available records.</div>')+'</div><div style="font-size:10px;color:#766d60">Records are limited to the '+employeeActivityCache.length+' most recently loaded audit events (up to 500 per source). No attendance, quality, task deadlines, working hours or comprehensive productivity scores are inferred without verified source data.</div></div>';
+}
+
 function renderEmployeeActivityDashboard(){
   const body=$('modalBody');if(!body)return;
   const today=dayStart(),activePeople=peopleCache.filter(p=>p.employment_status==='active');
@@ -2519,6 +2550,7 @@ function renderEmployeeActivityDashboard(){
   }).join('');
 
   body.innerHTML=`<div class="analyticsHero"><h3>Employee Activity Center</h3><p>Monitor each team member, recent actions, stock work, product changes and login activity.</p></div>
+  <div id="kcWIContent" style="margin:12px 0">${kcWIHtml()}</div>
   <div class="employeeSummaryGrid"><div class="employeeSummaryCard"><b>${activePeople.length}</b><small>Active Team</small></div><div class="employeeSummaryCard"><b>${todayActions}</b><small>Actions Today</small></div><div class="employeeSummaryCard"><b>${saleActions}</b><small>Sale Actions</small></div><div class="employeeSummaryCard"><b>${stockActions}</b><small>Stock / Counts</small></div><div class="employeeSummaryCard"><b>${productActions}</b><small>Product Changes</small></div><div class="employeeSummaryCard"><b>${employeeActivityCache.length}</b><small>Loaded Activity</small></div></div>
   <div class="analyticsSection"><div class="analyticsTitle"><span>📊 Activity — Last 7 Days</span><span class="sub">${daily.reduce((s,x)=>s+x.value,0)} actions</span></div>${analyticsBarsHtml(daily)}</div>
   <div class="analyticsSection"><div class="analyticsTitle"><span>◫ Activity Breakdown</span><span class="sub">Top action types</span></div>${actionRows.length?analyticsBreakdownHtml(actionRows):'<div class="sub">No activity yet.</div>'}</div>
