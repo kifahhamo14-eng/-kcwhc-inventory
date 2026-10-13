@@ -2438,6 +2438,13 @@ async function openRevenue(){
   });
   const channelRows=Object.entries(channelMap).map(([label,value])=>({label,value,display:dashMoney(value)})).sort((a,b)=>b.value-a.value);
 
+  // Projected stock income uses current on-hand units at their listed selling prices, not historical sales.
+  // Re-read inventory whenever Revenue opens so changes from other devices are included.
+  const {data:stockRows,error:stockErr}=await sb.from('products').select('id,name,quantity,selling_price');
+  const stock=stockErr?null:(stockRows||[]);
+  const stockUnits=stock?stock.reduce((n,p)=>n+Math.max(0,Number(p.quantity)||0),0):0;
+  const projectedStockIncome=stock?stock.reduce((n,p)=>n+(Math.max(0,Number(p.quantity)||0)*Math.max(0,Number(p.selling_price)||0)),0):0;
+
   const recent=rows.slice(0,8);
   $('modalBody').innerHTML=`
     <div class="analyticsHero"><h3>Revenue Performance</h3><p>Sales totals, recent movement, top products and channel mix in one easy-to-read view.</p></div>
@@ -2446,9 +2453,11 @@ async function openRevenue(){
       <div class="metricCard blue"><div class="metricIcon">📅</div><small>This Week</small><b>${dashMoney(summary?.week||0)}</b><div class="metricSub">Last 7 days</div></div>
       <div class="metricCard gold"><div class="metricIcon">◈</div><small>This Month</small><b>${dashMoney(summary?.month||0)}</b><div class="metricSub">${monthUnits} units • ${monthRows.length} sales</div></div>
       <div class="metricCard"><div class="metricIcon">Σ</div><small>All Time</small><b>${dashMoney(summary?.all_time||0)}</b><div class="metricSub">${summary?.sales_count||0} completed sales</div></div>
+      <div class="metricCard gold"><div class="metricIcon">◇</div><small>Projected Stock Income</small><b>${stock?dashMoney(projectedStockIncome):"Unavailable"}</b><div class="metricSub">${stock?`${stockUnits.toLocaleString()} units in stock × listed selling prices`:"Unable to load current inventory"}</div></div>
       <div class="metricCard"><div class="metricIcon">◎</div><small>Average Sale</small><b>${dashMoney(avgSale)}</b><div class="metricSub">Average transaction, last 30 days</div></div>
       <div class="metricCard ${trend>=0?'good':'red'}"><div class="metricIcon">${trend>=0?'↗':'↘'}</div><small>30-Day Trend</small><b>${trend>=0?'+':''}${trend}%</b><div class="metricSub">Compared with previous 30 days</div></div>
     </div>
+    <div class="analyticsSection"><div class="analyticsTitle"><span>◇ Projected Income from Current Stock</span><span class="sub">${stock?dashMoney(projectedStockIncome):"Unavailable"}</span></div><div class="sub">Estimated gross sales value of the inventory you currently have: each product’s quantity × selling price, added together. Updates whenever you open Revenue. This is not money earned, a sales forecast, or profit.</div>${stockErr?`<div class="auditEmpty">${esc(stockErr.message)}</div>`:""}</div>
     <div class="analyticsSection"><div class="analyticsTitle"><span>📈 Revenue — Last 14 Days</span><span class="sub">${dashMoney(dayItems.reduce((s,x)=>s+x.value,0))}</span></div>${analyticsBarsHtml(dayItems,v=>v?Math.round(v):'0')}</div>
     <div class="analyticsSection"><div class="analyticsTitle"><span>🏆 Top Products by Revenue</span><span class="sub">All recorded sales</span></div>${topProducts.length?topProducts.map((p,i)=>`<div class="rankRow"><div class="rankNo">${i+1}</div><div><div class="rankName">${esc(p.name)}</div><div class="rankMeta">${p.units} units sold</div></div><div class="rankValue">${dashMoney(p.revenue)}</div></div>`).join(''):'<div class="sub">No sales recorded yet.</div>'}</div>
     <div class="analyticsSection"><div class="analyticsTitle"><span>◉ Revenue by Current Sales Channel</span><span class="sub">Based on each product’s current channel</span></div>${channelRows.length?analyticsBreakdownHtml(channelRows):'<div class="sub">No channel data yet.</div>'}</div>
