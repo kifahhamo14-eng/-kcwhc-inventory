@@ -2575,7 +2575,6 @@ function renderEmployeeActivityDashboard(){
   }).join('');
 
   body.innerHTML=`<div class="analyticsHero"><h3>Employee Activity Center</h3><p>Monitor each team member, recent actions, stock work, product changes and login activity.</p></div>
-  <div id="kcWIContent" style="margin:12px 0">${kcWIHtml()}</div>
   <div class="employeeSummaryGrid"><div class="employeeSummaryCard"><b>${activePeople.length}</b><small>Active Team</small></div><div class="employeeSummaryCard"><b>${todayActions}</b><small>Actions Today</small></div><div class="employeeSummaryCard"><b>${saleActions}</b><small>Sale Actions</small></div><div class="employeeSummaryCard"><b>${stockActions}</b><small>Stock / Counts</small></div><div class="employeeSummaryCard"><b>${productActions}</b><small>Product Changes</small></div><div class="employeeSummaryCard"><b>${employeeActivityCache.length}</b><small>Loaded Activity</small></div></div>
   <div class="analyticsSection"><div class="analyticsTitle"><span>📊 Activity — Last 7 Days</span><span class="sub">${daily.reduce((s,x)=>s+x.value,0)} actions</span></div>${analyticsBarsHtml(daily)}</div>
   <div class="analyticsSection"><div class="analyticsTitle"><span>◫ Activity Breakdown</span><span class="sub">Top action types</span></div>${actionRows.length?analyticsBreakdownHtml(actionRows):'<div class="sub">No activity yet.</div>'}</div>
