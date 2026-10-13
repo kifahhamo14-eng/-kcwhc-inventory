@@ -727,6 +727,31 @@
   .secDonut{width:78px;height:78px}
 }
 
+
+/* kcWorkforceIntelligenceV1 */
+#kcWiRoot{min-width:0;overflow:hidden;margin-bottom:18px;color:#143d34}
+#kcWiRoot *{box-sizing:border-box}
+.kcWiHeader{background:linear-gradient(120deg,#064a3b,#0d7767);color:#fff;border-radius:17px;padding:18px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.kcWiEyebrow{letter-spacing:1.5px;font-weight:900;color:#e8cd8f;font-size:9px}
+.kcWiHeader h3{font-size:20px;margin:6px 0}.kcWiHeader p{font-size:11px;margin:0;color:#e2f4ee;line-height:1.5}
+.kcWiChip{white-space:nowrap;border:1px solid #a7dac7;border-radius:16px;padding:6px 9px;font-weight:900;font-size:9px}
+.kcWiFilters,.kcWiCompareSelectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.kcWiFilters label,.kcWiCompareSelectors label{font-size:10px;font-weight:800;display:grid;gap:5px;min-width:0}
+#kcWiRoot select{width:100%;min-width:0;padding:10px;border-radius:9px;border:1px solid #d9cdae;background:#fff;color:#143d34}
+.kcWiMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.kcWiMetrics>div{padding:12px;border:1px solid #e8ddc9;border-radius:12px;background:linear-gradient(170deg,#fff,#f9f5eb);min-width:0}
+.kcWiMetrics small{display:block;font-size:8px;letter-spacing:.5px;color:#726b60;font-weight:900}.kcWiMetrics b{display:block;font-size:22px;margin-top:5px}
+.kcWiSplit{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kcWiPanel{min-width:0;background:#fff;border:1px solid #e7dccc;border-radius:13px;padding:13px;margin:9px 0;box-shadow:0 3px 15px #133b2910}
+.kcWiPanel h4{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px;font-size:13px;margin:0 0 12px}.kcWiPanel h4 small{color:#898173;font-size:9px;font-weight:600}
+.kcWiTrend{height:130px;display:flex;gap:6px;align-items:end}.kcWiTrendCol{display:flex;flex:1;min-width:0;height:100%;flex-direction:column;align-items:center;gap:3px;justify-content:end}
+.kcWiTrendCol strong{font-size:10px}.kcWiTrendCol small{font-size:9px;color:#68645e}
+.kcWiTrendBg{height:95px;width:100%;display:flex;align-items:end;border-radius:6px;background:#f5f2e9;overflow:hidden}.kcWiTrendBg>div{width:100%;background:linear-gradient(#d5b66d,#0a7664);border-radius:5px 5px 0 0}
+.kcWiRanking{max-height:190px;overflow:auto}.kcWiRank{display:flex;align-items:center;gap:7px;margin:10px 0;font-size:10px}.kcWiRankName{width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.kcWiRank b{width:30px;text-align:right}.kcWiTrack{flex:1;min-width:0;height:9px;border-radius:20px;background:#ede9de;overflow:hidden}.kcWiFill{height:100%;border-radius:20px}
+.kcWiCompareRow{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:8px;align-items:center;margin:10px 0;font-size:10px}.kcWiCompareRow>div:nth-child(n+2){display:flex;align-items:center;gap:5px}.kcWiCompareRow b{min-width:22px;text-align:right}
+.kcWiAlert{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #eee7d9}.kcWiAlert>span{color:#bb883b;font-size:18px}.kcWiAlert>div{flex:1;min-width:0}.kcWiAlert b{display:block;font-size:11px}.kcWiAlert small{display:block;font-size:9px;color:#777067;margin-top:3px}.kcWiAlert button{background:#e9f3ee;border:1px solid #bcd8ca;border-radius:8px;padding:8px;font-size:9px;color:#075b46;font-weight:850}
+.kcWiGood{background:#eaf6ee;color:#126344;border-radius:9px;padding:12px;font-size:11px}.kcWiNotice{margin:10px 0 15px;font-size:10px;line-height:1.5;color:#716a5e}.kcWiMuted{font-size:11px;color:#777}
+@media(max-width:620px){.kcWiSplit{grid-template-columns:1fr}.kcWiMetrics{grid-template-columns:repeat(2,minmax(0,1fr))}.kcWiHeader{display:block}.kcWiChip{display:inline-block;margin-top:10px}.kcWiCompareRow{gap:5px;font-size:9px}}
+
 </style>
 
 <style id="opsUpgradeStyles">
@@ -2557,6 +2582,58 @@ function renderEmployeeActivityDashboard(){
   <div class="analyticsTitle" style="margin:12px 2px 7px"><span>👥 Team Monitoring</span><span class="sub">${peopleCache.length} profiles</span></div>
   <div class="employeeCards">${cards||'<div class="auditEmpty">No employee profiles found.</div>'}</div>`;
 }
+
+// kcWorkforceIntelligenceV1 — additional read-only performance intelligence, based on verified activity events.
+let kcWiDays=30,kcWiCompareA='',kcWiCompareB='',kcWiDepartment='all';
+function kcWiDate(v){const x=new Date(v).getTime();return Number.isFinite(x)?x:0}
+function kcWiEvents(id,days){const after=Date.now()-days*86400000;return employeeActivityCache.filter(x=>String(x.user_id)===String(id)&&kcWiDate(x.created_at)>=after)}
+function kcWiUsers(){return peopleCache.filter(p=>p.role!=='admin'&&p.employment_status!=='inactive'&&p.approval_status!=='rejected'&&(!kcWiDepartment||kcWiDepartment==='all'||String(p.department||'Unassigned')===kcWiDepartment))}
+function kcWiMeasure(p,days){
+ const rows=kcWiEvents(p.id,days),now=Date.now(),mid=now-7*86400000,old=now-14*86400000;
+ const current=employeeActivityCache.filter(x=>String(x.user_id)===String(p.id)&&kcWiDate(x.created_at)>=mid).length;
+ const previous=employeeActivityCache.filter(x=>String(x.user_id)===String(p.id)&&kcWiDate(x.created_at)>=old&&kcWiDate(x.created_at)<mid).length;
+ return {p,rows,total:rows.length,current,previous,sales:rows.filter(x=>/sale|sell/i.test(x.action||'')).length,stock:rows.filter(x=>/stock|count|quantity/i.test(x.action||'')).length,products:rows.filter(x=>/product_(added|edited|deleted)|add.*product|edit.*product|delete.*product/i.test(x.action||'')).length,dates:new Set(rows.map(x=>new Date(x.created_at).toDateString())).size};
+}
+function kcWiBar(v,max,color){return '<div class="kcWiTrack"><div class="kcWiFill" style="width:'+Math.min(100,Math.round(v/Math.max(1,max)*100))+'%;background:'+color+'"></div></div>'}
+function kcWiRender(){
+ const wrap=document.getElementById('kcWiRoot');if(!wrap)return;
+ const users=kcWiUsers(),stats=users.map(p=>kcWiMeasure(p,kcWiDays)).sort((a,b)=>b.total-a.total);
+ const logs=employeeActivityCache.filter(x=>kcWiDate(x.created_at)>=Date.now()-kcWiDays*86400000);
+ if(!kcWiCompareA||!users.some(p=>String(p.id)===kcWiCompareA))kcWiCompareA=users[0]?String(users[0].id):'';
+ if(!kcWiCompareB||!users.some(p=>String(p.id)===kcWiCompareB))kcWiCompareB=users[1]?String(users[1].id):kcWiCompareA;
+ const a=stats.find(x=>String(x.p.id)===kcWiCompareA),b=stats.find(x=>String(x.p.id)===kcWiCompareB);
+ const opt=users.map(p=>'<option value="'+esc(String(p.id))+'">'+esc(p.full_name||p.email||'Staff member')+'</option>').join('');
+ const deps=[...new Set(peopleCache.map(p=>String(p.department||'Unassigned')))].sort();
+ const trendDays=7,trend=Array.from({length:trendDays},(_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(trendDays-i-1));const start=d.getTime();return {label:d.toLocaleDateString(undefined,{weekday:'short'}),n:employeeActivityCache.filter(e=>kcWiDate(e.created_at)>=start&&kcWiDate(e.created_at)<start+86400000).length}});
+ const maxTrend=Math.max(1,...trend.map(x=>x.n));const maxTotal=Math.max(1,...stats.map(x=>x.total));
+ const alerts=stats.flatMap(s=>{
+  const out=[];
+  if(s.previous>=5&&s.current<s.previous*.6)out.push({p:s.p,title:'Activity volume decreased',detail:s.previous+' recorded actions in previous 7 days vs '+s.current+' in most recent 7 days',kind:'review'});
+  if(s.total===0)out.push({p:s.p,title:'No activity in selected period',detail:'No records in the loaded activity log. Check assigned duties and data coverage.',kind:'info'});
+  return out;
+ });
+ wrap.innerHTML='<div class="kcWiHeader"><div><div class="kcWiEyebrow">KCWHC • WORKFORCE INTELLIGENCE</div><h3>Employee Performance & Intelligence</h3><p>Evidence-based activity comparisons, productivity signals and manager review. Actions are not quality scores.</p></div><span class="kcWiChip">● LIVE LOG DATA</span></div>'
+ +'<div class="kcWiFilters"><label>Period <select id="kcWiDays" onchange="kcWiDays=Number(this.value);kcWiRender()"><option value="7">7 days</option><option value="30">30 days</option><option value="90">90 days</option></select></label><label>Department <select id="kcWiDepartment" onchange="kcWiDepartment=this.value;kcWiCompareA=\'\';kcWiCompareB=\'\';kcWiRender()"><option value="all">All departments</option>'+deps.map(d=>'<option value="'+esc(d)+'">'+esc(d)+'</option>').join('')+'</select></label></div>'
+ +'<div class="kcWiMetrics"><div><small>TEAM MEMBERS</small><b>'+stats.length+'</b></div><div><small>RECORDED ACTIONS</small><b>'+logs.length+'</b></div><div><small>ACTIVE CONTRIBUTORS</small><b>'+stats.filter(s=>s.total>0).length+'</b></div><div><small>REVIEW SIGNALS</small><b>'+alerts.length+'</b></div></div>'
+ +'<div class="kcWiSplit"><section class="kcWiPanel"><h4>Activity trend <small>Recent 7 days</small></h4><div class="kcWiTrend">'+trend.map(t=>'<div class="kcWiTrendCol"><strong>'+t.n+'</strong><div class="kcWiTrendBg"><div style="height:'+Math.max(t.n?5:0,Math.round(t.n/maxTrend*100))+'%"></div></div><small>'+t.label+'</small></div>').join('')+'</div></section>'
+ +'<section class="kcWiPanel"><h4>Recorded work <small>By employee • '+kcWiDays+' days</small></h4><div class="kcWiRanking">'+(stats.length?stats.map((s,i)=>'<div class="kcWiRank"><span class="kcWiRankName">'+esc(s.p.full_name||s.p.email||'Staff')+'</span>'+kcWiBar(s.total,maxTotal,'#0f7567')+'<b>'+s.total+'</b></div>').join(''):'<p class="kcWiMuted">No team profiles found.</p>')+'</div></section></div>'
+ +'<section class="kcWiPanel"><h4>Compare employees <small>Recorded actions, not a personnel rating</small></h4><div class="kcWiCompareSelectors"><label>Employee A<select id="kcWiA" onchange="kcWiCompareA=this.value;kcWiRender()">'+opt+'</select></label><label>Employee B<select id="kcWiB" onchange="kcWiCompareB=this.value;kcWiRender()">'+opt+'</select></label></div>'
+ + (a&&b?'<div class="kcWiCompare">'+[['Total actions','total'],['Sales actions','sales'],['Stock / count actions','stock'],['Product changes','products'],['Days with activity','dates']].map(q=>{const x=a[q[1]],y=b[q[1]],max=Math.max(x,y,1);return '<div class="kcWiCompareRow"><div>'+q[0]+'</div><div>'+kcWiBar(x,max,'#0e786b')+'<b>'+x+'</b></div><div>'+kcWiBar(y,max,'#c49a4c')+'<b>'+y+'</b></div></div>'}).join('')+'</div>':'<p class="kcWiMuted">Add employee records to enable comparisons.</p>')+'</section>'
+ +'<section class="kcWiPanel"><h4>Management review signals <small>Patterns requiring context, not findings of misconduct</small></h4>'+(alerts.length?alerts.slice(0,20).map(x=>'<div class="kcWiAlert"><span>⚑</span><div><b>'+esc(x.p.full_name||x.p.email||'Staff')+' — '+esc(x.title)+'</b><small>'+esc(x.detail)+'</small></div><button onclick="openEmployeeActivityDetail('+JSON.stringify(String(x.p.id)).replace(/"/g,'&quot;')+')">Review log</button></div>').join(''):'<div class="kcWiGood">✓ No activity-volume review signals from the loaded records.</div>')+'</section>'
+ +'<div class="kcWiNotice">Data coverage: the existing dashboard loads up to 500 recent inventory actions and 500 recent personnel audit events. Historical totals may be incomplete. A higher action count does not necessarily mean better performance. Attendance, deadlines, work quality, teamwork and task completion are not scored without their verified records. Review all signals fairly with the employee before taking action.</div>';
+ document.getElementById('kcWiDays').value=String(kcWiDays);
+ document.getElementById('kcWiDepartment').value=kcWiDepartment;
+ if(a)document.getElementById('kcWiA').value=kcWiCompareA;
+ if(b)document.getElementById('kcWiB').value=kcWiCompareB;
+}
+const kcWiOriginalRenderEmployeeActivityDashboard=renderEmployeeActivityDashboard;
+renderEmployeeActivityDashboard=function(){
+ kcWiOriginalRenderEmployeeActivityDashboard();
+ if(profile?.role!=='admin')return;
+ const body=document.getElementById('modalBody');if(!body)return;
+ const root=document.createElement('div');root.id='kcWiRoot';body.prepend(root);kcWiRender();
+};
+
 async function openActivity(){
   if(profile?.role!=='admin')return;
   if(!peopleCache.length)await loadPeople();
