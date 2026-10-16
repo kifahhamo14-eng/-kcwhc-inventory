@@ -779,43 +779,38 @@
 @media(max-width:360px){.bottomnav.kc-floating-nav{width:calc(100% - 14px);padding:7px 6px;gap:1px}.kc-floating-nav .navb{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.kc-floating-nav .navb,.kc-floating-nav .navb span{transition:none!important}}
 </style>
-<style>
-/* KCWHC lamp login — scoped to login only, preserves existing authentication */
-#login.kc-lamp-login{position:relative;isolation:isolate;overflow:auto;min-height:100vh;min-height:100dvh;display:flex;justify-content:center;align-items:center;padding:50px 26px;background:radial-gradient(ellipse at 24% 41%,#291a13 0%,#130f15 48%,#0b0a10 100%);transition:background .8s ease}
-#login.kc-lamp-login:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 28% 56%,rgba(209,112,38,.17),transparent 57%);opacity:1;transition:opacity .65s}
-#login.kc-lamp-login.lamp-off:before{opacity:0}
-#login.kc-lamp-login .kc-lamp-scene{position:relative;width:min(390px,38vw);height:540px;flex:0 1 390px;align-self:center;pointer-events:none;filter:drop-shadow(0 20px 20px rgba(0,0,0,.3))}
-#login.kc-lamp-login .kc-lamp-glow{position:absolute;top:88px;left:50%;transform:translateX(-50%);width:580px;height:550px;pointer-events:none;background:conic-gradient(from 160deg at 50% 0%,transparent 0deg,rgba(247,152,59,.15) 32deg,rgba(236,136,43,.04) 70deg,transparent 110deg,transparent 250deg,rgba(236,136,43,.04) 290deg,rgba(247,152,59,.15) 328deg,transparent 360deg);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);opacity:1;transition:opacity .65s}
-#login.kc-lamp-login.lamp-off .kc-lamp-glow{opacity:0}
-#login.kc-lamp-login .kc-lamp-shade{position:absolute;top:70px;left:50%;transform:translateX(-50%);width:130px;height:100px;background:linear-gradient(110deg,#bc824e,#ffe1a4 44%,#c88a50);clip-path:polygon(32% 0,68% 0,82% 8%,100% 98%,0 98%,18% 8%);border-radius:32px 32px 8px 8px;box-shadow:0 0 35px #f8b86b70;transition:background .55s,filter .55s}
-#login.kc-lamp-login.lamp-off .kc-lamp-shade{background:linear-gradient(110deg,#151318,#282328 45%,#111014);filter:brightness(.68)}
-#login.kc-lamp-login .kc-lamp-rim{position:absolute;top:162px;left:50%;transform:translateX(-50%);width:132px;height:12px;border-radius:50%;background:#aa7240;box-shadow:0 6px 18px #efad5ba0}
-#login.kc-lamp-login.lamp-off .kc-lamp-rim{background:#252125;box-shadow:none}
-#login.kc-lamp-login .kc-lamp-pole{position:absolute;top:172px;bottom:40px;left:calc(50% - 3px);width:6px;background:linear-gradient(90deg,#5f4d3c,#d4a36a,#594532)}
-#login.kc-lamp-login .kc-lamp-base{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:120px;height:15px;border-radius:50%;background:linear-gradient(#927150,#292426 55%,#151219);box-shadow:0 10px 22px #0008}
-#login.kc-lamp-login .kc-lamp-cord{position:absolute;top:173px;left:calc(50% + 37px);width:1px;height:80px;background:#b99b78;transform:rotate(-8deg);transform-origin:top}
-#login.kc-lamp-login .kc-lamp-toggle{position:absolute;top:246px;left:calc(50% + 30px);width:32px;height:32px;border:1px solid #c5a279;border-radius:50%;background:#30251dcc;color:#eac799;cursor:pointer;pointer-events:auto;font-size:16px;display:grid;place-items:center;transition:transform .2s}
-#login.kc-lamp-login .kc-lamp-toggle:hover{transform:scale(1.1)}
-#login.kc-lamp-login .loginWrap{position:relative;z-index:2;flex:0 1 400px;width:min(400px,100%);margin-left:clamp(0px,4vw,80px)}
-#login.kc-lamp-login .loginBrand{text-align:left;margin-bottom:22px}
-#login.kc-lamp-login .loginBrand h1{font-size:clamp(40px,5vw,66px);color:#e9bb76;text-shadow:0 2px 24px #ffc3722b}
-#login.kc-lamp-login .loginBrand p{font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#c9b8a6}
-#login.kc-lamp-login .loginCard{background:linear-gradient(135deg,rgba(35,30,32,.97),rgba(17,16,22,.98));border:1px solid rgba(244,180,105,.16);border-radius:14px;color:#f7eadb;box-shadow:0 25px 70px #0008;padding:26px}
-#login.kc-lamp-login .loginCard h2{text-align:left;font-family:Georgia,serif;font-size:27px;font-weight:500;color:#fff1dc}
-#login.kc-lamp-login .loginCard>p{text-align:left;color:#bba99b;font-size:12px}
-#login.kc-lamp-login .loginCard input:not([type=checkbox]){background:#1a191e;border:1px solid #5e4940;color:#f8eddf;border-radius:7px;padding:13px}
-#login.kc-lamp-login .loginCard input::placeholder{color:#a79791}
-#login.kc-lamp-login .loginOptions{color:#dbcab9}
-#login.kc-lamp-login .loginOptions button{color:#edbd86!important}
-#login.kc-lamp-login .signIn{background:linear-gradient(90deg,#ffd29b,#d98a38);color:#291709;border-radius:7px;box-shadow:0 4px 14px #c9782a25}
-#login.kc-lamp-login .roleChoose .selected{background:#c9904e;color:#20160f}
-#login.kc-lamp-login .roleChoose .not{background:#3a3332;color:#f0dfcd}
-#login.kc-lamp-login .msg{color:#ffb19c}
-#login.kc-lamp-login.lamp-off{background:#0b0a10}
-#login.kc-lamp-login.lamp-off .loginCard{box-shadow:0 25px 65px #0009}
-@media(max-width:690px){#login.kc-lamp-login{flex-direction:column;padding:28px 17px 50px;justify-content:flex-start}#login.kc-lamp-login .kc-lamp-scene{height:235px;width:100%;flex:0 0 235px;transform:scale(.64);transform-origin:50% 0;margin-bottom:-65px}#login.kc-lamp-login .kc-lamp-glow{height:320px}#login.kc-lamp-login .kc-lamp-pole{bottom:-130px}#login.kc-lamp-login .kc-lamp-base{bottom:-140px}#login.kc-lamp-login .loginWrap{flex:0 0 auto;margin-left:0;width:min(400px,100%)}#login.kc-lamp-login .loginBrand{text-align:center;margin-bottom:13px}#login.kc-lamp-login .loginBrand h1{font-size:44px}#login.kc-lamp-login .loginCard{padding:19px}#login.kc-lamp-login .kc-lamp-scene{pointer-events:none}}
-@media(prefers-reduced-motion:reduce){#login.kc-lamp-login *,#login.kc-lamp-login:before{transition:none!important}}
-</style>
+<style id="kc-pfp-lamp-login-v1">
+#login.kc-pfp-lamp-ready{background:#030405!important;overflow-y:auto;display:flex!important;align-items:flex-start!important;justify-content:center!important;padding:245px 18px 35px!important;transition:background .65s}
+#login.kc-pfp-lamp-ready.kc-pfp-lamp-on{background:radial-gradient(ellipse 80% 75% at 50% 9%,#544027 0%,#252018 35%,#0d0d10 75%,#050608 100%)!important}
+#login.kc-pfp-lamp-ready .loginCard{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(13px);transition:opacity .5s,transform .5s,visibility .5s}
+#login.kc-pfp-lamp-ready.kc-pfp-lamp-on .authCard{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+#login .kc-pfp-lamp-stage{position:absolute;top:0;left:50%;width:min(420px,100%);height:250px;transform:translateX(-50%);z-index:3;touch-action:none;user-select:none}
+#login .kc-pfp-lamp-stage svg{width:100%;height:100%;overflow:visible}
+#login .kc-pfp-light{opacity:0;transition:opacity .45s}
+#login.kc-pfp-lamp-on .kc-pfp-light{opacity:1}
+#login .kc-pfp-lamp-hit{cursor:grab;touch-action:none}
+#login .kc-pfp-lamp-hit:active{cursor:grabbing}
+#login .kc-pfp-lamp-hint{position:absolute;top:219px;left:0;right:0;text-align:center;color:#aaa296;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;pointer-events:none}
+#login.kc-pfp-lamp-on .kc-pfp-lamp-hint{opacity:0}
+@media(prefers-reduced-motion:reduce){#login .kc-pfp-light,#login .loginCard{transition:none!important}}
+</style><style id="kc-pfp-lamp-luxury-v2">
+#login.kc-pfp-lamp-ready{background:#020304!important;padding-top:268px!important;overscroll-behavior:contain}
+#login.kc-pfp-lamp-ready.kc-pfp-lamp-on{background:radial-gradient(ellipse 75% 60% at 50% 14%,#634525 0%,#2b2118 34%,#090a0e 82%)!important}
+#login .kc-pfp-lamp-stage{height:270px;z-index:100;overflow:visible;touch-action:none}
+#login .kc-pfp-lamp-stage svg{overflow:visible;touch-action:none}
+#login #kcPfpLampHit{stroke-width:75px;pointer-events:stroke;cursor:grab}
+#login #kcPfpLampHandle{cursor:grab;pointer-events:all}
+#login.kc-pfp-lamp-ready .loginCard{position:relative;z-index:2;background:linear-gradient(145deg,rgba(33,35,41,.92),rgba(13,17,24,.96))!important;border:1px solid #d8af6670!important;box-shadow:0 35px 100px #000d,0 0 55px #c8953620!important;backdrop-filter:blur(22px);border-radius:24px!important}
+#login.kc-pfp-lamp-ready .loginCard:before{content:"";position:absolute;inset:6px;border:1px solid #dabb7433;border-radius:19px;pointer-events:none}
+#login.kc-pfp-lamp-ready .loginCard h1{font-family:Georgia,serif;font-size:clamp(30px,7vw,44px)!important;letter-spacing:.12em;text-align:center;text-shadow:0 2px 24px #e4b96444}
+#login.kc-pfp-lamp-ready .loginCard h2{font-family:Georgia,serif;letter-spacing:.05em;text-align:center}
+#login.kc-pfp-lamp-ready .loginCard input{background:#f7f2e9!important;border:1px solid #d2b679!important}
+#login.kc-pfp-lamp-ready .loginCard button{background:linear-gradient(120deg,#c69b56,#f4d79b,#b8873d)!important;box-shadow:0 4px 18px #b68a3b2b;transition:filter .2s,transform .2s}
+#login.kc-pfp-lamp-ready .loginCard button:active{transform:scale(.98)}
+#login .kc-pfp-lamp-hint{top:231px;color:#d2b994;text-shadow:0 1px 6px black}
+#login.kc-pfp-lamp-on .kc-pfp-lamp-hint{opacity:0}
+@media(max-width:500px){#login.kc-pfp-lamp-ready{padding:260px 15px 28px!important}#login.kc-pfp-lamp-ready .loginCard{padding:24px 18px!important}}
+</style><style id="kc-pfp-extra">#login.kc-pfp-lamp-ready .loginWrap{position:relative;z-index:2;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(12px);transition:opacity .5s,transform .5s,visibility .5s}#login.kc-pfp-lamp-ready.kc-pfp-lamp-on .loginWrap{opacity:1;visibility:visible;pointer-events:auto;transform:none}#login.kc-pfp-lamp-ready .loginBrand h1{color:#f1ca7c;text-shadow:0 3px 25px #e4b96460}#login.kc-pfp-lamp-ready .loginBrand{text-align:center}#login.kc-pfp-lamp-ready .loginCard{color:#f4ead8}#login.kc-pfp-lamp-ready .loginCard>p{color:#d8c9ab}#login.kc-pfp-lamp-ready .loginOptions{color:#e5d8c0}#login.kc-pfp-lamp-ready .loginOptions button{background:transparent!important;color:#edc77a!important;box-shadow:none!important}#login.kc-pfp-lamp-ready .loginCard .msg{color:#f4c47f}#login.kc-pfp-lamp-ready .loginCard .signIn{color:#23180e}#login.kc-pfp-lamp-ready .kc-pfp-lamp-stage{z-index:10}#login.kc-pfp-lamp-ready{align-items:flex-start!important}#login.kc-pfp-lamp-ready .loginWrap{margin:auto}#login.kc-pfp-lamp-ready.kc-pfp-lamp-on .kc-pfp-lamp-hint{opacity:0}</style>
 <style id="kc-lamp-drag-fix">
 #login.kc-lamp-login{background:#040405!important}
 #login.kc-lamp-login:not(.lamp-off){background:radial-gradient(ellipse at 28% 45%,#392719 0%,#120f13 54%,#050506 100%)!important}
@@ -829,8 +824,19 @@
 #login.kc-lamp-login .kc-lamp-scene{touch-action:pan-y}
 </style></head>
 <body>
-<div id="login" class="login kc-lamp-login lamp-off">
-<div class="kc-lamp-scene" aria-label="Decorative floor lamp"><div class="kc-lamp-glow"></div><div class="kc-lamp-shade"></div><div class="kc-lamp-rim"></div><div class="kc-lamp-pole"></div><div class="kc-lamp-base"></div><div class="kc-lamp-cord"></div><button type="button" class="kc-lamp-toggle" aria-label="Toggle lamp light" onclick="document.getElementById('login').classList.toggle('lamp-off')" title="Turn lamp on or off">●</button></div>
+<div id="login" class="login">
+<div class="kc-pfp-lamp-stage" id="kcPfpLampStage"><svg viewBox="0 0 420 250" role="img" aria-label="Interactive pendant lamp and pull cord">
+<defs><linearGradient id="kcPfpShade" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#353638"/><stop offset=".6" stop-color="#141517"/><stop offset="1" stop-color="#08090b"/></linearGradient><radialGradient id="kcPfpGlow"><stop stop-color="#ffe2a3" stop-opacity=".85"/><stop offset="1" stop-color="#ffc66c" stop-opacity="0"/></radialGradient><linearGradient id="kcPfpBeam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffd990" stop-opacity=".42"/><stop offset="1" stop-color="#f3b84e" stop-opacity="0"/></linearGradient></defs>
+<path d="M210 0V62" stroke="#454343" stroke-width="5"/>
+<ellipse class="kc-pfp-light" cx="210" cy="139" rx="148" ry="116" fill="url(#kcPfpGlow)"/>
+<path class="kc-pfp-light" d="M146 114L28 250H392L274 114Z" fill="url(#kcPfpBeam)"/>
+<path d="M183 60Q179 79 155 103L141 120Q210 137 279 120L265 103Q241 79 237 60Z" fill="url(#kcPfpShade)" stroke="#55504b" stroke-width="1.5"/>
+<ellipse cx="210" cy="120" rx="69" ry="12" fill="#0e0e10" stroke="#777065" stroke-width="2"/>
+<ellipse class="kc-pfp-light" cx="210" cy="121" rx="62" ry="7.5" fill="#ffe1a2"/>
+<path id="kcPfpLampCord" d="M277 120Q277 149 277 189" fill="none" stroke="#c5b8a3" stroke-width="2.5" stroke-linecap="round"/>
+<g id="kcPfpLampHandle" transform="translate(277 189)"><rect x="-5" y="-1" width="10" height="23" rx="5" fill="#c1ad8b" stroke="#7f6e55"/><ellipse cy="19" rx="4.5" ry="2" fill="#75634c"/></g>
+<path id="kcPfpLampHit" class="kc-pfp-lamp-hit" d="M277 130L277 219" stroke="transparent" stroke-width="40" fill="none"/>
+</svg><div class="kc-pfp-lamp-hint">↓ Pull the cord to turn on</div></div>
  <div class="loginWrap">
   <div class="loginBrand"><div style="font-size:35px">✦</div><h1>KCWHC</h1><p>Inventory Command Center</p></div>
   <div class="loginCard" id="loginCard">
@@ -3614,18 +3620,18 @@ function openMore(){let body=`<button class="listRow" style="width:100%;text-ali
  mark('home');
 })();
 </script>
-<script id="kc-lamp-real-cord">
+<script id="kc-pfp-lamp-login-script">
 (function(){
-const login=document.getElementById('login'),btn=login?.querySelector('.kc-lamp-toggle'),cord=login?.querySelector('.kc-lamp-cord');
-if(!login||!btn||!cord)return;
-btn.removeAttribute('onclick');login.classList.add('lamp-off');
-let down=false,startX=0,startY=0,x=0,y=0,vx=0,vy=0,raf=0,ptr=null;
-function render(){cord.style.transform='rotate('+(-8+x*.25)+'deg)';cord.style.height=(80+y*.65)+'px';btn.style.transform='translate('+x+'px,'+y+'px) rotate('+x*.13+'deg)';}
-function bounce(){vx=(vx-x*.07)*.81;vy=(vy-y*.11)*.78;x+=vx;y+=vy;render();if(Math.abs(x)+Math.abs(y)+Math.abs(vx)+Math.abs(vy)>.3)raf=requestAnimationFrame(bounce);else{x=y=vx=vy=0;render();raf=0;}}
-function start(e){if(e.button!==undefined&&e.button!==0)return;e.preventDefault();cancelAnimationFrame(raf);down=true;ptr=e.pointerId;startX=e.clientX;startY=e.clientY;btn.setPointerCapture?.(ptr)}
-function move(e){if(!down||ptr!==e.pointerId)return;e.preventDefault();x=Math.max(-55,Math.min(55,e.clientX-startX));y=Math.max(-20,Math.min(100,e.clientY-startY));render()}
-function end(e){if(!down||ptr!==e.pointerId)return;down=false;ptr=null;if(y>32)login.classList.toggle('lamp-off');vx=0;vy=0;raf=requestAnimationFrame(bounce)}
-btn.addEventListener('pointerdown',start);btn.addEventListener('pointermove',move);btn.addEventListener('pointerup',end);btn.addEventListener('pointercancel',end);
-btn.setAttribute('aria-label','Pull lamp cord to turn light on or off');btn.title='Drag downward to pull cord';render();
-})();</script>
+const gate=document.getElementById('login'),stage=document.getElementById('kcPfpLampStage');if(!gate||!stage)return;
+const svg=stage.querySelector('svg'),cord=document.getElementById('kcPfpLampCord'),hit=document.getElementById('kcPfpLampHit'),handle=document.getElementById('kcPfpLampHandle');
+let dx=0,dy=0,vx=0,vy=0,drag=false,pid=null,raf=0,start=null;
+function draw(){let x=277+dx,y=189+dy;cord.setAttribute('d','M277 120 Q'+(277+dx*.20)+' '+(152+dy*.17)+' '+x+' '+y);hit.setAttribute('d','M277 130 Q'+(277+dx*.20)+' '+(152+dy*.17)+' '+x+' '+(y+24));handle.setAttribute('transform','translate('+x+' '+y+') rotate('+Math.max(-28,Math.min(28,-dx*.35))+')')}
+function settle(){vx=(vx-dx*.047)*.87;vy=(vy-dy*.075)*.79;dx+=vx;dy+=vy;draw();if(Math.abs(dx)+Math.abs(dy)+Math.abs(vx)+Math.abs(vy)>.25)raf=requestAnimationFrame(settle);else{dx=dy=vx=vy=0;draw()}}
+function down(e){if(e.button!==undefined&&e.button!==0)return;if(e.target!==handle&&!handle.contains(e.target)&&e.target!==hit)return;e.preventDefault();cancelAnimationFrame(raf);pid=e.pointerId;drag=true;start={x:e.clientX,y:e.clientY,dx,dy};try{stage.setPointerCapture(pid)}catch(_){}}
+function move(e){if(!drag||e.pointerId!==pid)return;e.preventDefault();const bounds=svg.getBoundingClientRect(),scale=420/Math.max(bounds.width,1);dx=Math.max(-85,Math.min(85,start.dx+(e.clientX-start.x)*scale));dy=Math.max(-15,Math.min(110,start.dy+(e.clientY-start.y)*scale));draw()}
+function up(e){if(!drag||e.pointerId!==pid)return;e.preventDefault();drag=false;pid=null;if(dy>24){gate.classList.toggle('kc-pfp-lamp-on');const hint=stage.querySelector('.kc-pfp-lamp-hint');if(hint)hint.textContent=gate.classList.contains('kc-pfp-lamp-on')?'Pull again to turn off':'↓ Pull the cord to turn on'}vx=vy=0;raf=requestAnimationFrame(settle)}
+stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('lostpointercapture',e=>{if(drag)up(e)});
+gate.classList.add('kc-pfp-lamp-ready');draw();
+})();
+</script>
 </body></html>
