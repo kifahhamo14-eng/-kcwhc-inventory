@@ -829,7 +829,7 @@
 #login.kc-lamp-login .kc-lamp-scene{touch-action:pan-y}
 </style></head>
 <body>
-<div id="login" class="login kc-lamp-login">
+<div id="login" class="login kc-lamp-login lamp-off">
 <div class="kc-lamp-scene" aria-label="Decorative floor lamp"><div class="kc-lamp-glow"></div><div class="kc-lamp-shade"></div><div class="kc-lamp-rim"></div><div class="kc-lamp-pole"></div><div class="kc-lamp-base"></div><div class="kc-lamp-cord"></div><button type="button" class="kc-lamp-toggle" aria-label="Toggle lamp light" onclick="document.getElementById('login').classList.toggle('lamp-off')" title="Turn lamp on or off">●</button></div>
  <div class="loginWrap">
   <div class="loginBrand"><div style="font-size:35px">✦</div><h1>KCWHC</h1><p>Inventory Command Center</p></div>
@@ -2110,7 +2110,8 @@ function move(e){if(!down||ptr!==e.pointerId)return;e.preventDefault();x=Math.ma
 function end(e){if(!down||ptr!==e.pointerId)return;down=false;ptr=null;if(y>32)login.classList.toggle('lamp-off');vx=0;vy=0;raf=requestAnimationFrame(bounce)}
 btn.addEventListener('pointerdown',start);btn.addEventListener('pointermove',move);btn.addEventListener('pointerup',end);btn.addEventListener('pointercancel',end);
 btn.setAttribute('aria-label','Pull lamp cord to turn light on or off');btn.title='Drag downward to pull cord';render();
-})();</script></body></html>`);
+})();</script>
+</body></html>`);
   win.document.close();
 }
 const kcLabelSelection=new Map();
