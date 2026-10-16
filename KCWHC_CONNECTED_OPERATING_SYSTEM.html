@@ -1475,7 +1475,7 @@ async function saveNewPassword(){
   $('loginMsg').textContent='Password updated. Sign in with your new password.';
 }
 async function loadProfile(uid){const {data,error}=await sb.from('profiles').select('id,full_name,email,role,approval_status,photo_url,phone,department,job_title,manager_id,hire_date,employment_status,permissions,last_login_at,last_activity_at,preferred_call_name,assistant_voice_name').eq('id',uid).single();if(error||!data){$('loginMsg').textContent='Your account profile could not be loaded.';return false}profile=data;return true}
-async function enterApp(){if(profile.employment_status!=='active'){try{await sb.auth.signOut({scope:'local'})}catch(_e){}showLoginCard();$('loginMsg').textContent=profile.employment_status==='terminated'?'This account has been terminated.':'This account is suspended.';return}if(profile.role!=='admin'&&profile.approval_status!=='approved'){showPendingApproval();return}$('login').classList.add('hidden');$('app').classList.remove('hidden');$('roleName').textContent=profile.role==='admin'?'Admin':'Employee';$('avatar').textContent=(profile.full_name||profile.role||'U')[0].toUpperCase();const isAdmin=profile.role==='admin';$('adminTiles').classList.toggle('hidden',!isAdmin);$('addTopBtn').classList.toggle('hidden',!(isAdmin||canDo('can_add_products')));$('editHeaderBtn').classList.toggle('hidden',!(isAdmin||canDo('can_edit_products')));await Promise.all([loadProducts(),loadAnnouncements(),loadTodos()]);if(isAdmin)await loadAdminSummary();try{await sb.rpc('log_user_login',{p_device:(navigator.userAgent||'').slice(0,300)})}catch(_e){}setupRealtime();initSessionSecurity();renderAll();repairLegacyImagesToStorage()}
+async function enterApp(){if(profile.employment_status!=='active'){try{await sb.auth.signOut({scope:'local'})}catch(_e){}showLoginCard();$('loginMsg').textContent=profile.employment_status==='terminated'?'This account has been terminated.':'This account is suspended.';return}if(profile.role!=='admin'&&profile.approval_status!=='approved'){showPendingApproval();return}$('login').classList.add('hidden');$('app').classList.remove('hidden');if(typeof window.kcShowLuxuryWelcome==='function')window.kcShowLuxuryWelcome();$('roleName').textContent=profile.role==='admin'?'Admin':'Employee';$('avatar').textContent=(profile.full_name||profile.role||'U')[0].toUpperCase();const isAdmin=profile.role==='admin';$('adminTiles').classList.toggle('hidden',!isAdmin);$('addTopBtn').classList.toggle('hidden',!(isAdmin||canDo('can_add_products')));$('editHeaderBtn').classList.toggle('hidden',!(isAdmin||canDo('can_edit_products')));await Promise.all([loadProducts(),loadAnnouncements(),loadTodos()]);if(isAdmin)await loadAdminSummary();try{await sb.rpc('log_user_login',{p_device:(navigator.userAgent||'').slice(0,300)})}catch(_e){}setupRealtime();initSessionSecurity();renderAll();repairLegacyImagesToStorage()}
 async function signOut(){stopScanner();realtime.forEach(c=>sb.removeChannel(c));realtime=[];await sb.auth.signOut();location.reload()}
 async function loadProducts(){const {data,error}=await sb.from('products').select('*').order('created_at',{ascending:true});if(error){toast(error.message);return}products=data||[]}
 async function loadAnnouncements(){const {data}=await sb.from('announcements').select('*').order('created_at',{ascending:false});announcements=data||[]}
@@ -2048,7 +2048,54 @@ function printKCWHCLabelSheet(items){
       <button onclick="window.print()">Print ${items.length} Label${items.length===1?'':'s'}</button>
       <div class="summary">2 across × 8 down • 16 labels per sheet • 0.9 cm top gap • Scale: 100%</div>
     </div>
-  </body></html>`);
+  
+<!-- KCWHC LUXURY LOGIN WELCOME -->
+<style id="kc-luxury-welcome-styles">
+#kcLuxuryWelcome{position:fixed;inset:0;z-index:2147482000;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 50% 12%,#28241c,#0d1110 72%);color:#efe2c3;font-family:Georgia,'Times New Roman',serif;transition:opacity .65s ease,visibility .65s ease}
+#kcLuxuryWelcome.kc-exit{opacity:0;visibility:hidden;pointer-events:none}
+#kcLuxuryWelcome .kc-welcome-scene{position:relative;width:min(100%,760px);min-height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;isolation:isolate}
+#kcLuxuryWelcome .kc-light-pool{position:absolute;inset:-20% -45%;z-index:-1;background:radial-gradient(ellipse at 50% 20%,rgba(255,207,122,.28),rgba(177,125,58,.09) 39%,transparent 66%);opacity:0;transition:opacity 1.2s ease}
+#kcLuxuryWelcome.kc-lit .kc-light-pool{opacity:1}
+#kcLuxuryWelcome .kc-lamp{position:absolute;top:0;left:50%;transform:translateX(-50%);border:0;background:transparent;color:#d9b97a;width:150px;height:160px;cursor:pointer;display:grid;place-items:start center;padding:0}
+#kcLuxuryWelcome .kc-lamp-wire{width:2px;height:68px;background:linear-gradient(#70634d,#cbaa6e);position:absolute;top:0;left:50%}
+#kcLuxuryWelcome .kc-lamp-shade{position:absolute;top:65px;left:28px;width:94px;height:54px;background:linear-gradient(110deg,#6c5434,#c9a46a 48%,#493925);clip-path:polygon(37% 0,63% 0,100% 100%,0 100%);box-shadow:0 8px 30px #0009}
+#kcLuxuryWelcome .kc-lamp-bulb{position:absolute;top:118px;left:65px;width:20px;height:14px;border-radius:0 0 14px 14px;background:#55472d;transition:background .6s,box-shadow .6s}
+#kcLuxuryWelcome.kc-lit .kc-lamp-bulb{background:#fff3c2;box-shadow:0 0 25px 13px #e5b65d88}
+#kcLuxuryWelcome .kc-welcome-content{margin-top:120px;opacity:.22;transform:translateY(8px);transition:opacity 1s,transform 1s}
+#kcLuxuryWelcome.kc-lit .kc-welcome-content{opacity:1;transform:none}
+#kcLuxuryWelcome .kc-welcome-star{font-size:24px;color:#d8b67d;letter-spacing:15px}
+#kcLuxuryWelcome h2{font-size:clamp(40px,9vw,78px);letter-spacing:.16em;margin:18px 0 8px;color:#f6e6bc;font-weight:400;text-shadow:0 0 35px #e4ba763d}
+#kcLuxuryWelcome .kc-welcome-rule{width:190px;height:1px;background:linear-gradient(90deg,transparent,#d5aa6c,transparent);margin:18px auto}
+#kcLuxuryWelcome .kc-welcome-sub{font:12px Arial,sans-serif;text-transform:uppercase;letter-spacing:.27em;color:#dfcaa5}
+#kcLuxuryWelcome .kc-welcome-hello{font:18px Arial,sans-serif;color:#eee0cb;margin:36px 0 24px;letter-spacing:.02em}
+#kcLuxuryWelcome .kc-enter{border:1px solid #ad8a54;border-radius:3px;background:#c8a46c;color:#181b17;padding:15px 32px;font:600 12px Arial,sans-serif;letter-spacing:.16em;cursor:pointer;text-transform:uppercase}
+#kcLuxuryWelcome .kc-enter:focus-visible,#kcLuxuryWelcome .kc-lamp:focus-visible{outline:2px solid #fff2d4;outline-offset:5px}
+#kcLuxuryWelcome .kc-welcome-hint{position:absolute;bottom:22px;font:11px Arial,sans-serif;color:#bda77f;letter-spacing:.08em}
+@media(max-width:550px){#kcLuxuryWelcome .kc-welcome-scene{min-height:100dvh;padding:65px 15px}#kcLuxuryWelcome h2{letter-spacing:.09em}}
+@media(prefers-reduced-motion:reduce){#kcLuxuryWelcome,#kcLuxuryWelcome *{transition:none!important}}
+</style>
+<script id="kc-luxury-welcome-script">
+(function(){
+let lastOverlay=null;
+window.kcShowLuxuryWelcome=function(){
+  const old=document.getElementById('kcLuxuryWelcome');if(old)old.remove();
+  const screen=document.createElement('section');
+  screen.id='kcLuxuryWelcome';screen.setAttribute('role','dialog');screen.setAttribute('aria-modal','true');screen.setAttribute('aria-label','Welcome to KCWHC');
+  screen.innerHTML='<div class="kc-welcome-scene"><div class="kc-light-pool"></div><button type="button" class="kc-lamp" aria-label="Turn on the welcome lamp"><span class="kc-lamp-wire"></span><span class="kc-lamp-shade"></span><span class="kc-lamp-bulb"></span></button><div class="kc-welcome-content"><div class="kc-welcome-star">✦</div><h2>KCWHC</h2><div class="kc-welcome-rule"></div><p class="kc-welcome-sub">Kalandia Cooperative · Established 1958</p><p class="kc-welcome-hello" id="kcLuxuryHello">Welcome back</p><button type="button" class="kc-enter">Enter Dashboard →</button></div><span class="kc-welcome-hint">Touch the lamp to illuminate your entrance</span></div>';
+  document.body.appendChild(screen);lastOverlay=screen;
+  const name=typeof profile!=='undefined'&&profile&&profile.full_name?profile.full_name.trim():'';
+  const hello=screen.querySelector('#kcLuxuryHello');hello.textContent=name?'Welcome back, '+name:'Welcome back';
+  const lamp=screen.querySelector('.kc-lamp');lamp.addEventListener('click',()=>{screen.classList.add('kc-lit');screen.querySelector('.kc-welcome-hint').textContent='Welcome to your command center';});
+  const close=()=>{screen.classList.add('kc-exit');window.setTimeout(()=>{if(screen.isConnected)screen.remove();if(lastOverlay===screen)lastOverlay=null},680)};
+  screen.querySelector('.kc-enter').addEventListener('click',close);
+  screen.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+  lamp.focus();
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)screen.classList.add('kc-lit');
+  else window.setTimeout(()=>{if(screen.isConnected)screen.classList.add('kc-lit')},400);
+};
+})();
+</script>
+</body></html>`);
   win.document.close();
 }
 const kcLabelSelection=new Map();
