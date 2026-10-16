@@ -825,16 +825,38 @@
 </style></head>
 <body>
 <div id="login" class="login">
-<div class="kc-pfp-lamp-stage" id="kcPfpLampStage"><svg viewBox="0 0 420 250" role="img" aria-label="Interactive pendant lamp and pull cord">
-<defs><linearGradient id="kcPfpShade" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#353638"/><stop offset=".6" stop-color="#141517"/><stop offset="1" stop-color="#08090b"/></linearGradient><radialGradient id="kcPfpGlow"><stop stop-color="#ffe2a3" stop-opacity=".85"/><stop offset="1" stop-color="#ffc66c" stop-opacity="0"/></radialGradient><linearGradient id="kcPfpBeam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffd990" stop-opacity=".42"/><stop offset="1" stop-color="#f3b84e" stop-opacity="0"/></linearGradient></defs>
-<path d="M210 0V62" stroke="#454343" stroke-width="5"/>
-<ellipse class="kc-pfp-light" cx="210" cy="139" rx="148" ry="116" fill="url(#kcPfpGlow)"/>
-<path class="kc-pfp-light" d="M146 114L28 250H392L274 114Z" fill="url(#kcPfpBeam)"/>
-<path d="M183 60Q179 79 155 103L141 120Q210 137 279 120L265 103Q241 79 237 60Z" fill="url(#kcPfpShade)" stroke="#55504b" stroke-width="1.5"/>
-<ellipse cx="210" cy="120" rx="69" ry="12" fill="#0e0e10" stroke="#777065" stroke-width="2"/>
-<ellipse class="kc-pfp-light" cx="210" cy="121" rx="62" ry="7.5" fill="#ffe1a2"/>
-<path id="kcPfpLampCord" d="M277 120Q277 149 277 189" fill="none" stroke="#c5b8a3" stroke-width="2.5" stroke-linecap="round"/>
-<g id="kcPfpLampHandle" transform="translate(277 189)"><rect x="-5" y="-1" width="10" height="23" rx="5" fill="#c1ad8b" stroke="#7f6e55"/><ellipse cy="19" rx="4.5" ry="2" fill="#75634c"/></g>
+<div class="kc-pfp-lamp-stage" id="kcPfpLampStage"><svg viewBox="0 0 420 250" role="img" aria-label="Ornate brass pendant lamp with a draggable gold tassel pull cord">
+<defs>
+ <linearGradient id="kcPfpBrass" x1="0" y1="0" x2="1" y2=".5"><stop stop-color="#523014"/><stop offset=".20" stop-color="#e5ad58"/><stop offset=".48" stop-color="#9a5d27"/><stop offset=".72" stop-color="#f8ce79"/><stop offset="1" stop-color="#5c3216"/></linearGradient>
+ <radialGradient id="kcPfpGlow"><stop stop-color="#ffd68a" stop-opacity=".72"/><stop offset="1" stop-color="#e1a04d" stop-opacity="0"/></radialGradient>
+ <linearGradient id="kcPfpBeam" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffd990" stop-opacity=".41"/><stop offset="1" stop-color="#ffbd60" stop-opacity="0"/></linearGradient>
+ <linearGradient id="kcPfpDome" x1="0" y1="0" x2="1" y2=".65"><stop stop-color="#35200f"/><stop offset=".28" stop-color="#91602c"/><stop offset=".58" stop-color="#35220f"/><stop offset=".85" stop-color="#ac712f"/><stop offset="1" stop-color="#281708"/></linearGradient>
+ <pattern id="kcPfpFiligree" width="25" height="22" patternUnits="userSpaceOnUse"><path d="M12 1C3 2 3 9 12 11C21 9 21 2 12 1ZM12 11C2 13 2 19 12 21C22 19 22 13 12 11Z" fill="none" stroke="#edb55d" stroke-width="1.8"/><path d="M0 11Q12 1 25 11M0 11Q12 21 25 11" fill="none" stroke="#c99142" stroke-width="1.2"/><circle cx="12" cy="11" r="2.1" fill="#e9aa48"/></pattern>
+</defs>
+<path d="M210 -10V51" stroke="url(#kcPfpBrass)" stroke-width="4"/>
+<ellipse class="kc-pfp-light" cx="210" cy="138" rx="136" ry="107" fill="url(#kcPfpGlow)"/>
+<path class="kc-pfp-light" d="M153 113L42 250H378L267 113Z" fill="url(#kcPfpBeam)"/>
+<g stroke="#6c411e" stroke-width=".8">
+<path d="M206 49V39h8v10M200 50Q210 42 220 50L222 56H198Z" fill="url(#kcPfpBrass)"/>
+<path d="M202 39Q210 31 218 39L217 43H203ZM207 30V22H213V30ZM205 24Q210 15 215 24" fill="url(#kcPfpBrass)"/>
+<path d="M194 54Q210 50 226 54L228 60Q210 66 192 60Z" fill="url(#kcPfpBrass)"/>
+<path d="M201 62Q210 67 219 62L224 70H196Z" fill="url(#kcPfpBrass)"/>
+</g>
+<path d="M198 67Q155 70 136 94Q125 106 119 117Q210 129 301 117Q295 106 284 94Q265 70 222 67Z" fill="url(#kcPfpDome)" stroke="#d5a159" stroke-width="2"/>
+<path d="M198 67Q155 70 136 94Q125 106 119 117Q210 129 301 117Q295 106 284 94Q265 70 222 67Z" fill="url(#kcPfpFiligree)" opacity=".92"/>
+<path d="M133 103Q210 113 287 103M126 112Q210 124 294 112" fill="none" stroke="#e6b363" stroke-width="1.6"/>
+<path d="M119 117Q210 132 301 117L303 123Q210 140 117 123Z" fill="url(#kcPfpBrass)" stroke="#e7b26b" stroke-width="1.5"/>
+<ellipse cx="210" cy="123" rx="90" ry="10" fill="#3b2410" stroke="#d1a162" stroke-width="2"/>
+<ellipse class="kc-pfp-light" cx="210" cy="125" rx="83" ry="7" fill="#ffd794"/>
+<ellipse cx="210" cy="126" rx="88" ry="3.5" fill="none" stroke="#edc475" stroke-width="1" opacity=".8"/>
+<path id="kcPfpLampCord" d="M277 120Q277 149 277 189" fill="none" stroke="#e4b768" stroke-width="2.2" stroke-linecap="round"/>
+<g id="kcPfpLampHandle" transform="translate(277 189)">
+ <circle cy="0" r="5.3" fill="url(#kcPfpBrass)" stroke="#f5d08b" stroke-width="1"/>
+ <path d="M-4 5Q0 1 4 5L6 13L-6 13Z" fill="url(#kcPfpBrass)" stroke="#f2c77b" stroke-width=".8"/>
+ <ellipse cy="13" rx="7" ry="2.5" fill="#e8b666"/>
+ <path d="M-6 14L-5.5 30M-4 14L-4 33M-2 14L-2 34M0 14V35M2 14L2 34M4 14L4 33M6 14L5.5 30" stroke="#f1c575" stroke-width="1.1" stroke-linecap="round"/>
+ <path d="M-6 15Q0 17 6 15" fill="none" stroke="#d59a43"/>
+</g>
 <path id="kcPfpLampHit" class="kc-pfp-lamp-hit" d="M277 130L277 219" stroke="transparent" stroke-width="40" fill="none"/>
 </svg><div class="kc-pfp-lamp-hint">↓ Pull the cord to turn on</div></div>
  <div class="loginWrap">
