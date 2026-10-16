@@ -779,9 +779,47 @@
 @media(max-width:360px){.bottomnav.kc-floating-nav{width:calc(100% - 14px);padding:7px 6px;gap:1px}.kc-floating-nav .navb{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.kc-floating-nav .navb,.kc-floating-nav .navb span{transition:none!important}}
 </style>
+<style>
+/* KCWHC lamp login — scoped to login only, preserves existing authentication */
+#login.kc-lamp-login{position:relative;isolation:isolate;overflow:auto;min-height:100vh;min-height:100dvh;display:flex;justify-content:center;align-items:center;padding:50px 26px;background:radial-gradient(ellipse at 24% 41%,#291a13 0%,#130f15 48%,#0b0a10 100%);transition:background .8s ease}
+#login.kc-lamp-login:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 28% 56%,rgba(209,112,38,.17),transparent 57%);opacity:1;transition:opacity .65s}
+#login.kc-lamp-login.lamp-off:before{opacity:0}
+#login.kc-lamp-login .kc-lamp-scene{position:relative;width:min(390px,38vw);height:540px;flex:0 1 390px;align-self:center;pointer-events:none;filter:drop-shadow(0 20px 20px rgba(0,0,0,.3))}
+#login.kc-lamp-login .kc-lamp-glow{position:absolute;top:88px;left:50%;transform:translateX(-50%);width:580px;height:550px;pointer-events:none;background:conic-gradient(from 160deg at 50% 0%,transparent 0deg,rgba(247,152,59,.15) 32deg,rgba(236,136,43,.04) 70deg,transparent 110deg,transparent 250deg,rgba(236,136,43,.04) 290deg,rgba(247,152,59,.15) 328deg,transparent 360deg);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);opacity:1;transition:opacity .65s}
+#login.kc-lamp-login.lamp-off .kc-lamp-glow{opacity:0}
+#login.kc-lamp-login .kc-lamp-shade{position:absolute;top:70px;left:50%;transform:translateX(-50%);width:130px;height:100px;background:linear-gradient(110deg,#bc824e,#ffe1a4 44%,#c88a50);clip-path:polygon(32% 0,68% 0,82% 8%,100% 98%,0 98%,18% 8%);border-radius:32px 32px 8px 8px;box-shadow:0 0 35px #f8b86b70;transition:background .55s,filter .55s}
+#login.kc-lamp-login.lamp-off .kc-lamp-shade{background:linear-gradient(110deg,#151318,#282328 45%,#111014);filter:brightness(.68)}
+#login.kc-lamp-login .kc-lamp-rim{position:absolute;top:162px;left:50%;transform:translateX(-50%);width:132px;height:12px;border-radius:50%;background:#aa7240;box-shadow:0 6px 18px #efad5ba0}
+#login.kc-lamp-login.lamp-off .kc-lamp-rim{background:#252125;box-shadow:none}
+#login.kc-lamp-login .kc-lamp-pole{position:absolute;top:172px;bottom:40px;left:calc(50% - 3px);width:6px;background:linear-gradient(90deg,#5f4d3c,#d4a36a,#594532)}
+#login.kc-lamp-login .kc-lamp-base{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:120px;height:15px;border-radius:50%;background:linear-gradient(#927150,#292426 55%,#151219);box-shadow:0 10px 22px #0008}
+#login.kc-lamp-login .kc-lamp-cord{position:absolute;top:173px;left:calc(50% + 37px);width:1px;height:80px;background:#b99b78;transform:rotate(-8deg);transform-origin:top}
+#login.kc-lamp-login .kc-lamp-toggle{position:absolute;top:246px;left:calc(50% + 30px);width:32px;height:32px;border:1px solid #c5a279;border-radius:50%;background:#30251dcc;color:#eac799;cursor:pointer;pointer-events:auto;font-size:16px;display:grid;place-items:center;transition:transform .2s}
+#login.kc-lamp-login .kc-lamp-toggle:hover{transform:scale(1.1)}
+#login.kc-lamp-login .loginWrap{position:relative;z-index:2;flex:0 1 400px;width:min(400px,100%);margin-left:clamp(0px,4vw,80px)}
+#login.kc-lamp-login .loginBrand{text-align:left;margin-bottom:22px}
+#login.kc-lamp-login .loginBrand h1{font-size:clamp(40px,5vw,66px);color:#e9bb76;text-shadow:0 2px 24px #ffc3722b}
+#login.kc-lamp-login .loginBrand p{font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#c9b8a6}
+#login.kc-lamp-login .loginCard{background:linear-gradient(135deg,rgba(35,30,32,.97),rgba(17,16,22,.98));border:1px solid rgba(244,180,105,.16);border-radius:14px;color:#f7eadb;box-shadow:0 25px 70px #0008;padding:26px}
+#login.kc-lamp-login .loginCard h2{text-align:left;font-family:Georgia,serif;font-size:27px;font-weight:500;color:#fff1dc}
+#login.kc-lamp-login .loginCard>p{text-align:left;color:#bba99b;font-size:12px}
+#login.kc-lamp-login .loginCard input:not([type=checkbox]){background:#1a191e;border:1px solid #5e4940;color:#f8eddf;border-radius:7px;padding:13px}
+#login.kc-lamp-login .loginCard input::placeholder{color:#a79791}
+#login.kc-lamp-login .loginOptions{color:#dbcab9}
+#login.kc-lamp-login .loginOptions button{color:#edbd86!important}
+#login.kc-lamp-login .signIn{background:linear-gradient(90deg,#ffd29b,#d98a38);color:#291709;border-radius:7px;box-shadow:0 4px 14px #c9782a25}
+#login.kc-lamp-login .roleChoose .selected{background:#c9904e;color:#20160f}
+#login.kc-lamp-login .roleChoose .not{background:#3a3332;color:#f0dfcd}
+#login.kc-lamp-login .msg{color:#ffb19c}
+#login.kc-lamp-login.lamp-off{background:#0b0a10}
+#login.kc-lamp-login.lamp-off .loginCard{box-shadow:0 25px 65px #0009}
+@media(max-width:690px){#login.kc-lamp-login{flex-direction:column;padding:28px 17px 50px;justify-content:flex-start}#login.kc-lamp-login .kc-lamp-scene{height:235px;width:100%;flex:0 0 235px;transform:scale(.64);transform-origin:50% 0;margin-bottom:-65px}#login.kc-lamp-login .kc-lamp-glow{height:320px}#login.kc-lamp-login .kc-lamp-pole{bottom:-130px}#login.kc-lamp-login .kc-lamp-base{bottom:-140px}#login.kc-lamp-login .loginWrap{flex:0 0 auto;margin-left:0;width:min(400px,100%)}#login.kc-lamp-login .loginBrand{text-align:center;margin-bottom:13px}#login.kc-lamp-login .loginBrand h1{font-size:44px}#login.kc-lamp-login .loginCard{padding:19px}#login.kc-lamp-login .kc-lamp-scene{pointer-events:none}}
+@media(prefers-reduced-motion:reduce){#login.kc-lamp-login *,#login.kc-lamp-login:before{transition:none!important}}
+</style>
 </head>
 <body>
-<div id="login" class="login">
+<div id="login" class="login kc-lamp-login">
+<div class="kc-lamp-scene" aria-label="Decorative floor lamp"><div class="kc-lamp-glow"></div><div class="kc-lamp-shade"></div><div class="kc-lamp-rim"></div><div class="kc-lamp-pole"></div><div class="kc-lamp-base"></div><div class="kc-lamp-cord"></div><button type="button" class="kc-lamp-toggle" aria-label="Toggle lamp light" onclick="document.getElementById('login').classList.toggle('lamp-off')" title="Turn lamp on or off">●</button></div>
  <div class="loginWrap">
   <div class="loginBrand"><div style="font-size:35px">✦</div><h1>KCWHC</h1><p>Inventory Command Center</p></div>
   <div class="loginCard" id="loginCard">
