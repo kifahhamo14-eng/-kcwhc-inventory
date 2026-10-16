@@ -816,7 +816,18 @@
 @media(max-width:690px){#login.kc-lamp-login{flex-direction:column;padding:28px 17px 50px;justify-content:flex-start}#login.kc-lamp-login .kc-lamp-scene{height:235px;width:100%;flex:0 0 235px;transform:scale(.64);transform-origin:50% 0;margin-bottom:-65px}#login.kc-lamp-login .kc-lamp-glow{height:320px}#login.kc-lamp-login .kc-lamp-pole{bottom:-130px}#login.kc-lamp-login .kc-lamp-base{bottom:-140px}#login.kc-lamp-login .loginWrap{flex:0 0 auto;margin-left:0;width:min(400px,100%)}#login.kc-lamp-login .loginBrand{text-align:center;margin-bottom:13px}#login.kc-lamp-login .loginBrand h1{font-size:44px}#login.kc-lamp-login .loginCard{padding:19px}#login.kc-lamp-login .kc-lamp-scene{pointer-events:none}}
 @media(prefers-reduced-motion:reduce){#login.kc-lamp-login *,#login.kc-lamp-login:before{transition:none!important}}
 </style>
-</head>
+<style id="kc-lamp-drag-fix">
+#login.kc-lamp-login{background:#040405!important}
+#login.kc-lamp-login:not(.lamp-off){background:radial-gradient(ellipse at 28% 45%,#392719 0%,#120f13 54%,#050506 100%)!important}
+#login.kc-lamp-login.lamp-off .loginWrap{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(10px)}
+#login.kc-lamp-login .loginWrap{transition:opacity .55s ease,transform .55s ease,visibility .55s}
+#login.kc-lamp-login .kc-lamp-cord{transform-origin:top center;will-change:transform,height}
+#login.kc-lamp-login .kc-lamp-toggle{touch-action:none;user-select:none;cursor:grab;z-index:6}
+#login.kc-lamp-login .kc-lamp-toggle:active{cursor:grabbing}
+#login.kc-lamp-login.lamp-off .kc-lamp-shade{box-shadow:none}
+#login.kc-lamp-login.lamp-off .kc-lamp-glow{opacity:0}
+#login.kc-lamp-login .kc-lamp-scene{touch-action:pan-y}
+</style></head>
 <body>
 <div id="login" class="login kc-lamp-login">
 <div class="kc-lamp-scene" aria-label="Decorative floor lamp"><div class="kc-lamp-glow"></div><div class="kc-lamp-shade"></div><div class="kc-lamp-rim"></div><div class="kc-lamp-pole"></div><div class="kc-lamp-base"></div><div class="kc-lamp-cord"></div><button type="button" class="kc-lamp-toggle" aria-label="Toggle lamp light" onclick="document.getElementById('login').classList.toggle('lamp-off')" title="Turn lamp on or off">●</button></div>
@@ -2086,7 +2097,20 @@ function printKCWHCLabelSheet(items){
       <button onclick="window.print()">Print ${items.length} Label${items.length===1?'':'s'}</button>
       <div class="summary">2 across × 8 down • 16 labels per sheet • 0.9 cm top gap • Scale: 100%</div>
     </div>
-  </body></html>`);
+  <script id="kc-lamp-real-cord">
+(function(){
+const login=document.getElementById('login'),btn=login?.querySelector('.kc-lamp-toggle'),cord=login?.querySelector('.kc-lamp-cord');
+if(!login||!btn||!cord)return;
+btn.removeAttribute('onclick');login.classList.add('lamp-off');
+let down=false,startX=0,startY=0,x=0,y=0,vx=0,vy=0,raf=0,ptr=null;
+function render(){cord.style.transform='rotate('+(-8+x*.25)+'deg)';cord.style.height=(80+y*.65)+'px';btn.style.transform='translate('+x+'px,'+y+'px) rotate('+x*.13+'deg)';}
+function bounce(){vx=(vx-x*.07)*.81;vy=(vy-y*.11)*.78;x+=vx;y+=vy;render();if(Math.abs(x)+Math.abs(y)+Math.abs(vx)+Math.abs(vy)>.3)raf=requestAnimationFrame(bounce);else{x=y=vx=vy=0;render();raf=0;}}
+function start(e){if(e.button!==undefined&&e.button!==0)return;e.preventDefault();cancelAnimationFrame(raf);down=true;ptr=e.pointerId;startX=e.clientX;startY=e.clientY;btn.setPointerCapture?.(ptr)}
+function move(e){if(!down||ptr!==e.pointerId)return;e.preventDefault();x=Math.max(-55,Math.min(55,e.clientX-startX));y=Math.max(-20,Math.min(100,e.clientY-startY));render()}
+function end(e){if(!down||ptr!==e.pointerId)return;down=false;ptr=null;if(y>32)login.classList.toggle('lamp-off');vx=0;vy=0;raf=requestAnimationFrame(bounce)}
+btn.addEventListener('pointerdown',start);btn.addEventListener('pointermove',move);btn.addEventListener('pointerup',end);btn.addEventListener('pointercancel',end);
+btn.setAttribute('aria-label','Pull lamp cord to turn light on or off');btn.title='Drag downward to pull cord';render();
+})();</script></body></html>`);
   win.document.close();
 }
 const kcLabelSelection=new Map();
