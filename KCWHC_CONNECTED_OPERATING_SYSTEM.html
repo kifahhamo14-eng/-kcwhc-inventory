@@ -762,6 +762,23 @@
 .kcr-wrap{color:#153d32}.kcr-hero{background:linear-gradient(125deg,#07533d,#043b2d);color:#fff;border:1px solid #d5ad52;border-radius:18px;padding:17px;margin-bottom:12px}.kcr-hero h3{color:#ffdf91;margin:5px 0;font-size:22px}.kcr-hero p{color:#d8e9e1;font-size:12px;margin:0}.kcr-grid,.kcr-scenarios{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.kcr-card,.kcr-section{background:#fff;border:1px solid #e1d7bb;border-radius:16px;padding:13px;margin:0 0 11px;box-shadow:0 3px 12px #163b2910;min-width:0}.kcr-card{background:#fbfaf5}.kcr-card small{color:#737d76;font-size:10px;font-weight:800}.kcr-card strong{display:block;font-size:clamp(18px,4vw,25px);color:#07563e;margin:6px 0;overflow-wrap:anywhere}.kcr-card p{font-size:10px;color:#758078;margin:0}.kcr-mini{display:flex;gap:3px;align-items:end;height:28px;margin-top:8px}.kcr-mini i{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(#e6c56f,#11684e)}.kcr-section{margin-top:13px}.kcr-heading{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:11px}.kcr-heading b{color:#0c4838;font-size:14px}.kcr-heading small{font-size:10px;color:#687971}.kcr-product{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid #ece8df;min-width:0;cursor:pointer}.kcr-photo{width:52px;height:56px;flex:none;background:#f2f1e8;border-radius:10px;overflow:hidden;display:grid;place-items:center}.kcr-photo img{height:100%;width:100%;object-fit:cover}.kcr-productText{flex:1;min-width:0}.kcr-productText b{display:block;font-size:11px;overflow-wrap:anywhere;color:#1b332b}.kcr-productText small{display:block;font-size:10px;color:#758078}.kcr-product>strong{font-size:12px;white-space:nowrap;color:#07543c}.kcr-barRow{margin:10px 0}.kcr-barRow div{display:flex;justify-content:space-between;gap:9px;font-size:11px}.kcr-track{height:9px;background:#eeebe2;border-radius:12px;overflow:hidden;margin-top:6px}.kcr-fill{height:100%;background:linear-gradient(90deg,#0a674d,#e4bf60)}.kcr-chart{display:flex;height:135px;gap:4px;align-items:end}.kcr-column{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;font-size:8px;color:#7b817c}.kcr-column i{width:82%;background:linear-gradient(#e6c36b,#0c694c);border-radius:4px 4px 0 0}.kcr-scenarios div,.kcr-insight{background:#f2f6f1;padding:12px;border-radius:11px;margin:5px 0}.kcr-scenarios strong{display:block;color:#0a593f}.kcr-note{color:#768079;font-size:11px;line-height:1.45}
 @media(max-width:380px){.kcr-card{padding:9px}.kcr-photo{width:45px;height:50px}}
 </style>
+<style id="kc-floating-nav-upgrade">
+/* KCWHC floating dock — isolated navigation-only upgrade */
+.bottomnav.kc-floating-nav{position:fixed;left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(620px,calc(100% - 28px));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;gap:5px;box-sizing:border-box;padding:9px 11px;min-height:74px;border:1px solid rgba(234,198,106,.5);border-radius:26px;background:rgba(3,60,47,.94);box-shadow:0 15px 42px rgba(0,40,29,.25),inset 0 1px rgba(255,255,255,.14);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:40}
+.kc-floating-nav .navb{position:relative;min-width:0;min-height:57px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;border-radius:18px;background:transparent;color:#e9eee8;font-size:10px;font-weight:700;cursor:pointer;transition:background .28s ease,color .28s ease,transform .3s cubic-bezier(.2,.8,.25,1)}
+.kc-floating-nav .navb span{font-size:24px;line-height:1;display:grid;place-items:center;width:38px;height:33px;transition:transform .35s cubic-bezier(.2,.85,.2,1),filter .3s ease}
+.kc-floating-nav .navb small{font:inherit;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kc-floating-nav .navb.active{color:#f9df91;background:linear-gradient(155deg,rgba(247,213,122,.23),rgba(247,213,122,.07));box-shadow:inset 0 0 0 1px rgba(249,222,144,.23)}
+.kc-floating-nav .navb.active span{transform:translateY(-5px) scale(1.16);filter:drop-shadow(0 4px 8px rgba(253,221,124,.55))}
+.kc-floating-nav .navb.active:after{content:"";position:absolute;bottom:3px;width:19px;height:3px;border-radius:5px;background:#f7d783;box-shadow:0 0 10px rgba(247,215,131,.8)}
+.kc-floating-nav .navb.scan span{margin:0;width:38px;height:33px;border:0;border-radius:0;background:none}
+.kc-floating-nav .navb:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.kc-floating-nav .navb:focus-visible{outline:2px solid #f7d783;outline-offset:2px}
+#app{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+@media(min-width:820px){.bottomnav.kc-floating-nav{bottom:22px;width:min(640px,calc(100% - 64px));padding:12px 15px;min-height:82px}.kc-floating-nav .navb{font-size:12px;min-height:61px}.kc-floating-nav .navb span{font-size:26px}}
+@media(max-width:360px){.bottomnav.kc-floating-nav{width:calc(100% - 14px);padding:7px 6px;gap:1px}.kc-floating-nav .navb{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.kc-floating-nav .navb,.kc-floating-nav .navb span{transition:none!important}}
+</style>
 </head>
 <body>
 <div id="login" class="login">
@@ -875,7 +892,13 @@
   </section>
 </div>
 
- <nav class="bottomnav"><button class="navb active" data-go="home" onclick="go('home')"><span>⌂</span>Home</button><button class="navb" onclick="focusSearch()"><span>⌕</span>Inventory</button><button class="navb scan" onclick="openScannerScreen()"><span>▥</span>Scan</button><button class="navb" onclick="go('sell')"><span>🛒</span>Sell</button><button class="navb" onclick="openMore()"><span>☰</span>More</button></nav>
+ <nav class="bottomnav kc-floating-nav" aria-label="KCWHC primary navigation">
+<button type="button" class="navb active" data-go="home" onclick="go('home')" aria-label="Home"><span aria-hidden="true">⌂</span><small>Home</small></button>
+<button type="button" class="navb" data-go="inventory" onclick="focusSearch()" aria-label="Inventory"><span aria-hidden="true">⌕</span><small>Inventory</small></button>
+<button type="button" class="navb scan" data-go="scan" onclick="openScannerScreen()" aria-label="Scan barcode"><span aria-hidden="true">▥</span><small>Scan</small></button>
+<button type="button" class="navb" data-go="sell" onclick="go('sell')" aria-label="Sell"><span aria-hidden="true">🛒</span><small>Sell</small></button>
+<button type="button" class="navb" data-go="more" onclick="openMore()" aria-label="More sections"><span aria-hidden="true">☰</span><small>More</small></button>
+</nav>
 </div>
 <div id="modal" class="modalShade" onclick="if(event.target===this)closeModal()"><div class="sheet"><div class="sheetHead"><b id="modalTitle">Menu</b><button class="close" onclick="closeModal()">✕</button></div><div id="modalBody"></div></div></div>
 <div id="toast" class="toast"></div>
@@ -3528,6 +3551,17 @@ function openMore(){let body=`<button class="listRow" style="width:100%;text-ali
       showResetPassword();
     }
   });
+})();
+</script>
+<script id="kc-floating-nav-state">
+(function(){
+ const nav=document.querySelector('.kc-floating-nav');if(!nav)return;
+ let inventorySelected=false;
+ const mark=(key)=>{nav.querySelectorAll('.navb').forEach(button=>{const active=button.dataset.go===key;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current')})};
+ nav.addEventListener('click',function(e){const btn=e.target.closest('.navb');if(!btn)return;const key=btn.dataset.go;inventorySelected=key==='inventory';mark(key);if(key==='inventory')setTimeout(()=>mark('inventory'),0)});
+ const observer=new MutationObserver(()=>{const current=document.querySelector('.screen.active')?.id;if(!current)return;if(current==='home'&&inventorySelected){mark('inventory')}else if(current==='home'||current==='sell'||current==='scan'){inventorySelected=false;mark(current)}else{inventorySelected=false;mark('')}});
+ observer.observe(document.getElementById('app'),{subtree:true,attributes:true,attributeFilter:['class']});
+ mark('home');
 })();
 </script>
 </body></html>
