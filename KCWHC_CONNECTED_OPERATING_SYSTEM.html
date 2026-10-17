@@ -3361,7 +3361,7 @@ function renderManagedBoxes(){
  const q=($('manageBoxSearch')?.value||'').trim().toLowerCase();
  const boxes=storageBoxesCache||[],contents=storageBoxContentsCache||[];
  const lines=b=>contents.filter(x=>String(x.box_id)===String(b.id));
- const prod=x=>x.products||products.find(p=>String(p.id)===String(x.product_id))||{};
+ const prod=x=>products.find(p=>String(p.id)===String(x.product_id))||x.products||{};
  const qty=b=>lines(b).reduce((s,x)=>s+(Number(x.expected_quantity)||0),0);
  const low=b=>lines(b).some(x=>{const p=prod(x);return Number(p.reorder_level)>0&&Number(p.quantity)<=Number(p.reorder_level)});
  const active=boxes.filter(b=>String(b.status).toLowerCase()==='active').length;
