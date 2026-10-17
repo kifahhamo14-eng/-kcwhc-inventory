@@ -987,6 +987,24 @@
 #kcLabelSheetModal .kc-lp-actions button:first-child{flex:2;background:#075b46;border-color:#075b46;color:white}
 @media(max-width:550px){#kcLabelSheetModal .kc-lp-panel{padding:14px 14px 0}#kcLabelSheetModal .kc-lp-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}#kcLabelSheetModal .kc-lp-categories{grid-template-columns:repeat(2,minmax(0,1fr))}#kcLabelSheetModal .kc-lp-card{grid-template-columns:30px 100px minmax(0,1fr);gap:8px;padding:8px}#kcLabelSheetModal .kc-lp-img{width:100px;height:120px}#kcLabelSheetModal .kc-lp-name{font-size:13px}#kcLabelSheetModal .kc-lp-footer{margin:0 -14px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}#kcLabelSheetModal .kc-lp-actions button{flex:1}}
 </style>
+<style id="kc-inline-alert-style">
+.bottomnav.kc-floating-nav{grid-template-rows:auto auto!important;row-gap:2px!important}
+#kcInlineAlerts{grid-column:1/-1;min-width:0;display:none;color:#fff;border-bottom:1px solid rgba(238,208,134,.25);padding:5px 4px 9px}
+#kcInlineAlerts.is-active{display:block}
+.kc-alert-top{width:100%;display:flex;align-items:center;gap:8px;background:transparent;color:inherit;border:0;text-align:left;cursor:pointer;padding:0}
+.kc-alert-avatar{height:30px;width:30px;border-radius:50%;background:linear-gradient(145deg,#e4c26f,#b99846);color:#183b2e;display:grid;place-items:center;flex-shrink:0;font-size:14px;font-weight:900;overflow:hidden}
+.kc-alert-avatar img{height:100%;width:100%;object-fit:cover}
+.kc-alert-copy{min-width:0;flex:1;font-size:11px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kc-alert-copy b{display:block;color:#f3d58a;font-size:10px}
+.kc-alert-count{border-radius:12px;background:#d12e32;color:#fff;padding:3px 6px;font-size:10px;font-weight:800}
+.kc-alert-more{display:none;padding:9px 2px 2px;max-height:32vh;overflow:auto}
+#kcInlineAlerts.expanded .kc-alert-more{display:block}
+.kc-alert-entry{padding:9px;border-radius:11px;background:rgba(255,255,255,.09);margin:5px 0;display:flex;align-items:center;gap:8px}
+.kc-alert-entry span{flex:1;min-width:0;font-size:11px;line-height:1.35}
+.kc-alert-entry button{border:1px solid rgba(238,208,134,.65);border-radius:9px;color:#f6de9c;background:transparent;padding:7px;font-weight:800;font-size:10px}
+.kc-alert-hide{border:0;background:none;color:#e6c76b;padding:4px 6px;font-weight:800}
+.bottomnav.kc-floating-nav>.navb{grid-row:2}
+</style>
 </head>
 <body>
 <div id="login" class="login">
@@ -1135,6 +1153,12 @@
 </div>
 
  <nav class="bottomnav kc-floating-nav" aria-label="KCWHC primary navigation">
+<div id="kcInlineAlerts" aria-label="Unread KCWHC notifications">
+ <button type="button" class="kc-alert-top" onclick="kcToggleInlineAlerts()" aria-label="Expand notification messages">
+  <span class="kc-alert-avatar" id="kcAlertAvatar">🔔</span><span class="kc-alert-copy" id="kcAlertHeadline"></span><span class="kc-alert-count" id="kcAlertCount"></span><span aria-hidden="true" id="kcAlertChevron">⌃</span>
+ </button>
+ <div class="kc-alert-more" id="kcAlertList"></div>
+</div>
 <button type="button" class="navb active" data-go="home" onclick="go('home')" aria-label="Home"><span aria-hidden="true">⌂</span><small>Home</small></button>
 <button type="button" class="navb" data-go="inventory" onclick="focusSearch()" aria-label="Inventory"><span aria-hidden="true">⌕</span><small>Inventory</small></button>
 <button type="button" class="navb scan" data-go="scan" onclick="openScannerScreen()" aria-label="Scan barcode"><span aria-hidden="true">▥</span><small>Scan</small></button>
@@ -2306,6 +2330,47 @@ function printKCWHCLabelSheet(items){
       <div class="summary">2 across × 8 down • 16 labels per sheet • 0.9 cm top gap • Scale: 100%</div>
     </div>
   
+<script id="kc-inline-alert-script">
+/* Notification messages live INSIDE the existing green navigation bar.
+   Reading a task or acknowledging an announcement clears its local unread state. */
+(function(){
+ const el=id=>document.getElementById(id);
+ const escText=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const scope=()=>String(window.profile?.id||'user');
+ const key=(kind,id)=>'kc_inline_read_'+scope()+'_'+kind+'_'+id;
+ function items(){
+   const a=typeof announcements!=='undefined'&&Array.isArray(announcements)?announcements:[];
+   const t=typeof todos!=='undefined'&&Array.isArray(todos)?todos:[];
+   const ann=a.filter(x=>!localStorage.getItem(key('ann',x.id))&&!localStorage.getItem(typeof opsAckKey==='function'?opsAckKey(x.id):'kc-no-ack')).map(x=>({kind:'ann',id:x.id,title:x.title||'New bulletin',detail:x.message||'',date:x.created_at||'',user:x.author_name||x.created_by_name||'KCWHC Command',photo:x.author_photo_url||null}));
+   const tasks=t.filter(x=>!x.completed&&!localStorage.getItem(key('task',x.id))).map(x=>({kind:'task',id:x.id,title:x.task||'New task',detail:x.due_date?'Due '+x.due_date:'Task waiting for action',date:x.created_at||'',user:'To-Do',photo:null}));
+   return ann.concat(tasks).sort((x,y)=>String(y.date).localeCompare(String(x.date))).slice(0,40);
+ }
+ window.kcRenderInlineAlerts=function(){
+  const host=el('kcInlineAlerts');if(!host)return;
+  const all=items();host.classList.toggle('is-active',all.length>0);
+  if(!all.length){host.classList.remove('expanded');return}
+  const first=all[0];
+  el('kcAlertHeadline').innerHTML='<b>'+ (first.kind==='ann'?'NEW ANNOUNCEMENT':'TASK REMINDER') +'</b>'+escText(first.title);
+  el('kcAlertCount').textContent=all.length;
+  el('kcAlertAvatar').textContent=first.kind==='ann'?'🔔':'✓';
+  el('kcAlertList').innerHTML=all.map(x=>'<div class="kc-alert-entry"><span><b>'+escText(x.kind==='ann'?'Announcement':'To-Do')+'</b> · '+escText(x.title)+'<small style="display:block;opacity:.8">'+escText(x.detail).slice(0,95)+'</small></span><button type="button" onclick="kcOpenInlineAlert(\''+x.kind+'\',\''+escText(x.id)+'\')">Read</button></div>').join('');
+ };
+ window.kcToggleInlineAlerts=function(){const host=el('kcInlineAlerts');if(!host)return;host.classList.toggle('expanded');el('kcAlertChevron').textContent=host.classList.contains('expanded')?'⌄':'⌃'};
+ window.kcOpenInlineAlert=function(kind,id){
+  localStorage.setItem(key(kind,id),new Date().toISOString());
+  el('kcInlineAlerts')?.classList.remove('expanded');
+  kcRenderInlineAlerts();
+  if(kind==='ann'&&typeof openAnnouncements==='function')openAnnouncements();
+  if(kind==='task'&&typeof openTodos==='function')openTodos();
+ };
+ const oldRender=window.renderCommand;
+ if(typeof oldRender==='function')window.renderCommand=function(){const result=oldRender.apply(this,arguments);kcRenderInlineAlerts();return result};
+ setInterval(()=>{if(!el('kcInlineAlerts'))return;try{kcRenderInlineAlerts()}catch(e){console.warn('KCWHC notifications',e)}},12000);
+ setInterval(async()=>{if(document.visibilityState==='hidden'||!window.sb||!window.profile?.id)return;try{if(typeof loadAnnouncements==='function')await loadAnnouncements();if(typeof loadTodos==='function')await loadTodos();if(typeof renderCommand==='function')renderCommand()}catch(e){console.warn('KCWHC refresh',e)}},60000);
+ window.addEventListener('focus',()=>{try{kcRenderInlineAlerts()}catch(e){}});
+ document.addEventListener('DOMContentLoaded',()=>setTimeout(kcRenderInlineAlerts,1200));
+})();
+</script>
 </body></html>`);
   win.document.close();
 }
