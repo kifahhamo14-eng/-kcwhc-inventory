@@ -882,6 +882,45 @@
 .kcb-unitline{font-size:12px;color:#587266;margin:8px 0}
 @media(max-width:390px){.kcb-location{grid-template-columns:1fr}}
 </style>
+<style id="kcwhc-label-picker-lux-2026">
+#kcLabelSheetModal .kcl-shell{box-sizing:border-box;width:min(850px,100%);max-height:min(94dvh,1000px);display:flex;flex-direction:column;overflow:hidden;background:#fff;color:#17352b;border-radius:24px;box-shadow:0 22px 65px #0005;font-family:Arial,sans-serif}
+#kcLabelSheetModal .kcl-top{padding:19px 19px 12px;flex-shrink:0;background:#fff}
+#kcLabelSheetModal .kcl-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#kcLabelSheetModal h2{font-size:clamp(22px,4vw,30px);margin:0;font-weight:900;color:#103e31}
+#kcLabelSheetModal .kcl-close{border:0;background:#f3eee3;border-radius:50%;width:40px;height:40px;font-size:24px;color:#305a4b;cursor:pointer}
+#kcLabelSheetModal .kcl-desc{font-size:13px;color:#68776e;line-height:1.4;margin:8px 0 14px}
+#kcLabelSheetModal .kcl-search{box-sizing:border-box;width:100%;border:1px solid #d5d9d2;border-radius:14px;padding:13px 15px;font-size:16px;background:#fafbf9;color:#183f30;outline:none}
+#kcLabelSheetModal .kcl-search:focus{border-color:#0b664c;box-shadow:0 0 0 3px #0b664c1c}
+#kcLabelSheetModal .kcl-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+#kcLabelSheetModal .kcl-stat{border-radius:13px;background:linear-gradient(135deg,#fcfaf3,#f4f1e7);border:1px solid #e5d7b8;padding:10px 7px;text-align:center}
+#kcLabelSheetModal .kcl-stat b{display:block;font-size:20px;color:#075b44}#kcLabelSheetModal .kcl-stat small{font-size:10px;color:#69776d;font-weight:700}
+#kcLabelSheetModal .kcl-progress{height:8px;background:#ebecdf;overflow:hidden;border-radius:15px;margin:8px 0 13px}
+#kcLabelSheetModal .kcl-progress i{display:block;background:linear-gradient(90deg,#075b44,#dfbd65);height:100%;transition:width .2s}
+#kcLabelSheetModal .kcl-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#798477;font-weight:900;margin:10px 0 8px}
+#kcLabelSheetModal .kcl-cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:7px;max-height:157px;overflow:auto}
+#kcLabelSheetModal .kcl-chip{min-width:0;border:1px solid #dcca98;border-radius:12px;background:#faf5e6;padding:10px 7px;font-size:12px;font-weight:800;color:#18513f;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+#kcLabelSheetModal .kcl-chip.active{background:#075d46;color:#fff;border-color:#075d46}
+#kcLabelSheetModal .kcl-filters{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+#kcLabelSheetModal .kcl-filters button{border:1px solid #e0d3ad;color:#225644;background:#fffaf0;border-radius:12px;padding:9px 11px;font-size:12px;font-weight:800}
+#kcLabelSheetModal .kcl-filters button.active{color:#fff;background:#075d46;border-color:#075d46}
+#kcLabelSheetModal .kcl-scroll{padding:7px 15px 12px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1;background:#f8f8f4}
+#kcLabelSheetModal .kcl-card{display:grid;grid-template-columns:34px 106px minmax(0,1fr);align-items:center;gap:10px;padding:11px;margin:9px 0;border-radius:15px;background:#fff;border:1px solid #e4e4db;box-shadow:0 3px 14px #062c1b0b}
+#kcLabelSheetModal .kcl-card.selected{border-color:#cda94c;background:#fcfcf7;box-shadow:0 0 0 1px #dfc678,0 5px 18px #06533814}
+#kcLabelSheetModal .kcl-toggle{width:31px;height:31px;border-radius:50%;border:2px solid #c6c7ba;background:#fff;cursor:pointer;font-size:18px;font-weight:900;color:white}
+#kcLabelSheetModal .selected .kcl-toggle{background:#075d46;border-color:#075d46}
+#kcLabelSheetModal .kcl-photo{width:106px;height:118px;object-fit:contain;border:1px solid #f0ede3;border-radius:12px;background:#fbfbfb;cursor:zoom-in}
+#kcLabelSheetModal .kcl-name{font-size:14px;line-height:1.25;font-weight:900;overflow-wrap:anywhere;color:#152f25}
+#kcLabelSheetModal .kcl-meta{font-size:11px;color:#68756a;line-height:1.4;overflow-wrap:anywhere;margin:5px 0}
+#kcLabelSheetModal .kcl-qty{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#kcLabelSheetModal .kcl-qty button{width:30px;height:30px;border:1px solid #d8cda9;background:#f8f4e9;border-radius:9px;font-size:19px;color:#15523e}
+#kcLabelSheetModal .kcl-qty input{width:47px;height:29px;text-align:center;border:1px solid #cdd4cc;border-radius:7px;font-size:14px}
+#kcLabelSheetModal .kcl-bottom{flex-shrink:0;background:white;border-top:1px solid #e7e1d7;padding:11px 16px calc(13px + env(safe-area-inset-bottom,0px))}
+#kcLabelSheetModal .kcl-totals{font-size:12px;color:#315448;font-weight:800;margin-bottom:9px}
+#kcLabelSheetModal .kcl-actions{display:flex;gap:8px}#kcLabelSheetModal .kcl-actions button{border-radius:11px;padding:12px 10px;font-size:13px;font-weight:900;cursor:pointer}
+#kcLabelSheetModal .kcl-print{flex:1;background:#075b46;color:#fff;border:1px solid #075b46}
+#kcLabelSheetModal .kcl-secondary{background:#fff;color:#265943;border:1px solid #c9d3c9}
+@media(max-width:480px){#kcLabelSheetModal .kcl-top{padding:13px 12px 9px}#kcLabelSheetModal .kcl-scroll{padding:4px 9px 9px}#kcLabelSheetModal .kcl-cats{grid-template-columns:repeat(3,minmax(0,1fr));max-height:145px}#kcLabelSheetModal .kcl-card{grid-template-columns:29px 92px minmax(0,1fr);gap:7px;padding:9px}#kcLabelSheetModal .kcl-photo{width:92px;height:116px}#kcLabelSheetModal .kcl-summary{gap:4px}#kcLabelSheetModal .kcl-stat{padding:8px 3px}#kcLabelSheetModal .kcl-stat b{font-size:18px}#kcLabelSheetModal .kcl-stat small{font-size:9px}#kcLabelSheetModal .kcl-name{font-size:12px}}
+</style>
 </head>
 <body>
 <div id="login" class="login">
@@ -2205,35 +2244,76 @@ function kcClearLabelPicks(){kcLabelSelection.clear();document.querySelectorAll(
 function kcOpenLabelSheetPicker(){
  let modal=document.getElementById('kcLabelSheetModal');
  if(!modal){modal=document.createElement('div');modal.id='kcLabelSheetModal';document.body.appendChild(modal)}
- modal.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.72);display:flex;justify-content:center;align-items:center;padding:15px';
- modal.innerHTML=`<div style="width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;color:#172b23;border-radius:17px;padding:18px;font-family:Arial,sans-serif;box-shadow:0 15px 55px #0005">
- <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><h2 style="margin:0;font-size:21px">Print a 16-label sheet</h2><button onclick="kcCloseLabelSheetPicker()" style="font-size:23px;background:none;border:0;cursor:pointer">✕</button></div>
- <p style="font-size:12px">Select products and quantities. Each sheet holds 16 labels (2 across × 8 down). Individual Print Label buttons remain available.</p>
- <input id="kcLabelSearch" oninput="kcRenderLabelPickerList()" placeholder="Search products or barcode..." style="box-sizing:border-box;width:100%;padding:12px;border:1px solid #aaa;border-radius:10px;font-size:15px">
- <div id="kcLabelFilters" style="margin-top:8px"></div><div id="kcLabelList" style="margin:12px 0;max-height:48vh;overflow:auto"></div>
- <div id="kcLabelTotals" style="font-weight:800;font-size:13px;margin:8px 0"></div>
- <div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="kcPrintSelectedLabels()" style="padding:11px 15px;background:#075b46;color:#fff;border:0;border-radius:9px;font-weight:800">Preview & Print Sheets</button><button onclick="kcClearLabelPicks();kcRenderLabelPickerList()" style="padding:11px;border:1px solid #aaa;border-radius:9px;background:#fff">Clear Selection</button><button onclick="kcCloseLabelSheetPicker()" style="padding:11px;border:1px solid #aaa;border-radius:9px;background:#fff">Cancel</button></div></div>`;
- window.kcLabelRecent=JSON.parse(localStorage.getItem('kcLabelRecent')||'[]');window.kcLabelCat='All';window.kcLabelColor='All';window.kcLabelOnlySelected=false;window.kcLabelOnlyRecent=false;kcLabelBuildFilters();
- kcRenderLabelPickerList();
+ modal.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.72);display:flex;justify-content:center;align-items:center;padding:10px';
+ modal.innerHTML=`<div class="kcl-shell">
+ <div class="kcl-top"><div class="kcl-head"><h2>Print a 16-label sheet</h2><button class="kcl-close" onclick="kcCloseLabelSheetPicker()" aria-label="Close">×</button></div>
+ <p class="kcl-desc">Choose products and copies. Product photos help you find items, but are not printed on barcode labels.</p>
+ <input class="kcl-search" id="kcLabelSearch" oninput="kcRenderLabelPickerList()" placeholder="Search products or barcode…">
+ <div class="kcl-summary" id="kcLabelSummary"></div>
+ <div class="kcl-progress"><i id="kcLabelProgress"></i></div>
+ <div class="kcl-title">Product Categories</div><div id="kcLabelFilters"></div>
+ </div><div class="kcl-scroll" id="kcLabelList"></div>
+ <div class="kcl-bottom"><div id="kcLabelTotals" class="kcl-totals"></div>
+ <div class="kcl-actions"><button class="kcl-print" onclick="kcPrintSelectedLabels()">Preview & Print Sheets</button><button class="kcl-secondary" onclick="kcClearLabelPicks();kcRenderLabelPickerList()">Clear</button><button class="kcl-secondary" onclick="kcCloseLabelSheetPicker()">Close</button></div></div></div>`;
+ try{window.kcLabelRecent=JSON.parse(localStorage.getItem('kcLabelRecent')||'[]')}catch(e){window.kcLabelRecent=[]}
+ window.kcLabelCat='All';window.kcLabelOnlySelected=false;window.kcLabelOnlyRecent=false;
+ kcLabelBuildFilters();kcRenderLabelPickerList();
 }
 function kcCloseLabelSheetPicker(){const el=document.getElementById('kcLabelSheetModal');if(el)el.style.display='none';}
 function kcLabelZoom(src){const overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;background:#061e19ed;z-index:1000001;display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out';const pic=document.createElement('img');pic.src=src;pic.style.cssText='max-width:95vw;max-height:85vh;object-fit:contain;background:white;border-radius:12px';overlay.appendChild(pic);overlay.onclick=()=>overlay.remove();document.body.appendChild(overlay)}
-function kcLabelFilter(type,v){if(type==='cat')window.kcLabelCat=v;if(type==='color')window.kcLabelColor=v;if(type==='selected'){window.kcLabelOnlySelected=!window.kcLabelOnlySelected;window.kcLabelOnlyRecent=false}if(type==='recent'){window.kcLabelOnlyRecent=!window.kcLabelOnlyRecent;window.kcLabelOnlySelected=false}kcLabelBuildFilters();kcRenderLabelPickerList()}
-function kcLabelAllFiltered(){const q=(document.getElementById('kcLabelSearch')?.value||'').toLowerCase();for(const p of products){if(window.kcLabelCat!=='All'&&String(p.category||'Uncategorized')!==window.kcLabelCat)continue;if(window.kcLabelColor!=='All'&&!String(p.color||'').toLowerCase().includes(window.kcLabelColor.toLowerCase()))continue;if(![p.name,p.barcode,p.storage_number,p.color].some(v=>String(v||'').toLowerCase().includes(q)))continue;kcLabelSelection.set(String(p.id),kcLabelSelection.get(String(p.id))||1)}kcLabelBuildFilters();kcRenderLabelPickerList()}
-function kcLabelBuildFilters(){const root=document.getElementById('kcLabelFilters');if(!root)return;const cats=['All',...new Set(products.map(p=>String(p.category||'Uncategorized')))];const colors=['All',...new Set(products.flatMap(p=>String(p.color||'').split(/[,/&+]/).map(v=>v.trim())).filter(Boolean))].slice(0,60);const bar=(arr,type,active)=>'<div class="kc-chipbar">'+arr.map(v=>'<button type="button" class="kc-chip '+(v===active?'kc-on':'')+'" data-kind="'+type+'" data-value="'+esc(v)+'">'+esc(v==='All'?(type==='cat'?'All Categories':'All Colors'):v)+'</button>').join('')+'</div>';root.innerHTML=bar(cats,'cat',window.kcLabelCat)+bar(colors,'color',window.kcLabelColor)+'<div class="kc-chipbar"><button class="kc-chip" data-kind="selected">✓ Selected ('+kcLabelSelection.size+')</button><button class="kc-chip" data-kind="recent">Recently Printed</button><button class="kc-chip" data-kind="all">Select All Filtered</button></div>';root.onclick=e=>{const b=e.target.closest('button[data-kind]');if(!b)return;if(b.dataset.kind==='all')kcLabelAllFiltered();else kcLabelFilter(b.dataset.kind,b.dataset.value)}}
+function kcLabelCategoryName(v){
+ const x=String(v||'').trim();if(!x)return 'Uncategorized';
+ const lower=x.toLowerCase().replace(/\s+/g,' ');
+ if(lower==='shawl'||lower==='shawls')return 'Shawls';
+ if(lower==='thobe'||lower==='thobes'||lower==='thob')return 'Thobe';
+ return x.charAt(0).toUpperCase()+x.slice(1);
+}
+function kcLabelFilter(type,v){
+ if(type==='cat')window.kcLabelCat=v;
+ if(type==='selected'){window.kcLabelOnlySelected=!window.kcLabelOnlySelected;window.kcLabelOnlyRecent=false}
+ if(type==='recent'){window.kcLabelOnlyRecent=!window.kcLabelOnlyRecent;window.kcLabelOnlySelected=false}
+ kcLabelBuildFilters();kcRenderLabelPickerList()
+}
+function kcLabelAllFiltered(){
+ const q=(document.getElementById('kcLabelSearch')?.value||'').toLowerCase();
+ for(const p of products){
+ if(window.kcLabelCat!=='All'&&kcLabelCategoryName(p.category)!==window.kcLabelCat)continue;
+ if(![p.name,p.barcode,p.storage_number,p.color,p.category].some(v=>String(v||'').toLowerCase().includes(q)))continue;
+ kcLabelSelection.set(String(p.id),kcLabelSelection.get(String(p.id))||1)
+ }
+ kcLabelBuildFilters();kcRenderLabelPickerList()
+}
+function kcLabelBuildFilters(){
+ const root=document.getElementById('kcLabelFilters');if(!root)return;
+ const cats=['All',...new Set(products.map(p=>kcLabelCategoryName(p.category)))].filter(Boolean);
+ const icons={'All':'📦','Shawls':'🧣','Thobe':'👗','Bags':'👜','Wall Hangers':'🧵','Wallets':'👛'};
+ root.innerHTML='<div class="kcl-cats">'+cats.map(v=>'<button type="button" class="kcl-chip '+(v===window.kcLabelCat?'active':'')+'" data-kind="cat" data-value="'+esc(v)+'">'+(icons[v]||'🏷️')+' '+esc(v==='All'?'All Products':v)+'</button>').join('')+'</div>'+
+ '<div class="kcl-filters"><button data-kind="selected" class="'+(window.kcLabelOnlySelected?'active':'')+'">✓ Selected ('+kcLabelSelection.size+')</button><button data-kind="recent" class="'+(window.kcLabelOnlyRecent?'active':'')+'">Recently Printed</button><button data-kind="all">Select All Filtered</button></div>';
+ root.onclick=e=>{const b=e.target.closest('button[data-kind]');if(!b)return;if(b.dataset.kind==='all')kcLabelAllFiltered();else kcLabelFilter(b.dataset.kind,b.dataset.value)}
+}
 function kcRenderLabelPickerList(){
  const root=document.getElementById('kcLabelList');if(!root)return;
  const q=(document.getElementById('kcLabelSearch')?.value||'').toLowerCase();
- const matches=products.filter(p=>(!window.kcLabelCat||window.kcLabelCat==='All'||String(p.category||'Uncategorized')===window.kcLabelCat)&&(!window.kcLabelOnlySelected||kcLabelSelection.has(String(p.id)))&&(!window.kcLabelOnlyRecent||(window.kcLabelRecent||[]).includes(String(p.id)))&&(!window.kcLabelColor||window.kcLabelColor==='All'||String(p.color||'').toLowerCase().includes(window.kcLabelColor.toLowerCase()))&&[p.name,p.barcode,p.storage_number,p.color,p.category].some(v=>String(v||'').toLowerCase().includes(q)));
- root.innerHTML=matches.map(p=>{const id=String(p.id);const checked=kcLabelSelection.has(id);const count=kcLabelSelection.get(id)||1;
- const photo=productImage(p);
- return `<div class="kc-label-row" style="display:flex;align-items:center;gap:9px;padding:9px 3px;border-bottom:1px solid #ddd"><input aria-label="Select ${esc(p.name)}" type="checkbox" ${checked?'checked':''} onchange="kcToggleLabelPick('${id}',this.checked);kcRenderLabelPickerList()" style="height:20px;width:20px;flex-shrink:0">${photo?`<img onclick="kcLabelZoom(this.src)" title="Tap to enlarge product" src="${esc(photo)}" alt="" loading="lazy" class="kc-label-photo" style="width:124px;height:148px;object-fit:contain;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;flex-shrink:0">`:'<div aria-hidden="true" style="width:124px;height:148px;flex-shrink:0;background:#f5f5f5;border:1px solid #ddd;border-radius:6px"></div>'}<div class="kc-label-details" style="flex:1;min-width:0"><div style="font-weight:750;font-size:13px">${esc(p.name||'Unnamed')}</div><div style="font-size:11px;color:#555">${esc(p.color||'')} • ${esc(p.barcode||'No barcode')}</div></div><label class="kc-label-qty" style="font-size:11px">Copies <input type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)" style="width:57px;padding:6px;border:1px solid #aaa;border-radius:6px"></label></div>`;
- }).join('')||'<p>No matching products.</p>';
+ const matches=products.filter(p=>(!window.kcLabelCat||window.kcLabelCat==='All'||kcLabelCategoryName(p.category)===window.kcLabelCat)&&(!window.kcLabelOnlySelected||kcLabelSelection.has(String(p.id)))&&(!window.kcLabelOnlyRecent||(window.kcLabelRecent||[]).includes(String(p.id)))&&[p.name,p.barcode,p.storage_number,p.color,p.category].some(v=>String(v||'').toLowerCase().includes(q)));
+ root.innerHTML=matches.map(p=>{
+ const id=String(p.id),checked=kcLabelSelection.has(id),count=kcLabelSelection.get(id)||1,photo=productImage(p);
+ return `<div class="kcl-card ${checked?'selected':''}">
+ <button type="button" class="kcl-toggle" aria-label="Select ${esc(p.name||'product')}" onclick="kcToggleLabelPick('${id}',${!checked});kcRenderLabelPickerList()">${checked?'✓':''}</button>
+ ${photo?`<img class="kcl-photo" onclick="kcLabelZoom(this.src)" title="Enlarge photo" src="${esc(photo)}" alt="" loading="lazy">`:'<div class="kcl-photo"></div>'}
+ <div><div class="kcl-name">${esc(p.name||'Unnamed')}</div>
+ <div class="kcl-meta">${esc(p.color||'No color')} · ${esc(p.barcode||'No barcode')}</div>
+ <div class="kcl-qty"><button type="button" ${checked?'':'disabled'} onclick="kcSetLabelQty('${id}',Math.max(1,(${count})-1))">−</button>
+ <input aria-label="Copies" type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)">
+ <button type="button" ${checked?'':'disabled'} onclick="kcSetLabelQty('${id}',Math.min(500,(${count})+1))">+</button></div></div></div>`;
+ }).join('')||'<div style="padding:25px;text-align:center;color:#66776c">No matching products.</div>';
  let total=0;for(const v of kcLabelSelection.values())total+=v;
- const sheets=Math.ceil(total/16),spare=(sheets*16-total);
- document.getElementById('kcLabelTotals').textContent=`${kcLabelSelection.size} products · ${total} labels · ${sheets} sheet(s) · ${spare} unused label positions on final sheet`;
+ const sheets=Math.ceil(total/16),spare=sheets*16-total;
+ document.getElementById('kcLabelTotals').textContent=`${kcLabelSelection.size} products · ${total} labels · ${sheets} sheet(s) · ${spare} unused on final sheet`;
+ const summary=document.getElementById('kcLabelSummary');
+ if(summary)summary.innerHTML=[['Products',kcLabelSelection.size],['Labels',total],['Sheets',sheets],['Spaces Left',spare]].map(x=>'<div class="kcl-stat"><b>'+x[1]+'</b><small>'+x[0]+'</small></div>').join('');
+ const bar=document.getElementById('kcLabelProgress');if(bar)bar.style.width=(total?(total%16||16)/16*100:0)+'%';
  kcUpdateLabelPickStatus();
- const sel=document.querySelector('#kcLabelFilters [data-kind="selected"]');if(sel)sel.textContent='✓ Selected ('+kcLabelSelection.size+')';
+ const selected=document.querySelector('#kcLabelFilters [data-kind="selected"]');if(selected)selected.textContent='✓ Selected ('+kcLabelSelection.size+')';
 }
 function kcSetLabelQty(id,val){
  const n=Number(val);
