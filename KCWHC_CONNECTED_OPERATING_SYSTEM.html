@@ -860,6 +860,28 @@
 .kcb-empty{padding:22px;text-align:center;background:white;border-radius:15px;color:#69716a}
 #manageBoxSearch{font-size:16px;min-height:45px}
 </style>
+<style id="kcwhc-box-cards-2026">
+#managedBoxes .boxCard{padding:16px;margin:12px 0;border-radius:17px;border:1px solid #dfd2b9;background:#fff;box-shadow:0 5px 18px rgba(0,63,48,.07)}
+#managedBoxes .boxCode{font-size:18px;line-height:1.3;color:#075840;font-weight:950}
+#managedBoxes .boxMeta{font-size:12px;line-height:1.5;color:#56655e}
+#managedBoxes .boxActions{gap:7px;margin-top:12px}
+#managedBoxes .boxActions button{font-size:12px;padding:11px 8px;min-height:42px;border-radius:10px;flex:1}
+.kcb-location{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:13px 0}
+.kcb-location>div{padding:11px;background:#f9f6ed;border-radius:11px;border:1px solid #eee2c9;min-width:0}
+.kcb-location small{display:block;font-weight:800;font-size:11px;color:#577066;margin-bottom:5px}
+.kcb-location b{display:block;font-size:14px;overflow-wrap:anywhere;color:#173c30}
+.kcb-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+.kcb-stat{background:white;border:1px solid #e9dec7;border-radius:12px;padding:11px}
+.kcb-stat strong{font-size:23px;color:#075840;display:block}.kcb-stat small{font-size:11px;color:#64736a}
+.kcb-filterbar{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.kcb-filterbar button{font-size:12px;padding:8px 12px;background:#fff;border:1px solid #d6c8ae;border-radius:22px;color:#075840;font-weight:800}
+.kcb-filterbar button.active{background:#075840;color:white}
+.kcb-preview{display:flex;align-items:center;gap:6px;margin-top:10px}
+.kcb-preview img{width:47px;height:47px;object-fit:cover;border-radius:9px;border:1px solid #e4dfd3}
+.kcb-roomtitle{font-size:15px;color:#075840;font-weight:900;margin:16px 0 8px}
+.kcb-unitline{font-size:12px;color:#587266;margin:8px 0}
+@media(max-width:390px){.kcb-location{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div id="login" class="login">
@@ -3344,56 +3366,50 @@ function setBoxView(v){kcBoxView=v;renderManagedBoxes()}
 
 let kcBoxFilter='all';
 function kcSetBoxFilter(v){kcBoxFilter=v;renderManagedBoxes()}
+
+let kcBoxView='all';
+function kcSetBoxView(v){kcBoxView=v;renderManagedBoxes()}
 async function openBoxManagement(){
- if(profile?.role!=='admin'){openScanBoxLookup();return}
- try{await loadStorageBoxes()}catch(e){toast(e.message);return}
- kcBoxFilter='all';
- $('modalTitle').textContent='Box Management';
- $('modalBody').innerHTML='<div class="stockCenterHero"><h3>Box Management</h3><p>Find boxes quickly, preview their products, and organize your storage rooms.</p></div>'
- +'<button class="saveBtn" onclick="openCreateBox()">＋ Create New Box</button>'
- +'<div class="kcb-summary" id="kcbSummary"></div>'
- +'<div class="field" style="margin-top:12px"><label>Search Boxes</label><input id="manageBoxSearch" placeholder="Search box, barcode, room, product…" oninput="renderManagedBoxes()"></div>'
- +'<div class="kcb-tools" id="kcbFilters"></div><div id="managedBoxes"></div>';
- renderManagedBoxes();
+  if(profile?.role!=='admin'){openScanBoxLookup();return}
+  try{await loadStorageBoxes()}catch(e){toast(e.message);return}
+  kcBoxView='all';
+  $('modalTitle').textContent='Box Management';
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>Box Management</h3><p>Find storage boxes and their assigned products quickly.</p></div>
+  <button class="saveBtn" onclick="openCreateBox()">＋ Create New Box</button>
+  <div class="kcb-stats" id="kcbStats"></div>
+  <div class="field"><label>Search Boxes</label><input id="manageBoxSearch" placeholder="Box, barcode, storage room, product…" oninput="renderManagedBoxes()"></div>
+  <div id="kcbFilterbar" class="kcb-filterbar"></div><div id="managedBoxes"></div>`;
+  renderManagedBoxes();
 }
 function renderManagedBoxes(){
- const el=$('managedBoxes');if(!el)return;
- const q=($('manageBoxSearch')?.value||'').trim().toLowerCase();
- const boxes=storageBoxesCache||[],contents=storageBoxContentsCache||[];
- const lines=b=>contents.filter(x=>String(x.box_id)===String(b.id));
- const prod=x=>products.find(p=>String(p.id)===String(x.product_id))||x.products||{};
- const qty=b=>lines(b).reduce((s,x)=>s+(Number(x.expected_quantity)||0),0);
- const low=b=>lines(b).some(x=>{const p=prod(x);return Number(p.reorder_level)>0&&Number(p.quantity)<=Number(p.reorder_level)});
- const active=boxes.filter(b=>String(b.status).toLowerCase()==='active').length;
- const units=boxes.reduce((s,b)=>s+qty(b),0);
- const sum=$('kcbSummary');
- if(sum)sum.innerHTML=[['Total Boxes',boxes.length],['Active Boxes',active],['Stored Units',units],['Low Stock Boxes',boxes.filter(low).length]].map(x=>'<div class="kcb-metric"><b>'+x[1]+'</b><small>'+x[0]+'</small></div>').join('');
- const roomOf=b=>String(b.storage_room||'Unassigned').trim()||'Unassigned';
- const rooms=[...new Set(boxes.map(roomOf))].sort((a,b)=>a.localeCompare(b));
- const options=[['all','All Boxes'],['rooms','Room Map'],['low','Low Stock'],['empty','Empty']].concat(rooms.map(r=>['room:'+r,r]));
- const tabs=$('kcbFilters');
- if(tabs)tabs.innerHTML=options.map(([v,label])=>'<button type="button" class="'+(kcBoxFilter===v?'active':'')+'" onclick="kcSetBoxFilter(decodeURIComponent(\''+encodeURIComponent(v)+'\'))">'+esc(label)+'</button>').join('');
- const rows=boxes.filter(b=>{
-  const hay=[b.box_code,b.box_name,b.storage_room,b.barcode,...lines(b).flatMap(x=>{const p=prod(x);return [p.name,p.storage_number,p.color]})].filter(Boolean).join(' ').toLowerCase();
-  return (!q||hay.includes(q))&&(kcBoxFilter==='all'||kcBoxFilter==='rooms'||kcBoxFilter==='low'&&low(b)||kcBoxFilter==='empty'&&qty(b)===0||kcBoxFilter==='room:'+roomOf(b));
- });
- const renderCard=b=>{
-  const list=lines(b),photos=list.map(x=>productImage(prod(x))).filter(Boolean).slice(0,3);
-  const value=list.reduce((s,x)=>s+(Number(prod(x).selling_price)||0)*(Number(x.expected_quantity)||0),0);
-  const img=photos.map(src=>'<img loading="lazy" alt="Product preview" src="'+esc(src)+'">').join('')||'<div class="kcb-fallback">▣</div>';
-  const more=list.length>3?'<span class="boxMeta">+'+(list.length-3)+' more</span>':'';
-  const loc=esc(roomOf(b))+(b.box_name?' · '+esc(b.box_name):'');
-  return '<div class="boxCard"><div class="boxHead"><div><div class="boxCode">'+esc(b.box_code||'Unnamed Box')+'</div>'
-   +'<div class="boxMeta">📍 '+loc+'<br>Barcode: '+esc(b.barcode||'—')+'</div></div>'
-   +'<span class="kcb-badge">'+esc(b.status||'active')+'</span></div>'
-   +'<div class="kcb-previews">'+img+more+'</div>'
-   +'<div class="kcb-countline">'+list.length+' product types · '+qty(b)+' units'+(low(b)?' · ⚠ Low stock':'')+'</div>'
-   +'<div class="boxActions"><button class="primary" onclick="openBoxDetails(\''+b.id+'\')">Open Box</button>'
-   +'<button onclick="editBoxContents(\''+b.id+'\')">Assign</button><button onclick="printBoxLabel(\''+b.id+'\')">Print Label</button></div></div>';
- };
- if(kcBoxFilter==='rooms'){
-  el.innerHTML=rooms.map(room=>{const group=rows.filter(b=>roomOf(b)===room);return group.length?'<div class="kcb-room">▦ '+esc(room)+' · '+group.length+' boxes</div>'+group.map(renderCard).join(''):''}).join('')||'<div class="kcb-empty">No boxes match your search.</div>';
- }else el.innerHTML=rows.map(renderCard).join('')||'<div class="kcb-empty">No boxes match your filter.</div>';
+  const el=$('managedBoxes');if(!el)return;
+  const boxes=storageBoxesCache||[], contents=storageBoxContentsCache||[];
+  const lines=b=>contents.filter(x=>String(x.box_id)===String(b.id));
+  const pr=x=>x.products||products.find(p=>String(p.id)===String(x.product_id))||{};
+  const unitCount=b=>lines(b).reduce((n,x)=>n+(Number(x.expected_quantity)||0),0);
+  const stats=$('kcbStats');
+  if(stats)stats.innerHTML=`<div class="kcb-stat"><strong>${boxes.length}</strong><small>Total Boxes</small></div><div class="kcb-stat"><strong>${boxes.reduce((n,b)=>n+unitCount(b),0)}</strong><small>Units in Boxes</small></div>`;
+  const rooms=[...new Set(boxes.map(b=>String(b.storage_room||'Unassigned').trim()||'Unassigned'))].sort();
+  const filters=[['all','All Boxes'],['map','Storage Room Map'],...rooms.map(r=>['room:'+r,r])];
+  const bar=$('kcbFilterbar');if(bar)bar.innerHTML=filters.map(([id,label])=>`<button type="button" class="${kcBoxView===id?'active':''}" onclick="kcSetBoxView(decodeURIComponent('${encodeURIComponent(id)}'))">${esc(label)}</button>`).join('');
+  const query=($('manageBoxSearch')?.value||'').trim().toLowerCase();
+  const matching=boxes.filter(b=>{
+    const hay=[b.box_code,b.box_name,b.storage_room,b.barcode,b.shelf_bin,...lines(b).flatMap(x=>{const p=pr(x);return [p.name,p.storage_number,p.shelf_bin]})].filter(Boolean).join(' ').toLowerCase();
+    return (!query||hay.includes(query))&&(kcBoxView==='all'||kcBoxView==='map'||kcBoxView==='room:'+String(b.storage_room||'Unassigned').trim());
+  });
+  const card=b=>{
+    const items=lines(b);
+    const images=items.map(x=>productImage(pr(x))).filter(Boolean).slice(0,3);
+    const shelves=[...new Set(items.map(x=>String(pr(x).shelf_bin||'').trim()).filter(Boolean))];
+    const shelfValue=String(b.shelf_bin||b.shelf_bin_box||b.shelf||'').trim()||shelves.join(' · ')||b.box_name||b.box_code||'Not assigned';
+    return `<div class="boxCard"><div class="boxHead"><div><div class="boxCode">${esc(b.box_code||'Unnamed Box')}</div><div class="boxMeta">Barcode: ${esc(b.barcode||'—')}</div></div><span class="historyBadge">${esc(b.status||'active')}</span></div>
+    <div class="kcb-location"><div><small>Storage Room</small><b>${esc(b.storage_room||'Not assigned')}</b></div><div><small>Shelf / Bin / Box</small><b>${esc(shelfValue)}</b></div></div>
+    <div class="kcb-preview">${images.map(src=>`<img loading="lazy" alt="Saved product image" src="${esc(src)}">`).join('')}${items.length>3?`<span class="boxMeta">+${items.length-3} more</span>`:''}</div>
+    <div class="kcb-unitline">${items.length} product types · ${unitCount(b)} units</div>
+    <div class="boxActions"><button class="primary" onclick="openBoxDetails('${b.id}')">Open Box</button><button onclick="editBoxContents('${b.id}')">Assign</button><button onclick="printBoxLabel('${b.id}')">Print Label</button></div></div>`;
+  };
+  if(kcBoxView==='map')el.innerHTML=rooms.map(r=>{const group=matching.filter(b=>String(b.storage_room||'Unassigned').trim()===r);return group.length?`<div class="kcb-roomtitle">▦ ${esc(r)} · ${group.length} boxes</div>${group.map(card).join('')}`:''}).join('')||'<div class="empty">No boxes found.</div>';
+  else el.innerHTML=matching.map(card).join('')||'<div class="empty">No boxes found.</div>';
 }
 function openCreateBox(){
   const rooms=roomList();
