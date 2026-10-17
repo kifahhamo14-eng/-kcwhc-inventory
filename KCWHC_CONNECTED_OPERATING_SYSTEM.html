@@ -921,6 +921,44 @@
 #kcLabelSheetModal .kcl-secondary{background:#fff;color:#265943;border:1px solid #c9d3c9}
 @media(max-width:480px){#kcLabelSheetModal .kcl-top{padding:13px 12px 9px}#kcLabelSheetModal .kcl-scroll{padding:4px 9px 9px}#kcLabelSheetModal .kcl-cats{grid-template-columns:repeat(3,minmax(0,1fr));max-height:145px}#kcLabelSheetModal .kcl-card{grid-template-columns:29px 92px minmax(0,1fr);gap:7px;padding:9px}#kcLabelSheetModal .kcl-photo{width:92px;height:116px}#kcLabelSheetModal .kcl-summary{gap:4px}#kcLabelSheetModal .kcl-stat{padding:8px 3px}#kcLabelSheetModal .kcl-stat b{font-size:18px}#kcLabelSheetModal .kcl-stat small{font-size:9px}#kcLabelSheetModal .kcl-name{font-size:12px}}
 </style>
+<style id="kc-label-picker-premium-2026">
+#kcLabelSheetModal .kc-lp-panel{width:min(860px,100%);max-height:92vh;overflow-y:auto;overscroll-behavior:contain;background:#fff;color:#17372d;border-radius:23px;padding:18px 18px 0;box-shadow:0 18px 60px #0005;box-sizing:border-box}
+#kcLabelSheetModal .kc-lp-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#kcLabelSheetModal .kc-lp-heading h2{margin:0;font-size:clamp(22px,4.8vw,30px);line-height:1.2;color:#153c30}
+#kcLabelSheetModal .kc-lp-exit{font-size:28px;background:#f7f2e7;border:0;color:#174c3c;border-radius:50%;width:44px;height:44px;flex-shrink:0}
+#kcLabelSheetModal .kc-lp-description{font-size:13px;color:#64736b;line-height:1.45;margin:9px 0 14px}
+#kcLabelSheetModal #kcLabelSearch{box-sizing:border-box;width:100%;border:1.5px solid #ded4bf;border-radius:14px;min-height:52px;padding:13px 15px;background:#fff;font-size:16px}
+#kcLabelSheetModal .kc-lp-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:12px 0}
+#kcLabelSheetModal .kc-lp-metric{padding:11px 8px;border:1px solid #e7dbbf;border-radius:13px;background:linear-gradient(150deg,#fffdfa,#f8f2e4);min-width:0;text-align:center}
+#kcLabelSheetModal .kc-lp-metric b{display:block;font-size:24px;color:#075b46}
+#kcLabelSheetModal .kc-lp-metric small{display:block;font-size:10px;color:#607066;line-height:1.25;font-weight:800}
+#kcLabelSheetModal .kc-lp-progressline{font-weight:750;font-size:12px;display:flex;justify-content:space-between;gap:8px;margin:10px 0 6px}
+#kcLabelSheetModal .kc-lp-track{background:#efe8d8;height:9px;border-radius:50px;overflow:hidden;margin-bottom:14px}
+#kcLabelSheetModal #kcLpFill{display:block;width:0;height:100%;background:linear-gradient(90deg,#0b644e,#cfae60);transition:width .2s}
+#kcLabelSheetModal .kc-lp-subhead{font-weight:900;color:#174937;letter-spacing:.06em;text-transform:uppercase;font-size:11px;margin:12px 0 9px}
+#kcLabelSheetModal .kc-lp-categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;max-width:100%;margin-bottom:12px}
+#kcLabelSheetModal .kc-lp-categories button,#kcLabelSheetModal .kc-lp-toolbar button{border:1px solid #d8c58b;border-radius:13px;background:#faf6eb;color:#14503d;padding:10px;font-size:13px;font-weight:800;min-height:44px;white-space:normal;overflow-wrap:anywhere;cursor:pointer}
+#kcLabelSheetModal .kc-lp-categories button.kc-on,#kcLabelSheetModal .kc-lp-toolbar button.kc-on{background:#076448;color:#fff;border-color:#076448;box-shadow:0 5px 12px #075b4625}
+#kcLabelSheetModal .kc-lp-toolbar{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px}
+#kcLabelSheetModal .kc-lp-list{display:flex;flex-direction:column;gap:11px;max-height:47vh;overflow-y:auto;padding:3px 3px 14px}
+#kcLabelSheetModal .kc-lp-card{display:grid;grid-template-columns:36px 132px minmax(0,1fr);align-items:center;gap:11px;padding:11px;border:1px solid #e8e0d2;background:linear-gradient(160deg,#fff,#fbfaf6);border-radius:17px;box-shadow:0 4px 14px #153c300b}
+#kcLabelSheetModal .kc-lp-card.kc-selected{border-color:#0b6a51;box-shadow:0 4px 17px #0b6a5129;background:#f7fbf8}
+#kcLabelSheetModal .kc-lp-check{appearance:none;border:2px solid #bfcabd;width:29px;height:29px;border-radius:50%;background:white;cursor:pointer}
+#kcLabelSheetModal .kc-lp-check:checked{background:#09674d;border-color:#09674d;box-shadow:inset 0 0 0 6px #fff}
+#kcLabelSheetModal .kc-lp-img{width:132px;height:146px;object-fit:contain;border:1px solid #eee6dc;background:#fff;border-radius:12px;cursor:zoom-in}
+#kcLabelSheetModal .kc-lp-details{min-width:0}
+#kcLabelSheetModal .kc-lp-name{font-weight:850;color:#16382c;font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+#kcLabelSheetModal .kc-lp-sub{color:#65746c;font-size:12px;margin-top:6px;overflow-wrap:anywhere}
+#kcLabelSheetModal .kc-lp-qty{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;font-size:12px;font-weight:800}
+#kcLabelSheetModal .kc-lp-qty button{width:34px;height:34px;background:#f7f0df;border:1px solid #d7c495;border-radius:9px;font-size:20px;color:#075b46}
+#kcLabelSheetModal .kc-lp-qty input{width:54px;max-width:54px;padding:8px 4px;text-align:center;border:1px solid #d6cebe;border-radius:9px;font-size:16px}
+#kcLabelSheetModal .kc-lp-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #e5ddcc;margin:0 -18px;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 22px #0000000e;z-index:3}
+#kcLabelSheetModal #kcLabelTotals{font-weight:850;font-size:12px;margin:0 0 9px;line-height:1.35}
+#kcLabelSheetModal .kc-lp-actions{display:flex;gap:8px;flex-wrap:wrap}
+#kcLabelSheetModal .kc-lp-actions button{border-radius:11px;padding:12px;font-size:13px;font-weight:850;border:1px solid #d6c9a7;background:#fff;color:#164536;min-height:45px}
+#kcLabelSheetModal .kc-lp-actions button:first-child{flex:2;background:#075b46;border-color:#075b46;color:white}
+@media(max-width:550px){#kcLabelSheetModal .kc-lp-panel{padding:14px 14px 0}#kcLabelSheetModal .kc-lp-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}#kcLabelSheetModal .kc-lp-categories{grid-template-columns:repeat(2,minmax(0,1fr))}#kcLabelSheetModal .kc-lp-card{grid-template-columns:30px 100px minmax(0,1fr);gap:8px;padding:8px}#kcLabelSheetModal .kc-lp-img{width:100px;height:120px}#kcLabelSheetModal .kc-lp-name{font-size:13px}#kcLabelSheetModal .kc-lp-footer{margin:0 -14px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}#kcLabelSheetModal .kc-lp-actions button{flex:1}}
+</style>
 </head>
 <body>
 <div id="login" class="login">
@@ -2244,19 +2282,19 @@ function kcClearLabelPicks(){kcLabelSelection.clear();document.querySelectorAll(
 function kcOpenLabelSheetPicker(){
  let modal=document.getElementById('kcLabelSheetModal');
  if(!modal){modal=document.createElement('div');modal.id='kcLabelSheetModal';document.body.appendChild(modal)}
- modal.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.72);display:flex;justify-content:center;align-items:center;padding:10px';
- modal.innerHTML=`<div class="kcl-shell">
- <div class="kcl-top"><div class="kcl-head"><h2>Print a 16-label sheet</h2><button class="kcl-close" onclick="kcCloseLabelSheetPicker()" aria-label="Close">×</button></div>
- <p class="kcl-desc">Choose products and copies. Product photos help you find items, but are not printed on barcode labels.</p>
- <input class="kcl-search" id="kcLabelSearch" oninput="kcRenderLabelPickerList()" placeholder="Search products or barcode…">
- <div class="kcl-summary" id="kcLabelSummary"></div>
- <div class="kcl-progress"><i id="kcLabelProgress"></i></div>
- <div class="kcl-title">Product Categories</div><div id="kcLabelFilters"></div>
- </div><div class="kcl-scroll" id="kcLabelList"></div>
- <div class="kcl-bottom"><div id="kcLabelTotals" class="kcl-totals"></div>
- <div class="kcl-actions"><button class="kcl-print" onclick="kcPrintSelectedLabels()">Preview & Print Sheets</button><button class="kcl-secondary" onclick="kcClearLabelPicks();kcRenderLabelPickerList()">Clear</button><button class="kcl-secondary" onclick="kcCloseLabelSheetPicker()">Close</button></div></div></div>`;
+ modal.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.72);display:flex;justify-content:center;align-items:center;padding:12px';
+ modal.innerHTML=`<div class="kc-lp-panel">
+ <div class="kc-lp-heading"><h2>Print a 16-label sheet</h2><button class="kc-lp-exit" onclick="kcCloseLabelSheetPicker()" aria-label="Close">×</button></div>
+ <p class="kc-lp-description">Choose products and quantities • A4 paper • 2 columns × 8 rows. Pictures appear here, never on printed labels.</p>
+ <input id="kcLabelSearch" oninput="kcRenderLabelPickerList()" placeholder="Search products or barcode…" aria-label="Search products">
+ <div class="kc-lp-metrics"><div class="kc-lp-metric"><b id="kcLpProducts">0</b><small>Products</small></div><div class="kc-lp-metric"><b id="kcLpLabels">0</b><small>Labels</small></div><div class="kc-lp-metric"><b id="kcLpSheets">0</b><small>Sheets</small></div><div class="kc-lp-metric"><b id="kcLpUnused">0</b><small>Empty spaces</small></div></div>
+ <div class="kc-lp-progressline"><span id="kcLpProgressText">0 / 16 labels on current sheet</span><span>16 per sheet</span></div><div class="kc-lp-track"><span id="kcLpFill"></span></div>
+ <div id="kcLabelFilters"></div>
+ <div id="kcLabelList" class="kc-lp-list"></div>
+ <div class="kc-lp-footer"><div id="kcLabelTotals"></div><div class="kc-lp-actions"><button onclick="kcPrintSelectedLabels()">Preview & Print Sheets</button><button onclick="kcClearLabelPicks();kcRenderLabelPickerList()">Clear</button><button onclick="kcCloseLabelSheetPicker()">Close</button></div></div>
+ </div>`;
  try{window.kcLabelRecent=JSON.parse(localStorage.getItem('kcLabelRecent')||'[]')}catch(e){window.kcLabelRecent=[]}
- window.kcLabelCat='All';window.kcLabelOnlySelected=false;window.kcLabelOnlyRecent=false;
+ window.kcLabelCat='All';window.kcLabelColor='All';window.kcLabelOnlySelected=false;window.kcLabelOnlyRecent=false;
  kcLabelBuildFilters();kcRenderLabelPickerList();
 }
 function kcCloseLabelSheetPicker(){const el=document.getElementById('kcLabelSheetModal');if(el)el.style.display='none';}
@@ -2268,58 +2306,42 @@ function kcLabelCategoryName(v){
  if(lower==='thobe'||lower==='thobes'||lower==='thob')return 'Thobe';
  return x.charAt(0).toUpperCase()+x.slice(1);
 }
-function kcLabelFilter(type,v){
- if(type==='cat')window.kcLabelCat=v;
- if(type==='selected'){window.kcLabelOnlySelected=!window.kcLabelOnlySelected;window.kcLabelOnlyRecent=false}
- if(type==='recent'){window.kcLabelOnlyRecent=!window.kcLabelOnlyRecent;window.kcLabelOnlySelected=false}
- kcLabelBuildFilters();kcRenderLabelPickerList()
+function kcNormLabelCat(v){const c=String(v||'').trim();if(!c)return 'Uncategorized';const x=c.toLowerCase();return ({shawl:'Shawls',shawls:'Shawls',thob:'Thobe',thobe:'Thobe',thobes:'Thobe',bag:'Bags',bags:'Bags',wallet:'Wallets',wallets:'Wallets'})[x]||c.charAt(0).toUpperCase()+c.slice(1)}
+function kcLabelFilter(type,v){if(type==='cat')window.kcLabelCat=v;if(type==='selected'){window.kcLabelOnlySelected=!window.kcLabelOnlySelected;window.kcLabelOnlyRecent=false}if(type==='recent'){window.kcLabelOnlyRecent=!window.kcLabelOnlyRecent;window.kcLabelOnlySelected=false}kcLabelBuildFilters();kcRenderLabelPickerList()}
+function kcLabelMatched(){
+ const q=(document.getElementById('kcLabelSearch')?.value||'').trim().toLowerCase();
+ return products.filter(p=>(!window.kcLabelCat||window.kcLabelCat==='All'||kcNormLabelCat(p.category)===window.kcLabelCat)&&(!window.kcLabelOnlySelected||kcLabelSelection.has(String(p.id)))&&(!window.kcLabelOnlyRecent||(window.kcLabelRecent||[]).includes(String(p.id)))&&[p.name,p.barcode,p.storage_number,p.color,p.category].some(v=>String(v||'').toLowerCase().includes(q)));
 }
-function kcLabelAllFiltered(){
- const q=(document.getElementById('kcLabelSearch')?.value||'').toLowerCase();
- for(const p of products){
- if(window.kcLabelCat!=='All'&&kcLabelCategoryName(p.category)!==window.kcLabelCat)continue;
- if(![p.name,p.barcode,p.storage_number,p.color,p.category].some(v=>String(v||'').toLowerCase().includes(q)))continue;
- kcLabelSelection.set(String(p.id),kcLabelSelection.get(String(p.id))||1)
- }
- kcLabelBuildFilters();kcRenderLabelPickerList()
-}
+function kcLabelAllFiltered(){kcLabelMatched().forEach(p=>{const id=String(p.id);if(!kcLabelSelection.has(id))kcLabelSelection.set(id,1)});kcLabelBuildFilters();kcRenderLabelPickerList()}
 function kcLabelBuildFilters(){
  const root=document.getElementById('kcLabelFilters');if(!root)return;
- const cats=['All',...new Set(products.map(p=>kcLabelCategoryName(p.category)))].filter(Boolean);
- const icons={'All':'📦','Shawls':'🧣','Thobe':'👗','Bags':'👜','Wall Hangers':'🧵','Wallets':'👛'};
- root.innerHTML='<div class="kcl-cats">'+cats.map(v=>'<button type="button" class="kcl-chip '+(v===window.kcLabelCat?'active':'')+'" data-kind="cat" data-value="'+esc(v)+'">'+(icons[v]||'🏷️')+' '+esc(v==='All'?'All Products':v)+'</button>').join('')+'</div>'+
- '<div class="kcl-filters"><button data-kind="selected" class="'+(window.kcLabelOnlySelected?'active':'')+'">✓ Selected ('+kcLabelSelection.size+')</button><button data-kind="recent" class="'+(window.kcLabelOnlyRecent?'active':'')+'">Recently Printed</button><button data-kind="all">Select All Filtered</button></div>';
- root.onclick=e=>{const b=e.target.closest('button[data-kind]');if(!b)return;if(b.dataset.kind==='all')kcLabelAllFiltered();else kcLabelFilter(b.dataset.kind,b.dataset.value)}
+ const cats=['All',...new Set(products.map(p=>kcNormLabelCat(p.category)))].sort((a,b)=>a==='All'?-1:b==='All'?1:a.localeCompare(b));
+ const icons={All:'▦',Shawls:'🧣',Thobe:'👗',Bags:'👜',Wallets:'👛',Uncategorized:'📁'};
+ root.innerHTML='<div class="kc-lp-subhead">Browse categories</div><div class="kc-lp-categories">'+cats.map(v=>'<button type="button" class="'+(v===window.kcLabelCat?'kc-on':'')+'" data-kind="cat" data-value="'+esc(v)+'">'+(icons[v]||'🏷️')+' '+esc(v==='All'?'All Products':v)+'</button>').join('')+'</div><div class="kc-lp-subhead">Quick selection</div><div class="kc-lp-toolbar"><button data-kind="selected" class="'+(window.kcLabelOnlySelected?'kc-on':'')+'">✓ Selected ('+kcLabelSelection.size+')</button><button data-kind="recent" class="'+(window.kcLabelOnlyRecent?'kc-on':'')+'">Recently Printed</button><button data-kind="all">Select All Filtered</button></div>';
+ root.onclick=e=>{const b=e.target.closest('button[data-kind]');if(!b)return;if(b.dataset.kind==='all')kcLabelAllFiltered();else kcLabelFilter(b.dataset.kind,b.dataset.value)};
 }
 function kcRenderLabelPickerList(){
  const root=document.getElementById('kcLabelList');if(!root)return;
- const q=(document.getElementById('kcLabelSearch')?.value||'').toLowerCase();
- const matches=products.filter(p=>(!window.kcLabelCat||window.kcLabelCat==='All'||kcLabelCategoryName(p.category)===window.kcLabelCat)&&(!window.kcLabelOnlySelected||kcLabelSelection.has(String(p.id)))&&(!window.kcLabelOnlyRecent||(window.kcLabelRecent||[]).includes(String(p.id)))&&[p.name,p.barcode,p.storage_number,p.color,p.category].some(v=>String(v||'').toLowerCase().includes(q)));
- root.innerHTML=matches.map(p=>{
- const id=String(p.id),checked=kcLabelSelection.has(id),count=kcLabelSelection.get(id)||1,photo=productImage(p);
- return `<div class="kcl-card ${checked?'selected':''}">
- <button type="button" class="kcl-toggle" aria-label="Select ${esc(p.name||'product')}" onclick="kcToggleLabelPick('${id}',${!checked});kcRenderLabelPickerList()">${checked?'✓':''}</button>
- ${photo?`<img class="kcl-photo" onclick="kcLabelZoom(this.src)" title="Enlarge photo" src="${esc(photo)}" alt="" loading="lazy">`:'<div class="kcl-photo"></div>'}
- <div><div class="kcl-name">${esc(p.name||'Unnamed')}</div>
- <div class="kcl-meta">${esc(p.color||'No color')} · ${esc(p.barcode||'No barcode')}</div>
- <div class="kcl-qty"><button type="button" ${checked?'':'disabled'} onclick="kcSetLabelQty('${id}',Math.max(1,(${count})-1))">−</button>
- <input aria-label="Copies" type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)">
- <button type="button" ${checked?'':'disabled'} onclick="kcSetLabelQty('${id}',Math.min(500,(${count})+1))">+</button></div></div></div>`;
- }).join('')||'<div style="padding:25px;text-align:center;color:#66776c">No matching products.</div>';
- let total=0;for(const v of kcLabelSelection.values())total+=v;
- const sheets=Math.ceil(total/16),spare=sheets*16-total;
- document.getElementById('kcLabelTotals').textContent=`${kcLabelSelection.size} products · ${total} labels · ${sheets} sheet(s) · ${spare} unused on final sheet`;
- const summary=document.getElementById('kcLabelSummary');
- if(summary)summary.innerHTML=[['Products',kcLabelSelection.size],['Labels',total],['Sheets',sheets],['Spaces Left',spare]].map(x=>'<div class="kcl-stat"><b>'+x[1]+'</b><small>'+x[0]+'</small></div>').join('');
- const bar=document.getElementById('kcLabelProgress');if(bar)bar.style.width=(total?(total%16||16)/16*100:0)+'%';
+ const matches=kcLabelMatched();
+ root.innerHTML=matches.map(p=>{const id=String(p.id),checked=kcLabelSelection.has(id),count=kcLabelSelection.get(id)||1,photo=productImage(p);
+ return `<div class="kc-lp-card ${checked?'kc-selected':''}">
+ <input type="checkbox" class="kc-lp-check" aria-label="Select ${esc(p.name||'product')}" ${checked?'checked':''} onchange="kcToggleLabelPick('${id}',this.checked);kcRenderLabelPickerList()">
+ ${photo?`<img class="kc-lp-img" onclick="kcLabelZoom(this.src)" title="Tap to enlarge product" src="${esc(photo)}" alt="${esc(p.name||'Product')}" loading="lazy">`:'<div class="kc-lp-img"></div>'}
+ <div class="kc-lp-details"><div class="kc-lp-name">${esc(p.name||'Unnamed')}</div><div class="kc-lp-sub">${esc(p.color||'No color listed')}<div>${esc(p.barcode||'No barcode')}</div></div>
+ <div class="kc-lp-qty">Copies <button type="button" ${checked?'':'disabled'} onclick="kcLabelAdjustQty('${id}',-1)">−</button><input type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)" aria-label="Label copies"><button type="button" ${checked?'':'disabled'} onclick="kcLabelAdjustQty('${id}',1)">+</button></div></div>
+ </div>`;
+ }).join('')||'<div style="padding:25px;text-align:center;color:#6a786d">No matching products.</div>';
+ let total=0;for(const v of kcLabelSelection.values())total+=Number(v)||0;
+ const sheets=Math.ceil(total/16),spare=sheets*16-total,position=total?((total-1)%16+1):0;
+ const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+ set('kcLpProducts',kcLabelSelection.size);set('kcLpLabels',total);set('kcLpSheets',sheets);set('kcLpUnused',spare);set('kcLpProgressText',position+' / 16 labels on current sheet');
+ const fill=document.getElementById('kcLpFill');if(fill)fill.style.width=(position/16*100)+'%';
+ const totals=document.getElementById('kcLabelTotals');if(totals)totals.textContent=kcLabelSelection.size+' products • '+total+' labels • '+sheets+' sheet(s) • '+spare+' unused positions';
  kcUpdateLabelPickStatus();
- const selected=document.querySelector('#kcLabelFilters [data-kind="selected"]');if(selected)selected.textContent='✓ Selected ('+kcLabelSelection.size+')';
+ const sel=document.querySelector('#kcLabelFilters [data-kind="selected"]');if(sel)sel.textContent='✓ Selected ('+kcLabelSelection.size+')';
 }
-function kcSetLabelQty(id,val){
- const n=Number(val);
- if(!Number.isInteger(n)||n<1||n>500){toast('Choose between 1 and 500 labels per product.');kcRenderLabelPickerList();return}
- kcLabelSelection.set(String(id),n);kcRenderLabelPickerList();
-}
+function kcLabelAdjustQty(id,d){kcSetLabelQty(id,Math.max(1,(kcLabelSelection.get(String(id))||1)+d))}
+function kcSetLabelQty(id,val){const n=Number(val);if(!Number.isInteger(n)||n<1||n>500){toast('Choose between 1 and 500 labels per product.');kcRenderLabelPickerList();return}kcLabelSelection.set(String(id),n);kcRenderLabelPickerList()}
 function kcPrintSelectedLabels(){
  const items=[];for(const [id,n] of kcLabelSelection){const p=products.find(x=>String(x.id)===id);if(p)for(let i=0;i<n;i++)items.push(p)}
  if(!items.length){toast('Select at least one product.');return}
