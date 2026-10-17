@@ -2341,62 +2341,7 @@ function printKCWHCLabelSheet(items){
       <div class="summary">2 across × 8 down • 16 labels per sheet • 0.9 cm top gap • Scale: 100%</div>
     </div>
   
-<script id="kc-inline-alert-script">
-/* Notification messages live INSIDE the existing green navigation bar.
-   Reading a task or acknowledging an announcement clears its local unread state. */
-(function(){
- const el=id=>document.getElementById(id);
- const escText=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const scope=()=>String(window.profile?.id||'user');
- const key=(kind,id)=>'kc_inline_read_'+scope()+'_'+kind+'_'+id;
- function items(){
-   const a=typeof announcements!=='undefined'&&Array.isArray(announcements)?announcements:[];
-   const t=typeof todos!=='undefined'&&Array.isArray(todos)?todos:[];
-   const ann=a.filter(x=>!localStorage.getItem(key('ann',x.id))&&!localStorage.getItem(typeof opsAckKey==='function'?opsAckKey(x.id):'kc-no-ack')).map(x=>({kind:'ann',id:x.id,title:x.title||'New bulletin',detail:x.message||'',date:x.created_at||'',user:x.author_name||x.created_by_name||'KCWHC Command',photo:x.author_photo_url||null}));
-   const tasks=t.filter(x=>!x.completed&&!localStorage.getItem(key('task',x.id))).map(x=>({kind:'task',id:x.id,title:x.task||'New task',detail:x.due_date?'Due '+x.due_date:'Task waiting for action',date:x.created_at||'',user:'To-Do',photo:null}));
-   return ann.concat(tasks).sort((x,y)=>String(y.date).localeCompare(String(x.date))).slice(0,40);
- }
- window.kcRenderInlineAlerts=function(){
-  const host=el('kcInlineAlerts');if(!host)return;
-  const all=items();host.classList.toggle('is-active',all.length>0);
-  if(!all.length){host.classList.remove('expanded');return}
-  const first=all[0];
-  el('kcAlertHeadline').innerHTML='<b>'+ (first.kind==='ann'?'NEW ANNOUNCEMENT':'TASK REMINDER') +'</b>'+escText(first.title);
-  el('kcAlertCount').textContent=all.length;
-  el('kcAlertAvatar').textContent=first.kind==='ann'?'🔔':'✓';
-  el('kcAlertList').innerHTML=all.map(x=>'<div class="kc-alert-entry"><span><b>'+escText(x.kind==='ann'?'Announcement':'To-Do')+'</b> · '+escText(x.title)+'<small style="display:block;opacity:.8">'+escText(x.detail).slice(0,95)+'</small></span><button type="button" onclick="kcOpenInlineAlert(\''+x.kind+'\',\''+escText(x.id)+'\')">Read</button></div>').join('');
- };
- window.kcToggleInlineAlerts=function(){const host=el('kcInlineAlerts');if(!host)return;host.classList.toggle('expanded');el('kcAlertChevron').textContent=host.classList.contains('expanded')?'⌄':'⌃'};
- window.kcOpenInlineAlert=function(kind,id){
-  localStorage.setItem(key(kind,id),new Date().toISOString());
-  el('kcInlineAlerts')?.classList.remove('expanded');
-  kcRenderInlineAlerts();
-  if(kind==='ann'&&typeof openAnnouncements==='function')openAnnouncements();
-  if(kind==='task'&&typeof openTodos==='function')openTodos();
- };
- const oldRender=window.renderCommand;
- if(typeof oldRender==='function')window.renderCommand=function(){const result=oldRender.apply(this,arguments);kcRenderInlineAlerts();return result};
- setInterval(()=>{if(!el('kcInlineAlerts'))return;try{kcRenderInlineAlerts()}catch(e){console.warn('KCWHC notifications',e)}},12000);
- setInterval(async()=>{if(document.visibilityState==='hidden'||!window.sb||!window.profile?.id)return;try{if(typeof loadAnnouncements==='function')await loadAnnouncements();if(typeof loadTodos==='function')await loadTodos();if(typeof renderCommand==='function')renderCommand()}catch(e){console.warn('KCWHC refresh',e)}},60000);
- window.addEventListener('focus',()=>{try{kcRenderInlineAlerts()}catch(e){}});
- document.addEventListener('DOMContentLoaded',()=>setTimeout(kcRenderInlineAlerts,1200));
-})();
-</script>
-<script id="kc-integrated-alert-script">
-(function(){
-const by=id=>document.getElementById(id), seen=id=>'kcwhc_ann_ack_'+id, seenTask=id=>'kcwhc_todo_seen_'+id;
-function get(){
-if(typeof announcements==='undefined'||typeof todos==='undefined'||typeof profile==='undefined'||!profile?.id)return [];
-const a=(announcements||[]).filter(x=>!localStorage.getItem(seen(x.id))).map(x=>({kind:'Announcement',id:String(x.id),title:x.title||'New bulletin',desc:x.message||'',date:x.created_at||'',icon:'🔔'}));
-const t=(todos||[]).filter(x=>!x.completed&&x.due_date&&!localStorage.getItem(seenTask(x.id))&&new Date(x.due_date+'T00:00:00')<new Date(new Date().toDateString())).map(x=>({kind:'Overdue task',id:String(x.id),title:x.task||'Task overdue',desc:'Task needs attention',date:x.created_at||'',icon:'✓'}));
-return a.concat(t).sort((x,y)=>y.date.localeCompare(x.date));
-}
-window.kcQuickRefresh=function(){const n=document.querySelector('nav.kc-floating-nav'),a=get(),x=a[0];if(!n)return;n.classList.toggle('kc-alert-active',!!x);if(!x)return;by('kcQaIcon').textContent=x.icon;by('kcQaKind').textContent=x.kind.toUpperCase();by('kcQaTitle').textContent=x.title;by('kcQaCount').textContent=a.length;};
-window.kcQuickOpen=function(){if(typeof openModal!=='function')return;const a=get();openModal('Quick Alerts','<div class="kc-qa-list">'+(a.map(x=>'<div class="kc-qa-item"><b>'+esc(x.kind)+'</b><p>'+esc(x.title)+'</p><p>'+esc(x.desc)+'</p><button type="button" onclick="kcQuickRead(\''+x.kind+'\',\''+x.id+'\')">Open</button></div>').join('')||'<p>No unread alerts.</p>')+'</div>')};
-window.kcQuickRead=function(kind,id){if(kind==='Announcement'){localStorage.setItem(seen(id),'1');if(typeof openAnnouncements==='function')openAnnouncements();}else{localStorage.setItem(seenTask(id),'1');if(typeof openTodos==='function')openTodos();}window.kcQuickRefresh();if(typeof renderCommand==='function')renderCommand();};
-setInterval(window.kcQuickRefresh,4000);window.addEventListener('storage',window.kcQuickRefresh);
-})();
-</script></body></html>`);
+</body></html>`);
   win.document.close();
 }
 const kcLabelSelection=new Map();
