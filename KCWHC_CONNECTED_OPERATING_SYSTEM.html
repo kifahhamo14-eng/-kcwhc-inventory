@@ -1005,7 +1005,17 @@
 .kc-alert-hide{border:0;background:none;color:#e6c76b;padding:4px 6px;font-weight:800}
 .bottomnav.kc-floating-nav>.navb{grid-row:2}
 </style>
-</head>
+<style id="kc-quick-alert-css">
+.bottomnav.kc-floating-nav{row-gap:0;overflow:visible}
+#kcQuickAlert{grid-column:1/-1;display:none;width:100%;min-width:0;box-sizing:border-box;margin-bottom:5px;padding:8px 11px;border:1px solid #bfa663;border-radius:15px;background:linear-gradient(90deg,#155b44,#064333);color:white;align-items:center;gap:9px;text-align:left;cursor:pointer}
+.kc-alert-active #kcQuickAlert{display:flex}
+#kcQuickAlert .kc-qa-icon{width:30px;height:30px;min-width:30px;display:grid;place-items:center;border-radius:50%;background:#e8c874;color:#154734;font-size:14px}
+#kcQuickAlert .kc-qa-main{min-width:0;flex:1}
+#kcQuickAlert .kc-qa-kind{font-size:9px;color:#e9cb77;font-weight:900}
+#kcQuickAlert .kc-qa-title{font-size:11px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;font-weight:700}
+#kcQuickAlert .kc-qa-count{background:#bc3838;border-radius:12px;padding:3px 7px;font-size:10px}
+.kc-qa-list{display:grid;gap:8px;max-height:52vh;overflow:auto}.kc-qa-item{padding:11px;border:1px solid #e5d7b8;border-radius:12px;background:#fffaf0;color:#163c32}.kc-qa-item p{margin:5px 0;font-size:12px}.kc-qa-item button{background:#07563e;color:white;padding:7px 10px;border:0;border-radius:9px}
+</style></head>
 <body>
 <div id="login" class="login">
 <div class="kc-pfp-lamp-stage" id="kcPfpLampStage"><svg viewBox="0 0 420 250" role="img" aria-label="Ornate brass pendant lamp with a draggable gold tassel pull cord">
@@ -1152,7 +1162,7 @@
   </section>
 </div>
 
- <nav class="bottomnav kc-floating-nav" aria-label="KCWHC primary navigation">
+ <nav class="bottomnav kc-floating-nav" aria-label="KCWHC primary navigation"><button type="button" id="kcQuickAlert" onclick="kcQuickOpen()" aria-label="Open unread notifications"><span class="kc-qa-icon" id="kcQaIcon">🔔</span><span class="kc-qa-main"><span class="kc-qa-kind" id="kcQaKind">NEW ALERT</span><span class="kc-qa-title" id="kcQaTitle">Unread announcement</span></span><b class="kc-qa-count" id="kcQaCount">1</b><span>⌃</span></button>
 <div id="kcInlineAlerts" aria-label="Unread KCWHC notifications">
  <button type="button" class="kc-alert-top" onclick="kcToggleInlineAlerts()" aria-label="Expand notification messages">
   <span class="kc-alert-avatar" id="kcAlertAvatar">🔔</span><span class="kc-alert-copy" id="kcAlertHeadline"></span><span class="kc-alert-count" id="kcAlertCount"></span><span aria-hidden="true" id="kcAlertChevron">⌃</span>
@@ -1937,6 +1947,7 @@ function renderChannelPriorityPanel(){
 function renderAll(){renderStats();renderCommand();renderProducts();if(profile?.role==='admin')loadAdminSummary()}
 function renderStats(){const total=products.length,units=products.reduce((s,p)=>s+(+p.quantity||0),0),low=products.filter(p=>(+p.reorder_level||0)>0&&(+p.quantity||0)>0&&(+p.quantity||0)<=+p.reorder_level).length,out=products.filter(p=>(+p.quantity||0)<=0).length;$('statProducts').textContent=total;$('statUnits').textContent=units;$('statLow').textContent=low;$('statOut').textContent=out}
 function renderCommand(){
+  if(window.kcQuickRefresh)window.kcQuickRefresh();
   const a=announcements[0];
   const unread=announcements.filter(x=>!localStorage.getItem(opsAckKey(x.id)));
   $('annCount').textContent=unread.length+' New';
@@ -2371,7 +2382,21 @@ function printKCWHCLabelSheet(items){
  document.addEventListener('DOMContentLoaded',()=>setTimeout(kcRenderInlineAlerts,1200));
 })();
 </script>
-</body></html>`);
+<script id="kc-integrated-alert-script">
+(function(){
+const by=id=>document.getElementById(id), seen=id=>'kcwhc_ann_ack_'+id, seenTask=id=>'kcwhc_todo_seen_'+id;
+function get(){
+if(typeof announcements==='undefined'||typeof todos==='undefined'||typeof profile==='undefined'||!profile?.id)return [];
+const a=(announcements||[]).filter(x=>!localStorage.getItem(seen(x.id))).map(x=>({kind:'Announcement',id:String(x.id),title:x.title||'New bulletin',desc:x.message||'',date:x.created_at||'',icon:'🔔'}));
+const t=(todos||[]).filter(x=>!x.completed&&x.due_date&&!localStorage.getItem(seenTask(x.id))&&new Date(x.due_date+'T00:00:00')<new Date(new Date().toDateString())).map(x=>({kind:'Overdue task',id:String(x.id),title:x.task||'Task overdue',desc:'Task needs attention',date:x.created_at||'',icon:'✓'}));
+return a.concat(t).sort((x,y)=>y.date.localeCompare(x.date));
+}
+window.kcQuickRefresh=function(){const n=document.querySelector('nav.kc-floating-nav'),a=get(),x=a[0];if(!n)return;n.classList.toggle('kc-alert-active',!!x);if(!x)return;by('kcQaIcon').textContent=x.icon;by('kcQaKind').textContent=x.kind.toUpperCase();by('kcQaTitle').textContent=x.title;by('kcQaCount').textContent=a.length;};
+window.kcQuickOpen=function(){if(typeof openModal!=='function')return;const a=get();openModal('Quick Alerts','<div class="kc-qa-list">'+(a.map(x=>'<div class="kc-qa-item"><b>'+esc(x.kind)+'</b><p>'+esc(x.title)+'</p><p>'+esc(x.desc)+'</p><button type="button" onclick="kcQuickRead(\''+x.kind+'\',\''+x.id+'\')">Open</button></div>').join('')||'<p>No unread alerts.</p>')+'</div>')};
+window.kcQuickRead=function(kind,id){if(kind==='Announcement'){localStorage.setItem(seen(id),'1');if(typeof openAnnouncements==='function')openAnnouncements();}else{localStorage.setItem(seenTask(id),'1');if(typeof openTodos==='function')openTodos();}window.kcQuickRefresh();if(typeof renderCommand==='function')renderCommand();};
+setInterval(window.kcQuickRefresh,4000);window.addEventListener('storage',window.kcQuickRefresh);
+})();
+</script></body></html>`);
   win.document.close();
 }
 const kcLabelSelection=new Map();
@@ -2745,7 +2770,7 @@ function opsAvatarHtml(){
   return `<div class="opsAvatarFallback">${esc(n)}</div>`;
 }
 function opsAckKey(id){return 'kcwhc_ann_ack_'+id}
-function ackAnnouncementLocal(id){localStorage.setItem(opsAckKey(id),'1');openAnnouncements()}
+function ackAnnouncementLocal(id){localStorage.setItem(opsAckKey(id),'1');if(window.kcQuickRefresh)window.kcQuickRefresh();renderCommand();openAnnouncements()}
 async function createTodoFromAnnouncement(id){
   const a=announcements.find(x=>String(x.id)===String(id));if(!a)return;
   const task='Announcement follow-up: '+(a.title||a.message||'Team notice');
