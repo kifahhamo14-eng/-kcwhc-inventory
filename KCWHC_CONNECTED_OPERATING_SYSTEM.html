@@ -828,7 +828,17 @@
 #login.kc-lamp-login.lamp-off .kc-lamp-shade{box-shadow:none}
 #login.kc-lamp-login.lamp-off .kc-lamp-glow{opacity:0}
 #login.kc-lamp-login .kc-lamp-scene{touch-action:pan-y}
-</style><style>.kc-chipbar{display:flex;gap:6px;overflow-x:auto;padding:5px 0}.kc-chip{flex-shrink:0;border:1px solid #decf9f;border-radius:999px;background:#faf5e5;color:#164635;padding:8px 10px;font-size:11px;font-weight:700}.kc-chip.kc-on{background:#075b46;color:#fff}@media(max-width:819px){.bottomnav.kc-floating-nav{min-height:0!important;padding:3px 7px!important;bottom:calc(6px + env(safe-area-inset-bottom))!important;border-radius:18px!important;background:rgba(3,60,47,.90)!important}.kc-floating-nav .navb{min-height:39px!important;font-size:9px!important}.kc-floating-nav .navb span{font-size:18px!important;height:20px!important}#app{padding-bottom:calc(64px + env(safe-area-inset-bottom))!important}}</style></head>
+</style><style>.kc-chipbar{display:flex;gap:6px;overflow-x:auto;padding:5px 0}.kc-chip{flex-shrink:0;border:1px solid #decf9f;border-radius:999px;background:#faf5e5;color:#164635;padding:8px 10px;font-size:11px;font-weight:700}.kc-chip.kc-on{background:#075b46;color:#fff}@media(max-width:819px){.bottomnav.kc-floating-nav{min-height:0!important;padding:3px 7px!important;bottom:calc(6px + env(safe-area-inset-bottom))!important;border-radius:18px!important;background:rgba(3,60,47,.90)!important}.kc-floating-nav .navb{min-height:39px!important;font-size:9px!important}.kc-floating-nav .navb span{font-size:18px!important;height:20px!important}#app{padding-bottom:calc(64px + env(safe-area-inset-bottom))!important}}</style><style id="box-upgrade-v2">
+#managedBoxes .boxCard{padding:16px;margin:12px 0;border-radius:18px;border:1px solid #e0d1b3;box-shadow:0 5px 16px #123d2710;background:#fff}
+#managedBoxes .boxCode{font-size:18px;line-height:1.3}
+#managedBoxes .boxMeta{font-size:12px;line-height:1.6;margin-top:5px;overflow-wrap:anywhere}
+#managedBoxes .boxActions{gap:8px;margin-top:14px}
+#managedBoxes .boxActions button{font-size:12px;min-height:43px;padding:10px;flex:1;border-radius:10px}
+.boxSum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0}.boxStat{background:white;border:1px solid #e4d7bb;border-radius:14px;padding:13px}.boxStat b{display:block;font-size:22px;color:#07543e}.boxStat small{font-size:11px;color:#67736e}
+.boxFilters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.boxFilters button{padding:9px 12px;border:1px solid #d8c9aa;border-radius:20px;font-size:12px;font-weight:800;background:white;color:#07543e}.boxFilters button.sel{background:#07543e;color:white}
+.boxPics{display:flex;gap:7px;align-items:center;margin:11px 0 5px}.boxPics img,.boxNoPic{width:46px;height:46px;object-fit:cover;border-radius:9px;border:1px solid #eee4ce}.boxNoPic{display:grid;place-items:center;background:#f7f0df}
+.boxInfo{font-size:12px;font-weight:800;color:#2b5e4d;margin-top:9px}.boxRoomTitle{font-size:15px;font-weight:900;color:#07543e;padding:15px 2px 5px;border-bottom:1px solid #e1d3b4}
+</style></head>
 <body>
 <div id="login" class="login">
 <div class="kc-pfp-lamp-stage" id="kcPfpLampStage"><svg viewBox="0 0 420 250" role="img" aria-label="Ornate brass pendant lamp with a draggable gold tassel pull cord">
@@ -3307,20 +3317,38 @@ async function loadBoxRecentActivity(boxId){
   if(error){el.innerHTML='<div class="sub">Could not load box activity.</div>';return}
   const rows=data||[];el.innerHTML=`<div class="analyticsTitle"><span>Recent Box Activity</span><span class="sub">${rows.length} latest</span></div>${rows.length?rows.map(a=>`<div class="activityRow"><b>${esc(prettyAction(a.action))} • ${esc(a.products?.name||'Product')}</b><div class="sub">${a.quantity_before??'—'} → ${a.quantity_after??'—'} • ${esc(a.profiles?.full_name||'User')} • ${new Date(a.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No box movement recorded yet.</div>'}`;
 }
+let kcBoxView='all';
+function setBoxView(v){kcBoxView=v;renderManagedBoxes()}
 async function openBoxManagement(){
-  if(profile?.role!=='admin'){openScanBoxLookup();return}
-  try{await loadStorageBoxes()}catch(e){toast(e.message);return}
-  $('modalTitle').textContent='Box Management';
-  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>Box Management</h3><p>Create a physical box, print its barcode label, then assign the products and quantities that belong inside.</p></div>
-    <button class="saveBtn" onclick="openCreateBox()">＋ Create New Box</button>
-    <div class="field" style="margin-top:8px"><label>Search Boxes</label><input id="manageBoxSearch" placeholder="Box code, room, name…" oninput="renderManagedBoxes()"></div><div id="managedBoxes"></div>`;
-  renderManagedBoxes();
+ if(profile?.role!=='admin'){openScanBoxLookup();return}
+ try{await loadStorageBoxes()}catch(e){toast(e.message);return}
+ kcBoxView='all';
+ $('modalTitle').textContent='Box Management';
+ $('modalBody').innerHTML='<div class="stockCenterHero"><h3>Box Management</h3><p>Find, organize and print your storage boxes.</p></div><button class="saveBtn" onclick="openCreateBox()">＋ Create New Box</button><div class="boxSum" id="boxMetrics"></div><div class="field"><label>Search Boxes & Products</label><input id="manageBoxSearch" placeholder="Box, room, barcode or product…" oninput="renderManagedBoxes()"></div><div class="boxFilters" id="boxFilters"></div><div id="managedBoxes"></div>';
+ renderManagedBoxes();
 }
 function renderManagedBoxes(){
-  const el=$('managedBoxes');if(!el)return;
-  const q=($('manageBoxSearch')?.value||'').trim().toLowerCase();
-  const rows=storageBoxesCache.filter(b=>!q||[b.box_code,b.box_name,b.storage_room,b.barcode].filter(Boolean).join(' ').toLowerCase().includes(q));
-  el.innerHTML=rows.map(b=>`<div class="boxCard"><div class="boxHead"><div><div class="boxCode">${esc(b.box_code)}</div><div class="boxMeta">${esc(b.storage_room)}${b.box_name?` • ${esc(b.box_name)}`:''}<br>${esc(b.barcode)}</div></div><span class="historyBadge">${esc(b.status)}</span></div><div class="boxActions"><button class="primary" onclick="openBoxDetails('${b.id}')">View</button><button onclick="editBoxContents('${b.id}')">Assign Products</button><button onclick="printBoxLabel('${b.id}')">Print Label</button></div></div>`).join('')||'<div class="empty">No boxes yet.</div>';
+ const el=$('managedBoxes');if(!el)return;
+ const q=($('manageBoxSearch')?.value||'').trim().toLowerCase(), boxes=storageBoxesCache||[], contents=storageBoxContentsCache||[];
+ const lines=b=>contents.filter(x=>String(x.box_id)===String(b.id));
+ const prod=x=>x.products||products.find(p=>String(p.id)===String(x.product_id))||{};
+ const units=b=>lines(b).reduce((n,x)=>n+(Number(x.expected_quantity)||0),0);
+ const low=b=>lines(b).some(x=>{let p=prod(x);return Number(p.reorder_level)>0&&Number(p.quantity)<=Number(p.reorder_level)});
+ const rooms=[...new Set(boxes.map(b=>b.storage_room||'Unassigned'))].sort();
+ $('boxMetrics').innerHTML=[['Boxes',boxes.length],['Active',boxes.filter(b=>b.status==='active').length],['Units',boxes.reduce((a,b)=>a+units(b),0)],['Low Stock Boxes',boxes.filter(low).length]].map(([k,v])=>`<div class="boxStat"><b>${v}</b><small>${k}</small></div>`).join('');
+ const filters=[['all','All Boxes'],['map','Room Map'],['low','Low Stock'],['empty','Empty'],...rooms.map(r=>['room:'+r,r])];
+ $('boxFilters').innerHTML=filters.map(([key,label],i)=>`<button class="${kcBoxView===key?'sel':''}" onclick="setBoxView(decodeURIComponent('${encodeURIComponent(key)}'))">${esc(label)}</button>`).join('');
+ const cards=boxes.filter(b=>{
+  let hay=[b.box_code,b.box_name,b.storage_room,b.barcode,...lines(b).flatMap(x=>{const p=prod(x);return[p.name,p.color,p.storage_number]})].join(' ').toLowerCase();
+  return (!q||hay.includes(q))&&(kcBoxView==='all'||kcBoxView==='map'||kcBoxView==='low'&&low(b)||kcBoxView==='empty'&&units(b)===0||kcBoxView==='room:'+(b.storage_room||'Unassigned'));
+ });
+ function card(b){
+  const rows=lines(b),pics=rows.map(x=>productImage(prod(x))).filter(Boolean).slice(0,3), value=rows.reduce((n,x)=>n+Number(x.expected_quantity||0)*Number(prod(x).selling_price||0),0);
+  return `<div class="boxCard"><div class="boxHead"><div><div class="boxCode">${esc(b.box_code||'Box')}</div><div class="boxMeta">📍 ${esc(b.storage_room||'Unassigned')}${b.box_name?' · '+esc(b.box_name):''}<br>Barcode: ${esc(b.barcode||'—')}</div></div><span class="historyBadge">${esc(b.status||'active')}</span></div><div class="boxPics">${pics.map(img=>`<img src="${esc(img)}" loading="lazy" alt="Product">`).join('')||'<div class="boxNoPic">▣</div>'}${rows.length>3?`<span class="boxMeta">+${rows.length-3} more</span>`:''}</div><div class="boxInfo">${rows.length} products · ${units(b)} units · ₪${value.toLocaleString()}${low(b)?' · ⚠ Low stock':''}</div><div class="boxActions"><button class="primary" onclick="openBoxDetails('${b.id}')">Open Box</button><button onclick="editBoxContents('${b.id}')">Assign</button><button onclick="printBoxLabel('${b.id}')">Print Label</button></div></div>`;
+ }
+ if(kcBoxView==='map'){el.innerHTML=rooms.map(r=>{const a=cards.filter(b=>(b.storage_room||'Unassigned')===r);return a.length?`<div class="boxRoomTitle">▦ ${esc(r)} · ${a.length} boxes</div>${a.map(card).join('')}`:''}).join('')}
+ else el.innerHTML=cards.map(card).join('');
+ if(!el.innerHTML)el.innerHTML='<div class="empty">No matching boxes found.</div>';
 }
 function openCreateBox(){
   const rooms=roomList();
