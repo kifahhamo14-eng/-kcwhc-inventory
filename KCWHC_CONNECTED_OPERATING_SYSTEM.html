@@ -764,18 +764,18 @@
 </style>
 <style id="kc-floating-nav-upgrade">
 /* KCWHC floating dock — isolated navigation-only upgrade */
-.bottomnav.kc-floating-nav{position:fixed;left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(620px,calc(100% - 28px));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;gap:5px;box-sizing:border-box;padding:9px 11px;min-height:74px;border:1px solid rgba(234,198,106,.5);border-radius:26px;background:rgba(3,60,47,.94);box-shadow:0 15px 42px rgba(0,40,29,.25),inset 0 1px rgba(255,255,255,.14);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:40}
-.kc-floating-nav .navb{position:relative;min-width:0;min-height:57px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;border-radius:18px;background:transparent;color:#e9eee8;font-size:10px;font-weight:700;cursor:pointer;transition:background .28s ease,color .28s ease,transform .3s cubic-bezier(.2,.8,.25,1)}
-.kc-floating-nav .navb span{font-size:24px;line-height:1;display:grid;place-items:center;width:38px;height:33px;transition:transform .35s cubic-bezier(.2,.85,.2,1),filter .3s ease}
+.bottomnav.kc-floating-nav{position:fixed;left:50%;right:auto;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(620px,calc(100% - 28px));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;gap:5px;box-sizing:border-box;padding:5px 9px;min-height:59px;border:1px solid rgba(234,198,106,.5);border-radius:26px;background:rgba(3,60,47,.94);box-shadow:0 15px 42px rgba(0,40,29,.25),inset 0 1px rgba(255,255,255,.14);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:40}
+.kc-floating-nav .navb{position:relative;min-width:0;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;border-radius:14px;background:transparent;color:#e9eee8;font-size:10px;font-weight:700;cursor:pointer;transition:background .28s ease,color .28s ease,transform .3s cubic-bezier(.2,.8,.25,1)}
+.kc-floating-nav .navb span{font-size:21px;line-height:1;display:grid;place-items:center;width:31px;height:27px;transition:transform .35s cubic-bezier(.2,.85,.2,1),filter .3s ease}
 .kc-floating-nav .navb small{font:inherit;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .kc-floating-nav .navb.active{color:#f9df91;background:linear-gradient(155deg,rgba(247,213,122,.23),rgba(247,213,122,.07));box-shadow:inset 0 0 0 1px rgba(249,222,144,.23)}
-.kc-floating-nav .navb.active span{transform:translateY(-5px) scale(1.16);filter:drop-shadow(0 4px 8px rgba(253,221,124,.55))}
-.kc-floating-nav .navb.active:after{content:"";position:absolute;bottom:3px;width:19px;height:3px;border-radius:5px;background:#f7d783;box-shadow:0 0 10px rgba(247,215,131,.8)}
-.kc-floating-nav .navb.scan span{margin:0;width:38px;height:33px;border:0;border-radius:0;background:none}
+.kc-floating-nav .navb.active span{transform:translateY(-2px) scale(1.08);filter:drop-shadow(0 4px 8px rgba(253,221,124,.55))}
+.kc-floating-nav .navb.active:after{content:"";position:absolute;bottom:1px;width:16px;height:2px;border-radius:5px;background:#f7d783;box-shadow:0 0 10px rgba(247,215,131,.8)}
+.kc-floating-nav .navb.scan span{margin:0;width:31px;height:27px;border:0;border-radius:0;background:none}
 .kc-floating-nav .navb:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
 .kc-floating-nav .navb:focus-visible{outline:2px solid #f7d783;outline-offset:2px}
-#app{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
-@media(min-width:820px){.bottomnav.kc-floating-nav{bottom:22px;width:min(640px,calc(100% - 64px));padding:12px 15px;min-height:82px}.kc-floating-nav .navb{font-size:12px;min-height:61px}.kc-floating-nav .navb span{font-size:26px}}
+#app{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+@media(min-width:820px){.bottomnav.kc-floating-nav{bottom:22px;width:min(640px,calc(100% - 64px));padding:8px 12px;min-height:68px}.kc-floating-nav .navb{font-size:11px;min-height:50px}.kc-floating-nav .navb span{font-size:23px}}
 @media(max-width:360px){.bottomnav.kc-floating-nav{width:calc(100% - 14px);padding:7px 6px;gap:1px}.kc-floating-nav .navb{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.kc-floating-nav .navb,.kc-floating-nav .navb span{transition:none!important}}
 </style>
@@ -2152,7 +2152,7 @@ function kcOpenLabelSheetPicker(){
  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><h2 style="margin:0;font-size:21px">Print a 16-label sheet</h2><button onclick="kcCloseLabelSheetPicker()" style="font-size:23px;background:none;border:0;cursor:pointer">✕</button></div>
  <p style="font-size:12px">Select products and quantities. Each sheet holds 16 labels (2 across × 8 down). Individual Print Label buttons remain available.</p>
  <input id="kcLabelSearch" oninput="kcRenderLabelPickerList()" placeholder="Search products or barcode..." style="box-sizing:border-box;width:100%;padding:12px;border:1px solid #aaa;border-radius:10px;font-size:15px">
- <div id="kcLabelList" style="margin:12px 0;max-height:47vh;overflow:auto"></div>
+ <div id="kcLabelList" style="margin:12px 0;max-height:55vh;overflow:auto"></div>
  <div id="kcLabelTotals" style="font-weight:800;font-size:13px;margin:8px 0"></div>
  <div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="kcPrintSelectedLabels()" style="padding:11px 15px;background:#075b46;color:#fff;border:0;border-radius:9px;font-weight:800">Preview & Print Sheets</button><button onclick="kcClearLabelPicks();kcRenderLabelPickerList()" style="padding:11px;border:1px solid #aaa;border-radius:9px;background:#fff">Clear Selection</button><button onclick="kcCloseLabelSheetPicker()" style="padding:11px;border:1px solid #aaa;border-radius:9px;background:#fff">Cancel</button></div></div>`;
  kcRenderLabelPickerList();
@@ -2164,7 +2164,7 @@ function kcRenderLabelPickerList(){
  const matches=products.filter(p=>[p.name,p.barcode,p.storage_number,p.color].some(v=>String(v||'').toLowerCase().includes(q)));
  root.innerHTML=matches.map(p=>{const id=String(p.id);const checked=kcLabelSelection.has(id);const count=kcLabelSelection.get(id)||1;
  const photo=productImage(p);
- return `<div style="display:flex;align-items:center;gap:9px;padding:9px 3px;border-bottom:1px solid #ddd"><input aria-label="Select ${esc(p.name)}" type="checkbox" ${checked?'checked':''} onchange="kcToggleLabelPick('${id}',this.checked);kcRenderLabelPickerList()" style="height:20px;width:20px;flex-shrink:0">${photo?`<img src="${esc(photo)}" alt="" loading="lazy" style="width:46px;height:52px;object-fit:contain;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;flex-shrink:0">`:'<div aria-hidden="true" style="width:46px;height:52px;flex-shrink:0;background:#f5f5f5;border:1px solid #ddd;border-radius:6px"></div>'}<div style="flex:1;min-width:0"><div style="font-weight:750;font-size:13px">${esc(p.name||'Unnamed')}</div><div style="font-size:11px;color:#555">${esc(p.color||'')} • ${esc(p.barcode||'No barcode')}</div></div><label style="font-size:11px">Copies <input type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)" style="width:57px;padding:6px;border:1px solid #aaa;border-radius:6px"></label></div>`;
+ return `<div style="display:flex;align-items:center;gap:9px;padding:9px 3px;border-bottom:1px solid #ddd"><input aria-label="Select ${esc(p.name)}" type="checkbox" ${checked?'checked':''} onchange="kcToggleLabelPick('${id}',this.checked);kcRenderLabelPickerList()" style="height:20px;width:20px;flex-shrink:0">${photo?`<img src="${esc(photo)}" alt="" loading="lazy" style="width:96px;height:112px;object-fit:contain;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;flex-shrink:0">`:'<div aria-hidden="true" style="width:96px;height:112px;flex-shrink:0;background:#f5f5f5;border:1px solid #ddd;border-radius:6px"></div>'}<div style="flex:1;min-width:0"><div style="font-weight:750;font-size:13px">${esc(p.name||'Unnamed')}</div><div style="font-size:11px;color:#555">${esc(p.color||'')} • ${esc(p.barcode||'No barcode')}</div></div><label style="font-size:11px">Copies <input type="number" min="1" max="500" value="${count}" ${checked?'':'disabled'} onchange="kcSetLabelQty('${id}',this.value)" style="width:57px;padding:6px;border:1px solid #aaa;border-radius:6px"></label></div>`;
  }).join('')||'<p>No matching products.</p>';
  let total=0;for(const v of kcLabelSelection.values())total+=v;
  const sheets=Math.ceil(total/16),spare=(sheets*16-total);
