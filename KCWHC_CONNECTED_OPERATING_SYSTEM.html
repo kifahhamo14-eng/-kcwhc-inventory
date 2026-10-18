@@ -3650,7 +3650,7 @@ async function createStorageBox(){
 function editBoxContents(boxId){
   const b=storageBoxesCache.find(x=>x.id===boxId);if(!b)return;
   const assigned=new Map(storageBoxContentsCache.filter(x=>x.box_id===boxId).map(x=>[x.product_id,+x.expected_quantity||0]));
-  const roomProducts=products.filter(p=>String(p.storage_room||'').trim()===String(b.storage_room||'').trim());
+  const roomProducts=products;
   $('modalTitle').textContent='Assign Products • '+b.box_code;
   $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>${esc(b.box_code)}</h3><p>Enter new stock additions. Raising a quantity increases total stock; to reduce or relocate stock, use Sell or Transfer from the product card.</p></div>
   <div class="field"><label>Search Products</label><input id="boxProductSearch" placeholder="Name, storage number, barcode…" oninput="filterBoxAssignRows()"></div>
