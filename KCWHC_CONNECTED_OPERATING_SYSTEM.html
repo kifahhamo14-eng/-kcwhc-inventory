@@ -2766,7 +2766,7 @@ function ackAnnouncementLocal(id){localStorage.setItem(opsAckKey(id),'1');if(win
 async function createTodoFromAnnouncement(id){
   const a=announcements.find(x=>String(x.id)===String(id));if(!a)return;
   const task='Announcement follow-up: '+(a.title||a.message||'Team notice');
-  const {error}=await sb.from('todos').insert({task,priority:'High',due_date:null});
+  const {error}=await sb.from('todos').insert({task,priority:'High',due_date:null,created_by:profile.id,assignee_ids:[]});
   if(error){toast(error.message);return}await loadTodos();renderCommand();toast('Task created from announcement');openAnnouncements();
 }
 function openAnnouncements(){
@@ -2781,7 +2781,7 @@ function openAnnouncements(){
   const html=`<div class="opsHero"><div class="opsHeroTop"><div class="opsHeroIcon">📣</div><div><h3>Announcements Command Feed</h3><p>Important messages become trackable actions instead of simple notes.</p></div></div><div class="opsStats"><div class="opsStat red"><small>Unread</small><b>${unread}</b></div><div class="opsStat"><small>Total</small><b>${announcements.length}</b></div><div class="opsStat gold"><small>Posted Today</small><b>${today}</b></div><div class="opsStat"><small>Open Tasks</small><b>${todos.filter(t=>!t.completed).length}</b></div></div><div class="opsToolbar"><button class="opsBtn gold" onclick="openOperationsCenter()">⚡ Operations Center</button><button class="opsBtn" onclick="openTodos()">✓ View Tasks</button><button class="opsBtn" onclick="closeModal();go('inventory')">📦 Inventory</button></div></div>${composer}<div class="opsSection"><div class="opsSectionTitle"><b>Command Feed</b><span class="sub">${unread} require attention</span></div>${cards}</div>`;
   openModal('Announcements',html)
 }
-async function addAnnouncement(){const title=$('annTitle').value.trim(),message=$('annMessage').value.trim();if(!message)return;const {error}=await sb.from('announcements').insert({title,message});if(error){toast(error.message);return}await loadAnnouncements();renderCommand();openAnnouncements()}
+async function addAnnouncement(){return kcPublishAnn()}
 async function deleteAnnouncement(id){await sb.from('announcements').delete().eq('id',id);await loadAnnouncements();renderCommand();openAnnouncements()}
 function todoProgressPct(t){if(t.completed)return 100;const p=String(t.priority||'Normal').toLowerCase();return p==='high'?35:p==='medium'?25:15}
 function openTodos(){
@@ -2802,7 +2802,7 @@ function openOperationsCenter(){
   const html=`<div class="opsHero"><div class="opsHeroTop"><div class="opsHeroIcon">⚡</div><div><h3>KCWHC Operations Center</h3><p>Announcements, tasks and inventory risk connected in one command view.</p></div><div class="opsDonut" style="--p:${pct}%"><span>${pct}%</span></div></div><div class="opsStats"><div class="opsStat red"><small>Inventory Risks</small><b>${out.length+low.length}</b></div><div class="opsStat gold"><small>Open Tasks</small><b>${open.length}</b></div><div class="opsStat"><small>Unread Notices</small><b>${unread}</b></div><div class="opsStat"><small>Completed</small><b>${done.length}</b></div></div>${alert}<div class="opsToolbar"><button class="opsBtn gold" onclick="openTodos()">✓ Tasks</button><button class="opsBtn" onclick="openAnnouncements()">📣 Announcements</button><button class="opsBtn" onclick="closeModal();go('inventory')">📦 Inventory</button><button class="opsBtn" onclick="closeModal();openStockCountCenter()">▥ Count / Scan</button></div></div><div class="opsSection"><div class="opsSectionTitle"><b>Priority Actions</b><span class="sub">What needs attention now</span></div>${urgent.length?urgent.map(t=>`<div class="opsCard"><div class="opsTitle">${esc(t.task)}</div><div class="opsMeta">${t.due_date?dueText(t.due_date):'No due date'} • ${esc(t.priority||'High')} priority</div></div>`).join(''):'<div class="opsEmpty">No high-priority tasks right now.</div>'}</div><div class="opsSection"><div class="opsSectionTitle"><b>Latest Announcements</b><button class="opsMini" onclick="openAnnouncements()">View all</button></div>${announcements.slice(0,3).map(a=>`<div class="opsCard"><div class="opsTitle">${esc(a.title||'Announcement')}</div><div class="opsMessage">${esc(a.message)}</div></div>`).join('')||'<div class="opsEmpty">No announcements.</div>'}</div>`;
   openModal('Operations Center',html)
 }
-async function addTodo(){const task=$('todoTask').value.trim();if(!task)return;const {error}=await sb.from('todos').insert({task,priority:$('todoPriority').value,due_date:$('todoDue').value||null});if(error){toast(error.message);return}await loadTodos();renderCommand();openTodos()}
+async function addTodo(){return kcPublishTask()}
 async function deleteTodo(id){await sb.from('todos').delete().eq('id',id);await loadTodos();renderCommand();openTodos()}
 
 function dashMoney(v){return '₪'+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}
