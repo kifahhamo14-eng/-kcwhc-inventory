@@ -2015,28 +2015,8 @@ function go(name){
   if(name==='sell'&&!currentProduct)$('sellBody').innerHTML='<div class="empty">Scan or select a product to sell.</div>';
 }
 function focusSearch(){go('home');setTimeout(()=>$('search').focus(),100)}
-function kcwhcProductFallback(p){
-  const el=document.getElementById('detailBody');if(!el||!p)return;
-  const safe=(v)=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let locations='';try{locations=kcmlSafeSummary(p.id)}catch(e){console.error(e)}
-  el.innerHTML='<div class="detailHero" style="padding:18px;min-height:260px;background:#fff;border-radius:20px;margin:12px 18px"><div class="pnumber">'+safe(p.storage_number)+'</div><h2>'+safe(p.name)+'</h2><div class="detailsGrid"><div class="detail"><b>'+Number(p.quantity||0)+'</b><small>Total Stock</small></div><div class="detail"><b>₪'+Number(p.selling_price||0).toFixed(2)+'</b><small>Price</small></div></div>'+locations+'<div class="pcActions"><button class="smallbtn" onclick="renderDetail()">Reload details</button><button class="smallbtn" onclick="prepareSell(currentProduct.id)">Sell Item</button></div></div>';
-}
-async function openProduct(id,edit=false){
-  const p=products.find(x=>String(x.id)===String(id));if(!p){toast('Product not found');return}
-  currentProduct=p;go('detail');
-  kcwhcProductFallback(p);
-  try{renderDetail(edit)}catch(e){console.error('Product render error',e);kcwhcProductFallback(p)}
-  if(!$('detailBody')?.textContent?.trim())kcwhcProductFallback(p);
-  try{
-    await loadStorageBoxes();
-    if(currentProduct?.id===id&&document.querySelector('.screen.active')?.id==='detail'){
-      try{renderDetail(edit)}catch(e){console.error(e);kcwhcProductFallback(p)}
-      if(!$('detailBody')?.textContent?.trim())kcwhcProductFallback(p);
-    }
-  }catch(e){console.warn('Could not reload storage locations',e)}
-}
-
-function renderDetail(edit=false){try{const p=currentProduct,img=productImage(p),[status,cls]=stockLabel(p);$('detailBody').innerHTML=`<div class="detailHero"><div class="heroTop"><div class="detailImageWrap">${img?`<img class="prodImg" style="width:132px;height:166px;object-fit:contain" src="${img}" onclick="openImageZoom(this.src)">`:'<div class="placeholder" style="width:132px;height:166px">✦</div>'}</div><div class="detailInfo"><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag">${esc(p.category||'Uncategorized')}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${p.quantity}</b><small>Quantity</small></div><div class="detail"><b>${p.reorder_level}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div></div></div></div>${kcmlSafeSummary(p.id)}<div class="barcode" style="margin:12px auto 0;max-width:240px">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'')}</div></div><div class="recommend ${p.risk_level==='High'?'red':p.risk_level==='Low'?'green':''}" style="margin-top:10px">${esc(p.recommendation||'Stock OK')} • Risk: ${esc(p.risk_level||'Low')} — ${esc(p.risk_reason||'')}</div><div class="tabs"><button class="tab active" onclick="detailTab('activity',this)">Activity</button><button class="tab" onclick="detailTab('details',this)">Details</button><button class="tab" onclick="detailTab('sales',this)">Sales</button><button class="tab" onclick="detailTab('risk',this)">Risk</button></div><div id="tabPanel" class="tabPanel"></div><div class="pcActions">${canDo('can_sell')?`<button class="smallbtn primary" onclick="prepareSell('${p.id}')">Sell Item</button>`:''}<button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="openInventoryAction('${p.id}')">Inventory Action</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="enableEditCurrent()">Edit Product</button>`:''}${canDo('can_delete_products')?`<button class="smallbtn" style="color:#b21919" onclick="deleteProduct('${p.id}')">Delete Product</button>`:''}</div></div>`;detailTab('activity',document.querySelector('.tab'));if(edit&&canDo('can_edit_products'))enableEditCurrent()}catch(renderError){console.error('KCWHC product details render failed:',renderError);const p=currentProduct;const el=$('detailBody');if(el&&p){el.innerHTML='<div class="detailHero" style="padding:18px"><h2>'+esc(p.name||'Product')+'</h2><p>Product number: '+esc(p.storage_number||'—')+'</p><p>Total quantity: '+Number(p.quantity||0)+'</p>'+kcmlSafeSummary(p.id)+'<div class="pcActions"><button class="smallbtn" onclick="renderDetail()">Retry details</button><button class="smallbtn" onclick="prepareSell(\''+esc(p.id)+'\')">Sell Item</button></div></div>';}toast('Some product details could not be displayed. Basic details are shown.');}}
+function openProduct(id,edit=false){currentProduct=products.find(p=>p.id===id);if(!currentProduct)return;go('detail');renderDetail(edit)}
+function renderDetail(edit=false){const p=currentProduct,img=productImage(p),[status,cls]=stockLabel(p);$('detailBody').innerHTML=`<div class="detailHero"><div class="heroTop"><div class="detailImageWrap">${img?`<img class="prodImg" style="width:132px;height:166px;object-fit:contain" src="${img}" onclick="openImageZoom(this.src)">`:'<div class="placeholder" style="width:132px;height:166px">✦</div>'}</div><div class="detailInfo"><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag">${esc(p.category||'Uncategorized')}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel)}</span></div><div class="detailsGrid"><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${p.quantity}</b><small>Quantity</small></div><div class="detail"><b>${p.reorder_level}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div></div></div></div><div class="barcode" style="margin:12px auto 0;max-width:240px">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'')}</div></div><div class="recommend ${p.risk_level==='High'?'red':p.risk_level==='Low'?'green':''}" style="margin-top:10px">${esc(p.recommendation||'Stock OK')} • Risk: ${esc(p.risk_level||'Low')} — ${esc(p.risk_reason||'')}</div><div class="tabs"><button class="tab active" onclick="detailTab('activity',this)">Activity</button><button class="tab" onclick="detailTab('details',this)">Details</button><button class="tab" onclick="detailTab('sales',this)">Sales</button><button class="tab" onclick="detailTab('risk',this)">Risk</button></div><div id="tabPanel" class="tabPanel"></div><div class="pcActions">${canDo('can_sell')?`<button class="smallbtn primary" onclick="prepareSell('${p.id}')">Sell Item</button>`:''}<button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="openInventoryAction('${p.id}')">Inventory Action</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="enableEditCurrent()">Edit Product</button>`:''}${canDo('can_delete_products')?`<button class="smallbtn" style="color:#b21919" onclick="deleteProduct('${p.id}')">Delete Product</button>`:''}</div></div>`;detailTab('activity',document.querySelector('.tab'));if(edit&&canDo('can_edit_products'))enableEditCurrent()}
 async function detailTab(tab,btn){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');const p=currentProduct,panel=$('tabPanel');if(tab==='details'){panel.innerHTML=`<div class="listRow"><b>${productNameWithLogo(p.name)}</b><div class="sub">Category: ${esc(p.category||'—')} • Size: ${esc(p.size||'—')} • Color: ${esc(p.color||'—')}</div><div class="sub">Channel: ${esc(p.sales_channel)} • Status: ${esc(p.status||'Active')}</div></div>`;return}if(tab==='risk'){panel.innerHTML=`<div class="listRow"><b>${esc(p.risk_level||'Low')} Risk • ${p.risk_score||0}/100</b><div class="sub" style="margin-top:4px">${esc(p.risk_reason||'No major risk detected')}</div></div>`;return}if(profile.role!=='admin'){panel.innerHTML='<div class="sub">Admin access required for this history.</div>';return}if(tab==='activity'){panel.innerHTML='Loading…';const [{data:acts},{data:boxActs}]=await Promise.all([sb.from('inventory_activity').select('*,profiles(full_name)').eq('product_id',p.id).order('created_at',{ascending:false}).limit(40),sb.from('box_inventory_activity').select('*,storage_boxes(box_code),profiles(full_name)').eq('product_id',p.id).order('created_at',{ascending:false}).limit(40)]);const rows=[...(acts||[]).map(a=>({...a,kind:'inventory'})),...(boxActs||[]).map(a=>({...a,kind:'box'}))].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,50);panel.innerHTML=rows.length?rows.map(a=>`<div class="activityRow"><b>${esc(prettyAction(a.action))}${a.kind==='box'&&a.storage_boxes?.box_code?' • '+esc(a.storage_boxes.box_code):''}</b><div class="sub">${esc(a.profiles?.full_name||'User')} • ${a.quantity_before??'—'} → ${a.quantity_after??'—'}${a.note?' • '+esc(a.note):''} • ${new Date(a.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No activity yet.</div>';return}if(tab==='sales'){panel.innerHTML='Loading…';const {data}=await sb.from('orders').select('*').eq('product_id',p.id).eq('record_type','Sale').order('created_at',{ascending:false}).limit(25);panel.innerHTML=(data||[]).length?(data||[]).map(o=>`<div class="activityRow"><b>Sale × ${o.quantity}</b><div class="sub">₪${Number(o.total_price||0).toFixed(2)} • ${new Date(o.created_at).toLocaleString()}</div></div>`).join(''):'<div class="sub">No sales yet.</div>'}}
 function enableEditCurrent(){
   if(!currentProduct){toast('Product not found.');return}
@@ -2361,19 +2341,6 @@ function printKCWHCLabelSheet(items){
       <div class="summary">2 across × 8 down • 16 labels per sheet • 0.9 cm top gap • Scale: 100%</div>
     </div>
   
-
-<style>
-.kcml-panel{margin:12px 0;padding:14px;border:1px solid #d9e6df;border-radius:14px;background:#fff}.kcml-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:10px 4px;border-bottom:1px solid #e7eee9}.kcml-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.kcml-controls button{border-radius:10px;padding:10px 13px;background:#07533e;color:white;border:0}.kcml-form{display:grid;gap:12px}.kcml-form select,.kcml-form input{width:100%;padding:12px;border:1px solid #cad9d1;border-radius:10px;background:white;color:#163b2f}
-</style>
-<script>
-function kcmlLocations(id){return (storageBoxContentsCache||[]).filter(x=>String(x.product_id)===String(id)&&Number(x.expected_quantity)>0).map(x=>({record:x,box:(storageBoxesCache||[]).find(b=>b.id===x.box_id)})).filter(x=>x.box)}
-function kcmlOptions(productId){return kcmlLocations(productId).map(x=>'<option value="'+esc(x.box.id)+'">'+esc(x.box.storage_room||'Room')+' • '+esc(x.box.box_name||x.box.box_code||'Box')+' ('+Number(x.record.expected_quantity)+' pcs)</option>').join('')}
-function kcmlSafeSummary(productId){try{return kcmlSummary(productId)}catch(e){console.error('Storage locations failed:',e);return '<section class="kcml-panel"><strong>Storage locations</strong><div class="sub">Location list is temporarily unavailable. Try refreshing.</div></section>'}}
-function kcmlSummary(productId){const p=products.find(x=>x.id===productId);if(!p)return '';const rows=kcmlLocations(productId);const assigned=rows.reduce((n,x)=>n+Number(x.record.expected_quantity||0),0);return '<section class="kcml-panel"><strong>Storage locations</strong><div class="sub">Total stock: '+Number(p.quantity||0)+' • Assigned to boxes: '+assigned+' • Unassigned: '+Math.max(0,Number(p.quantity||0)-assigned)+'</div>'+ (rows.map(x=>'<div class="kcml-row"><span><b>'+esc(x.box.storage_room||'Room')+'</b><div class="sub">'+esc(x.box.box_name||x.box.box_code||'Box')+'</div></span><b>'+Number(x.record.expected_quantity)+' pcs</b></div>').join('')||'<div class="sub">No storage box assigned yet.</div>')+'<div class="kcml-controls">'+(canDo('can_change_stock')?'<button onclick="kcmlOpen(\''+productId+'\',\'add\')">+ Add stock to box</button><button onclick="kcmlOpen(\''+productId+'\',\'transfer\')">Transfer stock</button>':'')+'</div></section>'}
-async function kcmlOpen(id,mode){try{await loadStorageBoxes()}catch(e){toast(e.message);return}const p=products.find(x=>x.id===id);if(!p)return;const avail=kcmlLocations(id);const boxes=(storageBoxesCache||[]).filter(b=>!b.status||b.status==='active');const boxOpts=boxes.map(b=>'<option value="'+esc(b.id)+'">'+esc(b.storage_room||'Room')+' • '+esc(b.box_name||b.box_code||'Box')+'</option>').join('');const fromOpts=avail.map(x=>'<option value="'+esc(x.box.id)+'">'+esc(x.box.storage_room||'Room')+' • '+esc(x.box.box_name||x.box.box_code||'Box')+' ('+Number(x.record.expected_quantity)+' available)</option>').join('');openModal(mode==='add'?'Add Stock to Location':'Transfer Stock','<div class="kcml-form"><b>'+esc(p.name)+'</b>'+(mode==='transfer'?'<label>From box<select id="kcmlFrom">'+fromOpts+'</select></label>':'')+'<label>To box<select id="kcmlTo">'+boxOpts+'</select></label><label>Quantity<input id="kcmlQty" type="number" inputmode="numeric" min="1" step="1" value="1"></label><button class="saveBtn" onclick="kcmlSubmit(\''+esc(id)+'\',\''+mode+'\')">Save '+(mode==='add'?'stock':'transfer')+'</button></div>')}
-async function kcmlSubmit(id,mode){const to=document.getElementById('kcmlTo')?.value,from=document.getElementById('kcmlFrom')?.value,qty=Number(document.getElementById('kcmlQty')?.value);if(!Number.isInteger(qty)||qty<1){toast('Enter a valid quantity');return}if(mode==='transfer'&&(!from||from===to)){toast('Choose two different boxes');return}const btn=document.querySelector('#modalBody .saveBtn');if(btn){btn.disabled=true;btn.textContent='Saving…'}try{const {error}=await sb.rpc(mode==='add'?'kc_box_add':'kc_box_transfer',mode==='add'?{p_product:id,p_box:to,p_quantity:qty}:{p_product:id,p_source:from,p_target:to,p_quantity:qty});if(error)throw error;await Promise.all([loadStorageBoxes(),loadProducts()]);currentProduct=products.find(x=>x.id===id)||currentProduct;closeModal();if(document.getElementById('detailBody')&&document.getElementById('detailBody').offsetParent!==null)renderDetail();toast('Storage location updated')}catch(e){toast('Could not save: '+e.message);if(btn){btn.disabled=false;btn.textContent='Retry'}}}
-function kcmlSellPicker(id){const items=kcmlLocations(id);const stock=Number(products.find(x=>x.id===id)?.quantity||0);if(!items.length)return '<div class="sub">No boxes assigned. Sale will use normal inventory deduction.</div>';return '<div class="kcml-panel"><label><b>Sell from storage box</b><select id="kcmlSaleBox" style="display:block;width:100%;padding:12px;margin:8px 0;border-radius:10px">'+kcmlOptions(id)+'</select></label><div class="sub">Select the exact box to deduct stock from. Unassigned stock: '+Math.max(0,stock-items.reduce((n,x)=>n+Number(x.record.expected_quantity),0))+'</div></div>'}
-<\/script>
 </body></html>`);
   win.document.close();
 }
@@ -2619,23 +2586,37 @@ function prepareSell(id){
   go('sell');
   renderSell(product);
 }
-
-function kcLocations(id){return storageBoxContentsCache.filter(x=>x.product_id===id&&Number(x.expected_quantity)>0).map(x=>({row:x,box:storageBoxesCache.find(b=>b.id===x.box_id)})).filter(x=>x.box);}
-function kcLocationOptions(arr){return arr.map(x=>'<option value="'+esc(x.box.id)+'">'+esc((x.box.storage_room||'Room')+' / '+(x.box.box_name||x.box.box_code)+' ('+x.row.expected_quantity+' pcs)')+'</option>').join('');}
-function kcStoragePanel(id){const p=products.find(x=>x.id===id),a=kcLocations(id),sum=a.reduce((n,x)=>n+Number(x.row.expected_quantity),0);return '<div class="analyticsSection" style="margin:14px 0"><div class="analyticsTitle">Storage Locations <span class="sub">'+sum+' in boxes / '+(p?.quantity||0)+' total</span></div>'+a.map(x=>'<div class="listRow"><b>'+esc(x.box.storage_room||'Room')+' — '+esc(x.box.box_name||x.box.box_code)+'</b><div class="sub">'+x.row.expected_quantity+' pieces</div></div>').join('')+(canDo('can_change_stock')?'<div class="pcActions"><button class="smallbtn primary" onclick="kcLocationDialog(\''+id+'\',\'add\')">＋ Add stock to box</button><button class="smallbtn" onclick="kcLocationDialog(\''+id+'\',\'transfer\')">⇄ Transfer</button></div>':'')+'</div>';}
-function kcLocationDialog(id,mode){if(!canDo('can_change_stock'))return;const a=kcLocations(id),b=storageBoxesCache.filter(x=>String(x.status||'active').toLowerCase()==='active');if(!b.length){toast('Create a box first');return;}if(mode==='transfer'&&!a.length){toast('No assigned box inventory');return;}openModal(mode==='add'?'Add stock to box':'Transfer between boxes',(mode==='transfer'?'<div class="field"><label>From box</label><select id="kcFrom">'+kcLocationOptions(a)+'</select></div>':'')+'<div class="field"><label>To storage room / box</label><select id="kcTo">'+b.map(x=>'<option value="'+esc(x.id)+'">'+esc((x.storage_room||'Room')+' / '+(x.box_name||x.box_code))+'</option>').join('')+'</select></div><div class="field"><label>Quantity</label><input id="kcQty" type="number" min="1" step="1" value="1"></div><button id="kcLocationSave" class="saveBtn" onclick="kcLocationSave(\''+id+'\',\''+mode+'\')">Save</button>');}
-async function kcLocationSave(id,mode){const to=$('kcTo')?.value,from=$('kcFrom')?.value,qty=Number($('kcQty')?.value),btn=$('kcLocationSave');if(!Number.isInteger(qty)||qty<1||!to||(mode==='transfer'&&(!from||from===to))){toast('Check boxes and quantity');return;}if(btn?.disabled)return;if(btn)btn.disabled=true;try{const {error}=await sb.rpc(mode==='add'?'kc_box_add':'kc_box_transfer',mode==='add'?{p_product:id,p_box:to,p_quantity:qty}:{p_product:id,p_source:from,p_target:to,p_quantity:qty});if(error)throw error;await Promise.all([loadProducts(),loadStorageBoxes()]);currentProduct=products.find(x=>x.id===id)||currentProduct;closeModal();renderAll();if($('detailBody')&&currentProduct)renderDetail();toast('Storage locations updated');}catch(e){toast('Save failed: '+e.message);if(btn)btn.disabled=false;}}
-
-function renderSell(p){const body=$('sellBody');if(!body)return;if(!p){body.innerHTML='<div class="empty">Product unavailable</div>';return;}const loc=kcLocations(p.id),img=productImage(p),stock=Number(p.quantity)||0;body.innerHTML='<div class="sellCard"><div style="display:flex;gap:14px;align-items:center">'+(img?'<img class="prodImg" src="'+esc(img)+'" style="width:108px;height:132px;object-fit:contain">':'')+'<div><div class="pname">'+esc(p.name)+'</div><div class="sub">Available '+stock+' · ₪'+Number(p.selling_price||0).toFixed(2)+'</div></div></div>'+(stock>0?(loc.length?'<div class="field"><label>Sell from storage room / box</label><select id="kcSellBox" onchange="kcSyncSellBoxQuantity()" style="width:100%;padding:12px">'+kcLocationOptions(loc)+'</select></div>':'<div class="sub">No assigned box — uses existing inventory sale.</div>')+'<div style="padding:22px;text-align:center">Quantity to sell<div style="display:flex;align-items:center;justify-content:center;gap:16px;margin:12px"><button class="smallbtn" onclick="changeSellQty(-1)">−</button><strong id="sellQty" style="font-size:32px">1</strong><button class="smallbtn" onclick="changeSellQty(1)">+</button></div></div><button class="saveBtn" onclick="confirmSale()">Confirm Sale</button>':'<div class="empty">Out of stock</div>')+'</div>';}
-function kcSyncSellBoxQuantity(){
-  const selected=$('kcSellBox')?.value,qtyEl=$('sellQty');
-  if(!qtyEl||!currentProduct)return;
-  const row=kcLocations(currentProduct.id).find(x=>x.box.id===selected);
-  const maximum=Math.min(Number(currentProduct.quantity||0),row?Number(row.row.expected_quantity||0):Number(currentProduct.quantity||0));
-  qtyEl.textContent=String(Math.max(1,Math.min(Number(qtyEl.textContent)||1,maximum)));
+function renderSell(p){
+  const body=$('sellBody');
+  if(!body)return;
+  if(!p){body.innerHTML='<div class="empty">Product unavailable. Return to inventory and scan again.</div>';return;}
+  const stock=Math.max(0,Number(p.quantity)||0);
+  const img=productImage(p);
+  const imageHtml=img?'<img class="prodImg" src="'+esc(img)+'" alt="Product" style="width:108px;height:132px;object-fit:contain">':'<div class="placeholder" style="width:108px;height:132px">✦</div>';
+  body.innerHTML='<div class="sellCard"><div style="display:flex;align-items:center;gap:14px">'+imageHtml+'<div style="min-width:0"><div class="pnumber">'+esc(p.storage_number||p.sku||'')+'</div><div class="pname">'+esc(p.name||'Product')+'</div><div class="sub">Available: '+stock+' · Unit price: ₪'+Number(p.selling_price||0).toFixed(2)+'</div></div></div>'+
+  (stock>0?'<div style="padding:22px 0;text-align:center"><div class="sub">Quantity to sell</div><div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:14px 0"><button class="smallbtn" onclick="changeSellQty(-1)">−</button><strong id="sellQty" style="font-size:32px">1</strong><button class="smallbtn" onclick="changeSellQty(1)">+</button></div><div class="sub">Confirm to record the sale and reduce inventory.</div></div><button class="saveBtn" onclick="confirmSale()">Confirm Sale</button>':'<div class="empty">Out of stock — this product cannot be sold.</div>')+'</div>';
 }
-function changeSellQty(d){const el=$('sellQty');if(!el)return;const selected=$('kcSellBox')?.value,match=kcLocations(currentProduct.id).find(x=>x.box.id===selected);const max=Math.min(Number(currentProduct.quantity||0),match?Number(match.row.expected_quantity):Number(currentProduct.quantity||0));el.textContent=Math.max(1,Math.min(max,(Number(el.textContent)||1)+d));}
-async function confirmSale(){if(!canDo('can_sell')||!currentProduct)return;const qty=Number($('sellQty')?.textContent),loc=kcLocations(currentProduct.id),box=$('kcSellBox')?.value,match=loc.find(x=>x.box.id===box);if(!Number.isInteger(qty)||qty<1||qty>Number(currentProduct.quantity)||(loc.length&&(!match||qty>Number(match.row.expected_quantity)))){toast('Not enough stock in selected box');return;}const btn=$('sellBody')?.querySelector('.saveBtn');if(btn?.disabled)return;if(btn){btn.disabled=true;btn.textContent='Recording sale…';}try{const id=currentProduct.id,{error}=loc.length?await sb.rpc('kc_box_sale',{p_product:id,p_box:box,p_quantity:qty}):await sb.rpc('adjust_stock',{p_product_id:id,p_delta:-qty,p_action:'sale',p_note:'Sale from dashboard'});if(error)throw error;await Promise.all([loadProducts(),loadStorageBoxes()]);currentProduct=products.find(p=>p.id===id);renderAll();renderSell(currentProduct);toast('Sale recorded');}catch(e){toast('Sale failed: '+e.message);if(btn){btn.disabled=false;btn.textContent='Confirm Sale';}}}
+function changeSellQty(d){const el=$('sellQty');let n=Math.max(1,Math.min(+currentProduct.quantity||0,(+el.textContent||1)+d));el.textContent=n}
+async function confirmSale(){
+ if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}
+ if(!currentProduct)return;
+ const qty=Number($('sellQty')?.textContent);
+ if(!Number.isInteger(qty)||qty<1){toast('Choose a valid quantity');return}
+ if(qty>Number(currentProduct.quantity||0)){toast('Not enough stock');return}
+ const btn=$('sellBody')?.querySelector('.saveBtn');
+ if(btn?.disabled)return;
+ if(btn){btn.disabled=true;btn.textContent='Recording sale…'}
+ try{
+  const soldId=currentProduct.id;
+  const {error}=await sb.rpc('adjust_stock',{p_product_id:soldId,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});
+  if(error)throw error;
+  toast('Sale recorded — inventory updated');
+  await loadProducts();
+  try{await loadStorageBoxes()}catch(e){console.warn('Box refresh failed',e)}
+  currentProduct=products.find(p=>p.id===soldId)||null;
+  renderAll();renderSell(currentProduct);
+ }catch(e){toast('Sale failed: '+(e?.message||String(e)));if(btn){btn.disabled=false;btn.textContent='Confirm Sale'}}
+}
 async function countStock(id){if(!canDo('can_count_stock')){toast('Count Stock is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;const v=prompt(`Count stock for ${p.name}. Current: ${p.quantity}` ,p.quantity);if(v===null)return;const n=Number(v);if(!Number.isInteger(n)||n<0){toast('Enter a whole number 0 or higher');return}const {error}=await sb.rpc('set_stock_count',{p_product_id:id,p_quantity:n,p_note:'Physical stock count'});if(error){toast(error.message);return}toast('Stock count saved');await loadProducts();renderAll();if(currentProduct?.id===id){currentProduct=products.find(x=>x.id===id);renderDetail()}}
 async function adjustStock(id){if(!canDo('can_change_stock')){toast('Change Stock is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;const raw=prompt(`Adjust stock for ${p.name}.\nEnter a positive number to add or a negative number to remove.\nCurrent quantity: ${p.quantity}`,'0');if(raw===null)return;const delta=Number(raw);if(!Number.isInteger(delta)||delta===0){toast('Enter a whole number other than 0');return}if((+p.quantity||0)+delta<0){toast('Stock cannot go below zero');return}const {error}=await sb.rpc('adjust_stock',{p_product_id:id,p_delta:delta,p_action:'adjust_stock',p_note:'Manual stock adjustment'});if(error){toast(error.message);return}toast('Stock adjusted');await loadProducts();renderAll()}
 function openInventoryAction(id){
@@ -2728,7 +2709,7 @@ function manualLookup(){
   if(p){
     currentProduct=p;
     const img=productImage(p);
-    $('scanResult').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span>${p.color?`<span class="tag">${esc(p.color)}</span>`:''}</div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Box / Shelf</small></div></div></div></div>${kcmlSummary(p.id)}<div class="pcActions" style="margin-top:12px"><button class="smallbtn primary" onclick="openProduct('${p.id}')">Open Product</button>${canDo('can_edit_products')?`<button class="smallbtn" onclick="openScannedProductEdit('${p.id}')">Edit Product</button>`:''}${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}</div></div>`;
+    $('scanResult').innerHTML=`<div class="sellCard"><div class="heroTop"><div>${img?`<img class="prodImg" style="width:100px;height:120px" src="${img}">`:'<div class="placeholder" style="width:100px;height:120px">✦</div>'}</div><div><div class="pnumber">${esc(p.storage_number)}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag channel">${esc(p.sales_channel)}</span>${p.color?`<span class="tag">${esc(p.color)}</span>`:''}</div><div class="detailsGrid"><div class="detail"><b>${p.quantity}</b><small>Current Quantity</small></div><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Box / Shelf</small></div></div></div></div><div class="pcActions" style="margin-top:12px"><button class="smallbtn primary" onclick="openProduct('${p.id}')">Open Product</button>${canDo('can_edit_products')?`<button class="smallbtn" onclick="openScannedProductEdit('${p.id}')">Edit Product</button>`:''}${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}</div></div>`;
     return;
   }
 
@@ -3678,9 +3659,9 @@ async function createStorageBox(){
 function editBoxContents(boxId){
   const b=storageBoxesCache.find(x=>x.id===boxId);if(!b)return;
   const assigned=new Map(storageBoxContentsCache.filter(x=>x.box_id===boxId).map(x=>[x.product_id,+x.expected_quantity||0]));
-  const roomProducts=products;
+  const roomProducts=products.filter(p=>String(p.storage_room||'').trim()===String(b.storage_room||'').trim());
   $('modalTitle').textContent='Assign Products • '+b.box_code;
-  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>${esc(b.box_code)}</h3><p>Enter new stock additions. Raising a quantity increases total stock; to reduce or relocate stock, use Sell or Transfer from the product card.</p></div>
+  $('modalBody').innerHTML=`<div class="stockCenterHero"><h3>${esc(b.box_code)}</h3><p>Set the expected quantity for each product inside this box. Use 0 for products that do not belong in the box.</p></div>
   <div class="field"><label>Search Products</label><input id="boxProductSearch" placeholder="Name, storage number, barcode…" oninput="filterBoxAssignRows()"></div>
   <div id="boxAssignRows">${roomProducts.map(p=>{const img=productImage(p);return `<div class="countItem boxAssignRow" data-hay="${esc([p.name,p.storage_number,p.barcode,p.color].filter(Boolean).join(' ').toLowerCase())}">${img?`<img src="${img}">`:'<div class="ph">✦</div>'}<div><div class="countItemName">${productNameWithLogo(p.name)}</div><div class="countItemMeta">${esc(p.storage_number||'')} • Inventory qty ${p.quantity}</div></div><input class="boxQtyInput" data-product-id="${p.id}" type="number" min="0" value="${assigned.get(p.id)||0}" style="width:62px;padding:8px;border:1px solid #d8cbaa;border-radius:8px;text-align:center"></div>`}).join('')||'<div class="empty">No products are assigned to this storage room.</div>'}</div>
   <button class="saveBtn" onclick="saveBoxContents('${b.id}')">Save Box Contents</button>`;
@@ -3690,33 +3671,25 @@ function filterBoxAssignRows(){
   document.querySelectorAll('.boxAssignRow').forEach(r=>r.style.display=!q||String(r.dataset.hay||'').includes(q)?'grid':'none');
 }
 async function saveBoxContents(boxId){
-  if(!canDo('can_change_stock')){toast('Stock permission required');return;}
-  const fields=[...document.querySelectorAll('.boxQtyInput')];
-  const current=new Map(storageBoxContentsCache.filter(x=>x.box_id===boxId).map(x=>[String(x.product_id),Number(x.expected_quantity)||0]));
-  const changes=[];
-  for(const field of fields){
-    const id=String(field.dataset.productId),desired=Number(field.value),before=current.get(id)||0;
-    if(!Number.isInteger(desired)||desired<0){toast('Enter non-negative whole-number quantities');return;}
-    if(desired<before){toast('To reduce a box quantity, sell from that box or transfer to another box. Nothing was changed.');return;}
-    if(desired>before)changes.push({id,delta:desired-before});
-  }
-  if(!changes.length){toast('No stock additions to save');return;}
-  const btn=document.querySelector('#modalBody .saveBtn');
-  if(btn?.disabled)return;
-  if(btn){btn.disabled=true;btn.textContent='Saving stock…';}
-  try{
-    for(const ch of changes){
-      const {error}=await sb.rpc('kc_box_add',{p_product:ch.id,p_box:boxId,p_quantity:ch.delta});
-      if(error)throw error;
+  const inputs=[...document.querySelectorAll('.boxQtyInput')];
+  const desired=inputs.map(i=>({product_id:i.dataset.productId,qty:Math.max(0,parseInt(i.value||'0',10)||0)}));
+  const current=storageBoxContentsCache.filter(x=>x.box_id===boxId);
+  for(const d of desired){
+    const existing=current.find(x=>x.product_id===d.product_id);
+    if(d.qty>0){
+      if(existing){
+        const {error}=await sb.from('storage_box_contents').update({expected_quantity:d.qty,updated_at:new Date().toISOString()}).eq('id',existing.id);
+        if(error){alert(error.message);return}
+      }else{
+        const {error}=await sb.from('storage_box_contents').insert({box_id:boxId,product_id:d.product_id,expected_quantity:d.qty});
+        if(error){alert(error.message);return}
+      }
+    }else if(existing){
+      const {error}=await sb.from('storage_box_contents').delete().eq('id',existing.id);
+      if(error){alert(error.message);return}
     }
-    await Promise.all([loadStorageBoxes(),loadProducts()]);
-    renderAll();toast('Box stock added and product totals updated');
-    openBoxDetails(boxId);
-  }catch(e){
-    await Promise.allSettled([loadStorageBoxes(),loadProducts()]);
-    toast('Could not finish saving: '+e.message+' — review current quantities before retrying');
-    openBoxDetails(boxId);
   }
+  await loadStorageBoxes();toast('Box contents saved');openBoxDetails(boxId);
 }
 function printBoxLabel(boxId){
   const b=storageBoxesCache.find(x=>x.id===boxId);if(!b)return;
