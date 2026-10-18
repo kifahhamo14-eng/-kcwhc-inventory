@@ -2597,7 +2597,26 @@ function renderSell(p){
   (stock>0?'<div style="padding:22px 0;text-align:center"><div class="sub">Quantity to sell</div><div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:14px 0"><button class="smallbtn" onclick="changeSellQty(-1)">−</button><strong id="sellQty" style="font-size:32px">1</strong><button class="smallbtn" onclick="changeSellQty(1)">+</button></div><div class="sub">Confirm to record the sale and reduce inventory.</div></div><button class="saveBtn" onclick="confirmSale()">Confirm Sale</button>':'<div class="empty">Out of stock — this product cannot be sold.</div>')+'</div>';
 }
 function changeSellQty(d){const el=$('sellQty');let n=Math.max(1,Math.min(+currentProduct.quantity||0,(+el.textContent||1)+d));el.textContent=n}
-async function confirmSale(){if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}if(!currentProduct)return;const qty=+$('sellQty').textContent||1;if(qty>+currentProduct.quantity){toast('Not enough stock');return}const {error}=await sb.rpc('adjust_stock',{p_product_id:currentProduct.id,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});if(error){toast(error.message);return}toast('Sale recorded');await loadProducts();currentProduct=products.find(p=>p.id===currentProduct.id);renderAll();renderSell(currentProduct)}
+async function confirmSale(){
+ if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}
+ if(!currentProduct)return;
+ const qty=Number($('sellQty')?.textContent);
+ if(!Number.isInteger(qty)||qty<1){toast('Choose a valid quantity');return}
+ if(qty>Number(currentProduct.quantity||0)){toast('Not enough stock');return}
+ const btn=$('sellBody')?.querySelector('.saveBtn');
+ if(btn?.disabled)return;
+ if(btn){btn.disabled=true;btn.textContent='Recording sale…'}
+ try{
+  const soldId=currentProduct.id;
+  const {error}=await sb.rpc('adjust_stock',{p_product_id:soldId,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});
+  if(error)throw error;
+  toast('Sale recorded — inventory updated');
+  await loadProducts();
+  try{await loadStorageBoxes()}catch(e){console.warn('Box refresh failed',e)}
+  currentProduct=products.find(p=>p.id===soldId)||null;
+  renderAll();renderSell(currentProduct);
+ }catch(e){toast('Sale failed: '+(e?.message||String(e)));if(btn){btn.disabled=false;btn.textContent='Confirm Sale'}}
+}
 async function countStock(id){if(!canDo('can_count_stock')){toast('Count Stock is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;const v=prompt(`Count stock for ${p.name}. Current: ${p.quantity}` ,p.quantity);if(v===null)return;const n=Number(v);if(!Number.isInteger(n)||n<0){toast('Enter a whole number 0 or higher');return}const {error}=await sb.rpc('set_stock_count',{p_product_id:id,p_quantity:n,p_note:'Physical stock count'});if(error){toast(error.message);return}toast('Stock count saved');await loadProducts();renderAll();if(currentProduct?.id===id){currentProduct=products.find(x=>x.id===id);renderDetail()}}
 async function adjustStock(id){if(!canDo('can_change_stock')){toast('Change Stock is not enabled for your account.');return}const p=products.find(x=>x.id===id);if(!p)return;const raw=prompt(`Adjust stock for ${p.name}.\nEnter a positive number to add or a negative number to remove.\nCurrent quantity: ${p.quantity}`,'0');if(raw===null)return;const delta=Number(raw);if(!Number.isInteger(delta)||delta===0){toast('Enter a whole number other than 0');return}if((+p.quantity||0)+delta<0){toast('Stock cannot go below zero');return}const {error}=await sb.rpc('adjust_stock',{p_product_id:id,p_delta:delta,p_action:'adjust_stock',p_note:'Manual stock adjustment'});if(error){toast(error.message);return}toast('Stock adjusted');await loadProducts();renderAll()}
 function openInventoryAction(id){
