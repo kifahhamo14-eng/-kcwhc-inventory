@@ -781,6 +781,19 @@
 .command .kcUnassigned{font-size:16px}
 @media(max-width:410px){.command .kcLuxuryFace .kcTinyFace{width:32px;height:32px}.command .kcLuxuryAnn{padding:7px}.command .kcLuxuryTask{padding:7px 5px}.command .kcLuxuryBadges{margin-left:0}}
 
+
+/* KCWHC luxury command previews — visual enhancement only */
+.command>.panel{border:1px solid #ddbd72;box-shadow:0 10px 22px #00271c20;background:linear-gradient(145deg,#fffdf8,#f5edda)}
+.command>.panel .panelBody{padding:9px!important}
+.kcLuxAnn,.kcLuxTask{border:1px solid #ecd5a4;background:linear-gradient(155deg,#fffefa,#fcf6e9);border-radius:13px;padding:10px;box-shadow:0 4px 12px #73551c12;min-width:0}
+.kcLuxAnn{cursor:pointer;display:flex;flex-direction:column;gap:9px}
+.kcLuxAnnTop{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}.kcLuxChip{padding:5px 7px;background:#ffe9b4;border-radius:30px;color:#77501b;font-size:10px;font-weight:800}.kcLuxAnnTop time{font-size:9px;color:#7d7f78}
+.kcLuxTitle{font-size:14px;font-weight:900;line-height:1.25;color:#103a2e;overflow-wrap:anywhere}.kcLuxMessage{font-size:11px;line-height:1.5;color:#58645d;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.kcLuxPerson{border-top:1px solid #e9e2d3;padding-top:9px;display:flex;align-items:center;gap:8px;min-width:0}.kcLuxPerson>div{min-width:0}.kcLuxPerson b{font-size:10px;display:block;overflow-wrap:anywhere}.kcLuxPerson small{display:block;color:#6d7770;font-size:9px}.kcLuxPerson .kcTinyFace{height:35px!important;width:35px!important;min-width:35px!important;border-radius:50%;object-fit:cover;display:inline-flex;align-items:center;justify-content:center}
+.kcLuxAction{border-radius:10px;padding:10px;background:linear-gradient(100deg,#ffdd7a,#eac15b);display:flex;align-items:center;gap:7px;color:#392d10;font-size:11px;font-weight:900}.kcLuxAction span:nth-child(2){flex:1}.kcLuxAction span:last-child{font-size:19px}
+.kcLuxTasks{display:flex;flex-direction:column;gap:8px}.kcLuxProgress{padding:0 2px}.kcLuxTask{padding:9px}.kcLuxTaskHeading{display:flex;gap:8px;align-items:flex-start}.kcLuxTaskHeading input{flex:none;width:20px;height:20px;accent-color:#00724e;margin:2px 0 0;cursor:pointer}.kcLuxTaskTitle{font-size:12px;line-height:1.25;color:#12382d;font-weight:900;overflow-wrap:anywhere}.kcLuxBadges{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.kcLuxBadges span{font-size:9px;font-weight:800;padding:5px 6px;border-radius:30px}.kcLuxDue{background:#fff0cb;color:#936000}.kcLuxDue.late,.kcLuxPriority.high{background:#ffe0dc;color:#bf3432}.kcLuxPriority{background:#e9eee3;color:#456548}
+.kcLuxPeopleGrid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #e9e2d3;padding-top:8px;gap:6px;min-width:0}.kcLuxPeopleGrid>div{min-width:0}.kcLuxPeopleGrid>div+div{border-left:1px solid #e9e2d3;padding-left:6px}.kcLuxPeopleLabel{font-size:9px;color:#65756c;display:block;margin-bottom:5px}.kcLuxAssignee,.kcLuxTeam{display:flex;align-items:center;gap:5px;min-width:0;flex-wrap:wrap}.kcLuxAssignee .kcTinyFace,.kcLuxAssignee .kcTinyFace,.kcLuxTeam .kcTinyFace{width:28px!important;height:28px!important;min-width:28px!important;border-radius:50%;object-fit:cover;display:inline-flex;align-items:center;justify-content:center}.kcLuxAssignee small,.kcLuxTeam small{font-size:9px;color:#314a3e;overflow-wrap:anywhere;min-width:0}.kcLuxTeam .kcLuxAssignee{display:flex;align-items:center;gap:3px;flex-wrap:wrap}.kcLuxTeam .kcLuxAssignee small{max-width:68px}.kcLuxUnassigned{color:#76857b}.kcLuxMore{border:0;background:transparent;font-weight:800;color:#075b46;cursor:pointer;text-align:right;font-size:10px}
+@media(max-width:400px){.kcLuxTaskTitle{font-size:11px}.kcLuxBadges span{font-size:8px;padding:4px}.kcLuxPerson .kcTinyFace{width:32px!important;height:32px!important;min-width:32px!important}.kcLuxTeam .kcTinyFace{width:25px!important;height:25px!important;min-width:25px!important}}
 /* KCWHC Command Center: premium announcement and task preview */
 .command>.panel{position:relative;overflow:hidden;border:1px solid rgba(202,166,83,.38);box-shadow:0 10px 24px rgba(2,35,26,.11);background:linear-gradient(150deg,#fffdf8,#f6f0e2)}
 .command>.panel:before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg,#c49b42,#f9db89,#c49b42)}
@@ -1978,27 +1991,29 @@ function renderAll(){renderStats();renderCommand();renderProducts();if(profile?.
 function renderStats(){const total=products.length,units=products.reduce((s,p)=>s+(+p.quantity||0),0),low=products.filter(p=>(+p.reorder_level||0)>0&&(+p.quantity||0)>0&&(+p.quantity||0)<=+p.reorder_level).length,out=products.filter(p=>(+p.quantity||0)<=0).length;$('statProducts').textContent=total;$('statUnits').textContent=units;$('statLow').textContent=low;$('statOut').textContent=out}
 function renderCommand(){
   if(window.kcQuickRefresh)window.kcQuickRefresh();
-  const a=announcements[0];
-  const unread=announcements.filter(x=>!localStorage.getItem(opsAckKey(x.id)));
+  const a=announcements[0], unread=announcements.filter(x=>!localStorage.getItem(opsAckKey(x.id)));
   $('annCount').textContent=unread.length+' New';
-  $('announcementPreview').innerHTML=a?`<div class="kcPreviewAnn kcLuxuryAnn" onclick="openAnnouncements()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openAnnouncements()"><div class="kcPreviewTop"><span class="kcPreviewChip">📣 ${localStorage.getItem(opsAckKey(a.id))?'Read':'New Bulletin'}</span><span class="kcPreviewDate">${new Date(a.created_at).toLocaleDateString()}</span></div><div class="kcPreviewTitle">${esc(a.title||'KCWHC Announcement')}</div><div class="kcPreviewMessage">${esc(a.message||'Open to view announcement details.')}</div><div class="kcLuxuryAuthor"><div class="kcLuxuryFace">${kcFace(a.created_by||a.creator_id)}</div><div class="kcLuxuryIdentity"><strong>${esc(kcPersonById(a.created_by||a.creator_id)?.full_name||'Author not recorded')}</strong><small>KCWHC Command</small></div></div><div class="kcLuxuryOpen"><span>▤ &nbsp; Open bulletin</span><span>›</span></div></div>`:'<div class="kcPreviewEmpty">No announcements yet. Your next bulletin will appear here.</div>';
-  const open=todos.filter(t=>!t.completed);
-  const completed=todos.filter(t=>t.completed).length;
-  const pct=todos.length?Math.round(100*completed/todos.length):0;
+  const personName=id=>kcPersonById(id)?.full_name||'Employee';
+  $('announcementPreview').innerHTML=a?`<article class="kcLuxAnn" onclick="openAnnouncements()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openAnnouncements()">
+    <div class="kcLuxAnnTop"><span class="kcLuxChip">📣 ${localStorage.getItem(opsAckKey(a.id))?'Read':'New Bulletin'}</span><time>${new Date(a.created_at).toLocaleDateString()}</time></div>
+    <div class="kcLuxTitle">${esc(a.title||'KCWHC Announcement')}</div>
+    <p class="kcLuxMessage">${esc(a.message||'Open to view announcement details.')}</p>
+    <div class="kcLuxPerson">${kcFace(a.created_by||a.creator_id)}<div><b>${esc(kcPersonById(a.created_by||a.creator_id)?.full_name||'Author not recorded')}</b><small>KCWHC Command</small></div></div>
+    <div class="kcLuxAction">▤ <span>Open bulletin</span><span>›</span></div>
+  </article>`:'<div class="kcPreviewEmpty">No announcements yet. Your next bulletin will appear here.</div>';
+  const open=todos.filter(t=>!t.completed),completed=todos.filter(t=>t.completed).length,pct=todos.length?Math.round(100*completed/todos.length):0;
   $('todoCount').textContent=open.length+' Open';
-  const taskRows=[...open].sort((a,b)=>{
-    const p=t=>String(t.priority||'').toLowerCase()==='high'?0:String(t.priority||'').toLowerCase()==='medium'?1:2;
-    const d=t=>t.due_date?new Date(t.due_date+'T00:00:00').getTime():Infinity;
-    return d(a)-d(b)||p(a)-p(b);
-  }).slice(0,2).map(t=>{
+  const rows=open.slice(0,2).map(t=>{
     const label=t.due_date?dueText(t.due_date):'Open';
-    const late=label==='Overdue',today=label==='Due Today',prio=String(t.priority||'Normal');
     const creator=t.created_by||t.creator_id,ids=kcAssigneeIds(t);
-    const assigneeFaces=ids.length?ids.slice(0,3).map(kcFace).join(''):'<span class="kcUnassigned">—</span>';
-    const names=ids.map(id=>kcPersonById(id)?.full_name||'Employee');
-    return `<div class="kcLuxuryTask"><div class="kcLuxuryTaskHead"><input type="checkbox" aria-label="Complete ${esc(t.task||'Task')}" onchange="toggleTodo('${t.id}',this.checked)"><div class="kcLuxuryTaskTitle">${esc(t.task||'Task')}</div></div><div class="kcLuxuryBadges"><span class="kcMissionBadge ${late?'isLate':today?'isToday':''}">◷ ${esc(label)}</span><span class="kcLuxuryPriority ${prio.toLowerCase()==='high'?'high':''}">! ${esc(prio)} Priority</span></div><div class="kcLuxuryPeople"><div><small>Created by</small><div class="kcLuxuryFace">${kcFace(creator)}</div><span>${esc(kcPersonById(creator)?.full_name||'Not recorded')}</span></div><div><small>Assigned to</small><div class="kcLuxuryStack">${assigneeFaces}</div><span>${esc(names.length?names.length===1?names[0]:names.length+' team members':'Unassigned')}</span></div></div></div>`;
+    const assignees=ids.length?ids.slice(0,4).map(id=>`<span class="kcLuxAssignee">${kcFace(id)}<small>${esc(personName(id))}</small></span>`).join(''):'<small class="kcLuxUnassigned">Unassigned</small>';
+    return `<article class="kcLuxTask">
+      <div class="kcLuxTaskHeading"><input type="checkbox" aria-label="Complete ${esc(t.task||'Task')}" onchange="toggleTodo('${t.id}',this.checked)"><div class="kcLuxTaskTitle">${esc(t.task||'Task')}</div></div>
+      <div class="kcLuxBadges"><span class="kcLuxDue ${label==='Overdue'?'late':''}">◷ ${esc(label)}</span><span class="kcLuxPriority ${String(t.priority||'').toLowerCase()==='high'?'high':''}">⚑ ${esc(t.priority||'Normal')} Priority</span></div>
+      <div class="kcLuxPeopleGrid"><div><small class="kcLuxPeopleLabel">Created by</small><div class="kcLuxAssignee">${kcFace(creator)}<small>${esc(kcPersonById(creator)?.full_name||'Not recorded')}</small></div></div><div><small class="kcLuxPeopleLabel">Assigned to</small><div class="kcLuxTeam">${assignees}</div></div></div>
+    </article>`;
   }).join('');
-  $('todoPreview').innerHTML=`<div class="kcPreviewTasks"><div><div class="kcTaskProgressHead"><span>Task completion</span><span>${completed} of ${todos.length} · ${pct}%</span></div><div class="kcTaskTrack"><i style="width:${pct}%"></i></div></div>${taskRows||'<div class="kcPreviewEmpty">All caught up! No open tasks.</div>'}${open.length>2?'<div class="kcPreviewFooter" style="justify-content:flex-end;cursor:pointer" onclick="openTodos()">+'+(open.length-2)+' more tasks ›</div>':''}</div>`;
+  $('todoPreview').innerHTML=`<div class="kcLuxTasks"><div class="kcLuxProgress"><div class="kcTaskProgressHead"><span>Task completion</span><span>${completed} of ${todos.length} · ${pct}%</span></div><div class="kcTaskTrack"><i style="width:${pct}%"></i></div></div>${rows||'<div class="kcPreviewEmpty">All caught up! No open tasks.</div>'}${open.length>2?'<button class="kcLuxMore" onclick="openTodos()">+'+(open.length-2)+' more tasks ›</button>':''}</div>`;
 }
 function taskRiskClass(t){return t.risk_level==='High'?'red':t.risk_level==='Medium'?'amber':'green'}
 function dueText(d){const x=new Date(d+'T00:00:00'),today=new Date();today.setHours(0,0,0,0);const dd=Math.round((x-today)/86400000);return dd<0?'Overdue':dd===0?'Due Today':dd===1?'Tomorrow':x.toLocaleDateString()}
