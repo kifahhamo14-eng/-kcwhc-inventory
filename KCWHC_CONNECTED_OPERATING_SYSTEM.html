@@ -2000,6 +2000,7 @@ async function kcManageLocations(id){
  ${rows.map(c=>`<div class="listRow"><b>${esc(c.box.storage_room)} · ${esc(c.box.box_name||c.box.box_code)}</b><div class="sub">${+c.expected_quantity||0} pieces</div></div>`).join('')||'<div class="sub">No box assignments yet.</div>'}
  ${assigned!==+p.quantity?`<p class="sub" style="color:#9e6610">Unallocated existing stock: ${(+p.quantity||0)-assigned}. Assigning these units to a box must not add to total stock.</p>`:''}
  <div class="field"><label>Storage Room / Box</label><select id="kcLocBox">${opts}</select></div>
+ ${assigned<(+p.quantity||0)?`<div class="field"><label>Allocate Existing Stock (does not increase total)</label><input id="kcAllocateQty" type="number" min="1" max="${(+p.quantity||0)-assigned}" step="1" value="1"></div><button class="saveBtn" onclick="kcAllocateExistingStock('${id}')">Assign Existing Units to Selected Box</button>`:''}
  <div class="field"><label>Quantity to add (new incoming stock)</label><input id="kcLocQty" type="number" min="1" step="1" value="1"></div>
  <button class="saveBtn" onclick="kcAddLocationStock('${id}')">Add Stock to Selected Box</button>
  ${rows.length?`<div class="field"><label>Transfer From</label><select id="kcFromBox">${rows.filter(c=>+c.expected_quantity>0).map(c=>`<option value="${c.box_id}">${esc(c.box.storage_room)} · ${esc(c.box.box_name||c.box.box_code)} (${+c.expected_quantity||0})</option>`).join('')}</select></div>
@@ -2009,6 +2010,21 @@ async function kcManageLocations(id){
 async function kcLocationWrite(name,args,id){
  const {error}=await sb.rpc(name,args);if(error)return toast('Location update failed: '+error.message);
  await Promise.all([loadProducts(),loadStorageBoxes()]);renderAll();toast('Location stock updated');kcManageLocations(id);
+}
+async function kcAllocateExistingStock(id){
+ if(!canDo('can_change_stock'))return toast('No permission to manage stock');
+ const box=$('kcLocBox')?.value,n=Number($('kcAllocateQty')?.value);
+ if(!box||!Number.isInteger(n)||n<1)return toast('Choose box and positive quantity');
+ const {data:p,error:pe}=await sb.from('products').select('quantity').eq('id',id).single();
+ const {data:contents,error:ce}=await sb.from('storage_box_contents').select('id,box_id,expected_quantity').eq('product_id',id);
+ if(pe||ce)return toast('Could not confirm current stock');
+ const allocated=(contents||[]).reduce((sum,x)=>sum+(Number(x.expected_quantity)||0),0);
+ if(n>Number(p.quantity)-allocated)return toast('Not enough unallocated stock. Refresh and try again.');
+ const existing=(contents||[]).find(x=>x.box_id===box);
+ const req=existing?sb.from('storage_box_contents').update({expected_quantity:Number(existing.expected_quantity)+n}).eq('id',existing.id):sb.from('storage_box_contents').insert({product_id:id,box_id:box,expected_quantity:n});
+ const {error}=await req;
+ if(error)return toast('Unable to allocate: '+error.message);
+ await loadStorageBoxes();renderAll();toast(n+' existing units assigned without increasing total stock');kcManageLocations(id);
 }
 function kcAddLocationStock(id){
  const box=$('kcLocBox')?.value,n=Number($('kcLocQty')?.value);if(!box||!Number.isInteger(n)||n<=0)return toast('Select a box and a positive whole quantity');
