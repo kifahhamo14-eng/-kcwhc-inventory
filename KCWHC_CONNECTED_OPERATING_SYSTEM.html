@@ -2105,18 +2105,30 @@ function kcInlineLocationMarkup(p){
  const rows=kcProductBoxRows(p.id);
  return '<section id="kcInlineLocations" data-product="'+esc(p.id)+'" style="margin:14px 0;padding:14px;border:1px solid #dfd0a8;border-radius:16px;background:#fffaf0"><b>📍 Quantity by Location</b><p class="sub">Enter additional box quantities without leaving Edit Product.</p>'+
  rows.map(v=>'<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5d9c5"><span>'+esc(v.box.storage_room)+' · '+esc(v.box.box_name||v.box.box_code)+'</span><b>'+Number(v.expected_quantity||0)+' pcs</b></div>').join('')+
- '<div id="kcInlineLocationRows"></div><button type="button" class="smallbtn" onclick="kcAddInlineLocation()">＋ Add Another Location</button><p class="sub">Choose a room and box, then enter quantity. Allocate existing stock or add new stock.</p></section>';
+ '<div id="kcInlineLocationRows"></div><button type="button" class="smallbtn" onclick="kcAddInlineLocation()">＋ Add Another Location</button><p class="sub">Type the storage room and box, then enter quantity. New locations are created automatically.</p></section>';
 }
 function kcAddInlineLocation(){
  const root=$('kcInlineLocationRows');if(!root)return;
- const opts=(storageBoxesCache||[]).filter(b=>b.status==='active').map(b=>'<option value="'+esc(b.id)+'">'+esc(b.storage_room||'Room')+' · '+esc(b.box_name||b.box_code||'Box')+'</option>').join('');
- if(!opts)return toast('Create a box in Box Management first.');
  const el=document.createElement('div');el.className='kcInlineLocationEntry';el.style.cssText='padding:10px;margin:10px 0;border:1px solid #e0d1ad;border-radius:12px;background:white';
- el.innerHTML='<div class="field"><label>Storage Room / Shelf / Bin / Box</label><select class="kcInlineBox">'+opts+'</select></div><div class="field"><label>Quantity at this location</label><input class="kcInlineQty" type="number" min="1" step="1" value="1"></div><div class="field"><label>Stock type</label><select class="kcInlineMode"><option value="allocate">Allocate existing stock</option><option value="add">Add new stock</option></select></div><button type="button" class="smallbtn" onclick="this.parentElement.remove()">Remove location</button>';
+ el.innerHTML='<div class="field"><label>Storage Room</label><input class="kcInlineRoom" type="text" placeholder="e.g. B&C" autocomplete="off"></div><div class="field"><label>Shelf / Bin / Box</label><input class="kcInlineBoxName" type="text" placeholder="e.g. O or A2" autocomplete="off"></div><div class="field"><label>Quantity at this location</label><input class="kcInlineQty" type="number" min="1" step="1" value="1"></div><div class="field"><label>Stock type</label><select class="kcInlineMode"><option value="allocate">Allocate existing stock</option><option value="add">Add new stock</option></select></div><button type="button" class="smallbtn" onclick="this.parentElement.remove()">Remove location</button>';
  root.appendChild(el);
 }
 function kcPendingInlineLocations(){
- return [...document.querySelectorAll('#kcInlineLocationRows .kcInlineLocationEntry')].map(el=>({box:el.querySelector('.kcInlineBox')?.value,qty:Number(el.querySelector('.kcInlineQty')?.value),mode:el.querySelector('.kcInlineMode')?.value}));
+ return [...document.querySelectorAll('#kcInlineLocationRows .kcInlineLocationEntry')].map(el=>({room:el.querySelector('.kcInlineRoom')?.value.trim()||'',boxName:el.querySelector('.kcInlineBoxName')?.value.trim()||'',qty:Number(el.querySelector('.kcInlineQty')?.value),mode:el.querySelector('.kcInlineMode')?.value}));
+}
+async function kcResolveInlineBox(loc){
+ const same=(storageBoxesCache||[]).find(b=>b.status!=='archived'&&String(b.storage_room||'').trim().toLowerCase()===loc.room.toLowerCase()&&[b.box_name,b.box_code].some(s=>String(s||'').trim().toLowerCase()===loc.boxName.toLowerCase()));
+ if(same)return same.id;
+ const code=loc.room+'-'+loc.boxName;
+ const {data,error}=await sb.from('storage_boxes').insert({box_code:code,barcode:makeBoxEan13(),storage_room:loc.room,box_name:loc.boxName,created_by:profile.id}).select('id').single();
+ if(error){
+  await loadStorageBoxes();
+  const found=(storageBoxesCache||[]).find(b=>b.status!=='archived'&&String(b.storage_room||'').trim().toLowerCase()===loc.room.toLowerCase()&&[b.box_name,b.box_code].some(s=>String(s||'').trim().toLowerCase()===loc.boxName.toLowerCase()));
+  if(found)return found.id;
+  throw new Error('Could not create storage location '+code+': '+error.message);
+ }
+ storageBoxesCache.push({id:data.id,box_code:code,box_name:loc.boxName,storage_room:loc.room,status:'active'});
+ return data.id;
 }
 function buildAddForm(p=null){
   const needed=p?'can_edit_products':'can_add_products';
@@ -2549,7 +2561,7 @@ async function saveProduct(id){
   }
 
   const pendingLocations=id?kcPendingInlineLocations():[];
-  if(pendingLocations.some(v=>!v.box||!Number.isInteger(v.qty)||v.qty<1)){toast('Enter valid location quantities');return}
+  if(pendingLocations.some(v=>!v.room||!v.boxName||!Number.isInteger(v.qty)||v.qty<1)){toast('Enter valid location quantities');return}
   if(pendingLocations.length&&!canDo('can_change_stock')){toast('Change Stock permission required');return}
   const assigned=kcProductBoxRows(id).reduce((n,v)=>n+Number(v.expected_quantity||0),0);
   const free=Math.max(0,Number($('fQty')?.value||0)-assigned);
@@ -2627,7 +2639,8 @@ async function saveProduct(id){
 
     if(id&&pendingLocations.length){
       for(const loc of pendingLocations){
-        const {error:locationError}=await sb.rpc(loc.mode==='allocate'?'kc_box_allocate':'kc_box_add',{p_product:id,p_box:loc.box,p_quantity:loc.qty});
+        const boxId=await kcResolveInlineBox(loc);
+        const {error:locationError}=await sb.rpc(loc.mode==='allocate'?'kc_box_allocate':'kc_box_add',{p_product:id,p_box:boxId,p_quantity:loc.qty});
         if(locationError)throw new Error('Product details saved but a location failed: '+locationError.message);
       }
       await loadStorageBoxes();
