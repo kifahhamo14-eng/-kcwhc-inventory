@@ -1159,7 +1159,7 @@
     <div class="channels" id="salesChannelButtons"></div>
     <div id="channelPriorityPanel"></div>
     <div class="sectionTitle"><span>📦 Products (<span id="productCount">0</span>)</span><button id="addTopBtn" class="hidden" onclick="go('add')" style="border:1px solid #e8c354;background:#075b46;color:#fff;border-radius:9px;padding:7px 10px;font-size:9px">＋ Add Product</button></div>
-    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:9px 0"><button class="goldbtn" onclick="kcOpenLabelSheetPicker()" style="padding:10px 13px">▥ Print 16-Label Sheets</button><button class="goldbtn" onclick="kcOpenCatalogStudio()" style="padding:10px 13px">▤ Product Catalog</button><span id="kcLabelPickerCount" style="font-size:11px;font-weight:700">0 products / 0 labels</span></div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:9px 0"><button class="goldbtn" onclick="kcOpenLabelSheetPicker()" style="padding:10px 13px">▥ Print 16-Label Sheets</button><button class="goldbtn" onclick="kcOpenCatalogStudio()" style="padding:10px 13px">▤ Create Catalog</button><button class="goldbtn" onclick="kcOpenCatalogStudio()" style="padding:10px 13px">▤ Product Catalog</button><span id="kcLabelPickerCount" style="font-size:11px;font-weight:700">0 products / 0 labels</span></div>
     <div id="products" class="products"><div class="loading">Loading inventory…</div></div>
    </div>
   </div>
@@ -4192,4 +4192,4 @@ function save(h){var u=URL.createObjectURL(new Blob([h],{type:'text/html'}));var
 })();
 </script>
 <script src="kc-multi-location.js?v=20261019"></script>
-</body></html>
+<script src="kc-catalog-studio.js?v=20261019"></script></body></html>
