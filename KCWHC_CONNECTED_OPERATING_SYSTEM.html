@@ -2007,9 +2007,11 @@ async function kcManageLocations(id){
  <div class="field"><label>Transfer To</label><select id="kcToBox">${opts}</select></div><div class="field"><label>Transfer quantity</label><input id="kcTransferQty" type="number" min="1" step="1" value="1"></div><button class="saveBtn" onclick="kcTransferLocationStock('${id}')">Transfer Between Boxes</button>`:''}
  <button class="smallbtn" onclick="openBoxManagement()">Manage / Create Boxes</button>`);
 }
-async async function kcLocationWrite(name,args,id){
- const {error}=await sb.rpc(name,args);if(error)return toast('Location update failed: '+error.message);
- await Promise.all([loadProducts(),loadStorageBoxes()]);renderAll();toast('Location stock updated');kcManageLocations(id);
+async async async function kcLocationWrite(name,args,id){
+ try{
+  const {error}=await sb.rpc(name,args);if(error)throw error;
+  await Promise.all([loadProducts(),loadStorageBoxes()]);renderAll();toast('Location stock updated');await kcManageLocations(id);
+ }catch(e){toast('Location update failed: '+(e?.message||String(e)))}
 }
 async function kcAllocateExistingStock(id){
  if(!canDo('can_change_stock'))return toast('No permission to manage stock');
