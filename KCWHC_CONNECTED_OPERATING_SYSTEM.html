@@ -2657,7 +2657,7 @@ function renderSell(p){
   const kcSellRows=kcProductBoxRows(p.id).filter(c=>+c.expected_quantity>0);
   const kcSellAssigned=kcProductBoxRows(p.id).reduce((n,c)=>n+(+c.expected_quantity||0),0);
   const kcBoxSelect=kcSellRows.length?'<div class="field"><label>Sell from Storage Room / Box</label><select id="kcSellBox" onchange="kcUpdateSellAvailable()">'+kcSellRows.map(c=>'<option value="'+esc(c.box_id)+'">'+esc(c.box.storage_room)+' · '+esc(c.box.box_name||c.box.box_code)+' ('+Number(c.expected_quantity)+' available)</option>').join('')+'</select></div>':'';
-  const kcSellWarning=kcSellRows.length&&kcSellAssigned!==stock?'<p class="sub" style="color:#aa6500">Box quantities ('+kcSellAssigned+') differ from total inventory ('+stock+'). Reconcile before selling from a box.</p>':'';
+  const kcSellWarning=kcSellRows.length&&kcSellAssigned!==stock?'<p class="sub" style="color:#aa6500">Box quantities ('+kcSellAssigned+') differ from total inventory ('+stock+'). You can sell from a box with enough stock; verify unassigned quantities separately.</p>':'';
   body.innerHTML='<div class="sellCard"><div style="display:flex;align-items:center;gap:14px">'+imageHtml+'<div style="min-width:0"><div class="pnumber">'+esc(p.storage_number||p.sku||'')+'</div><div class="pname">'+esc(p.name||'Product')+'</div><div class="sub">Available: '+stock+' · Unit price: ₪'+Number(p.selling_price||0).toFixed(2)+'</div></div></div>'+
   kcBoxSelect+kcSellWarning+(stock>0?'<div style="padding:22px 0;text-align:center"><div class="sub">Quantity to sell</div><div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:14px 0"><button class="smallbtn" onclick="changeSellQty(-1)">−</button><strong id="sellQty" style="font-size:32px">1</strong><button class="smallbtn" onclick="changeSellQty(1)">+</button></div><div class="sub">Confirm to record the sale and reduce inventory.</div></div><button class="saveBtn" onclick="confirmSale()">Confirm Sale</button>':'<div class="empty">Out of stock — this product cannot be sold.</div>')+'</div>';
 }
@@ -2672,7 +2672,7 @@ async function confirmSale(){
  const chosenBox=$('kcSellBox')?.value;
  const allBoxRows=kcProductBoxRows(currentProduct.id);
  const assigned=allBoxRows.reduce((n,c)=>n+(+c.expected_quantity||0),0);
- if(chosenBox&&(assigned!==Number(currentProduct.quantity||0)||qty>Number(allBoxRows.find(c=>c.box_id===chosenBox)?.expected_quantity||0))){toast('Check box quantities before selling');return}
+ if(chosenBox&&qty>Number(allBoxRows.find(c=>c.box_id===chosenBox)?.expected_quantity||0)){toast('Not enough stock in selected box');return}
  const btn=$('sellBody')?.querySelector('.saveBtn');
  if(btn?.disabled)return;
  if(btn){btn.disabled=true;btn.textContent='Recording sale…'}
