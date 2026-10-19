@@ -1754,6 +1754,8 @@ async function loadProfile(uid){const {data,error}=await sb.from('profiles').sel
 async function enterApp(){if(profile.employment_status!=='active'){try{await sb.auth.signOut({scope:'local'})}catch(_e){}showLoginCard();$('loginMsg').textContent=profile.employment_status==='terminated'?'This account has been terminated.':'This account is suspended.';return}if(profile.role!=='admin'&&profile.approval_status!=='approved'){showPendingApproval();return}$('login').classList.add('hidden');$('app').classList.remove('hidden');$('roleName').textContent=profile.role==='admin'?'Admin':'Employee';$('avatar').textContent=(profile.full_name||profile.role||'U')[0].toUpperCase();const isAdmin=profile.role==='admin';$('adminTiles').classList.toggle('hidden',!isAdmin);$('addTopBtn').classList.toggle('hidden',!(isAdmin||canDo('can_add_products')));$('editHeaderBtn').classList.toggle('hidden',!(isAdmin||canDo('can_edit_products')));await Promise.all([loadProducts(),loadAnnouncements(),loadTodos()]);if(isAdmin)await loadAdminSummary();try{await sb.rpc('log_user_login',{p_device:(navigator.userAgent||'').slice(0,300)})}catch(_e){}setupRealtime();initSessionSecurity();renderAll();repairLegacyImagesToStorage()}
 async function signOut(){stopScanner();realtime.forEach(c=>sb.removeChannel(c));realtime=[];await sb.auth.signOut();location.reload()}
 async function loadProducts(){const {data,error}=await sb.from('products').select('*').order('created_at',{ascending:true});if(error){toast(error.message);return}products=data||[]}
+// Refresh location balances after inventory loads, without blocking the existing dashboard.
+
 async function loadAnnouncements(){await kcLoadFaces();const {data}=await sb.from('announcements').select('*').order('created_at',{ascending:false});announcements=data||[]}
 async function loadTodos(){const {data}=await sb.from('todos').select('*').order('completed',{ascending:true}).order('created_at',{ascending:false});todos=data||[]}
 async function loadAdminSummary(){if(profile.role!=='admin')return;const since90=new Date(Date.now()-90*86400000).toISOString();const [{data:r},{data:a},{data:sales}]=await Promise.all([sb.rpc('get_revenue_summary'),sb.from('inventory_activity').select('id,created_at').gte('created_at',new Date(new Date().setHours(0,0,0,0)).toISOString()),sb.from('orders').select('product_id,quantity,record_type,created_at').eq('record_type','Sale').gte('created_at',since90)]);$('revMonth').textContent='₪'+Number(r?.month||0).toLocaleString();$('activityToday').textContent=(a||[]).length;const high=products.filter(p=>p.risk_level==='High').length,med=products.filter(p=>p.risk_level==='Medium').length;$('riskHigh').textContent=high+' High';$('riskMedium').textContent=med+' Medium';const sm=buildScaleMetrics(products,sales||[]);$('scaleReady').textContent=sm.filter(x=>x.scale_label==='Scale Now').length+' Ready';$('scaleGrowing').textContent=sm.filter(x=>x.scale_label==='Growing').length+' Growing'}
@@ -2634,6 +2636,7 @@ function prepareSell(id){
   currentProduct=product;
   go('sell');
   renderSell(product);
+  loadStorageBoxes().then(()=>{if(currentProduct?.id===id)renderSell(product)}).catch(e=>toast('Box locations unavailable: '+e.message));
 }
 function renderSell(p){
   const body=$('sellBody');
@@ -2643,8 +2646,13 @@ function renderSell(p){
   const img=productImage(p);
   const imageHtml=img?'<img class="prodImg" src="'+esc(img)+'" alt="Product" style="width:108px;height:132px;object-fit:contain">':'<div class="placeholder" style="width:108px;height:132px">✦</div>';
   body.innerHTML='<div class="sellCard"><div style="display:flex;align-items:center;gap:14px">'+imageHtml+'<div style="min-width:0"><div class="pnumber">'+esc(p.storage_number||p.sku||'')+'</div><div class="pname">'+esc(p.name||'Product')+'</div><div class="sub">Available: '+stock+' · Unit price: ₪'+Number(p.selling_price||0).toFixed(2)+'</div></div></div>'+
-  (stock>0?'<div style="padding:22px 0;text-align:center"><div class="sub">Quantity to sell</div><div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:14px 0"><button class="smallbtn" onclick="changeSellQty(-1)">−</button><strong id="sellQty" style="font-size:32px">1</strong><button class="smallbtn" onclick="changeSellQty(1)">+</button></div><div class="sub">Confirm to record the sale and reduce inventory.</div></div><button class="saveBtn" onclick="confirmSale()">Confirm Sale</button>':'<div class="empty">Out of stock — this product cannot be sold.</div>')+'</div>';
+const kcSellRows=kcProductBoxRows(p.id).filter(c=>+c.expected_quantity>0);
+  const kcSellAssigned=kcProductBoxRows(p.id).reduce((n,c)=>n+(+c.expected_quantity||0),0);
+  const kcBoxSelect=kcSellRows.length?'<div class="field"><label>Sell from Storage Room / Box</label><select id="kcSellBox" onchange="kcUpdateSellAvailable()">'+kcSellRows.map(c=>'<option value="'+esc(c.box_id)+'">'+esc(c.box.storage_room)+' · '+esc(c.box.box_name||c.box.box_code)+' ('+Number(c.expected_quantity)+' available)</option>').join('')+'</select></div>':'';
+  const kcSellWarning=kcSellRows.length&&kcSellAssigned!==stock?'<p class="sub" style="color:#aa6500">Box quantities ('+kcSellAssigned+') differ from total inventory ('+stock+'). Reconcile before selling from a box.</p>':'';
+      kcBoxSelect+kcSellWarning+(stock>0?'<div style="padding:22px 0;text-align:center"><div class="sub">Quantity to sell</div><div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:14px 0"><button class="smallbtn" onclick="changeSellQty(-1)">−</button><strong id="sellQty" style="font-size:32px">1</strong><button class="smallbtn" onclick="changeSellQty(1)">+</button></div><div class="sub">Confirm to record the sale and reduce inventory.</div></div><button class="saveBtn" onclick="confirmSale()">Confirm Sale</button>':'<div class="empty">Out of stock — this product cannot be sold.</div>')+'</div>';
 }
+function kcUpdateSellAvailable(){const box=$('kcSellBox')?.value;if(!box)return;const row=kcProductBoxRows(currentProduct?.id).find(c=>c.box_id===box),avail=Number(row?.expected_quantity||0),el=$('sellQty');if(el)el.textContent=Math.max(1,Math.min(avail,+el.textContent||1))}
 function changeSellQty(d){const el=$('sellQty');let n=Math.max(1,Math.min(+currentProduct.quantity||0,(+el.textContent||1)+d));el.textContent=n}
 async function confirmSale(){
  if(!canDo('can_sell')){toast('Sell is not enabled for your account.');return}
@@ -2652,12 +2660,16 @@ async function confirmSale(){
  const qty=Number($('sellQty')?.textContent);
  if(!Number.isInteger(qty)||qty<1){toast('Choose a valid quantity');return}
  if(qty>Number(currentProduct.quantity||0)){toast('Not enough stock');return}
+ const chosenBox=$('kcSellBox')?.value;
+ const allBoxRows=kcProductBoxRows(currentProduct.id);
+ const assigned=allBoxRows.reduce((n,c)=>n+(+c.expected_quantity||0),0);
+ if(chosenBox&&(assigned!==Number(currentProduct.quantity||0)||qty>Number(allBoxRows.find(c=>c.box_id===chosenBox)?.expected_quantity||0))){toast('Check box quantities before selling');return}
  const btn=$('sellBody')?.querySelector('.saveBtn');
  if(btn?.disabled)return;
  if(btn){btn.disabled=true;btn.textContent='Recording sale…'}
  try{
   const soldId=currentProduct.id;
-  const {error}=await sb.rpc('adjust_stock',{p_product_id:soldId,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});
+  const {error}=chosenBox?await sb.rpc('kc_box_sale',{p_product:soldId,p_box:chosenBox,p_quantity:qty}):await sb.rpc('adjust_stock',{p_product_id:soldId,p_delta:-qty,p_action:'sale',p_note:'Sale from KCWHC dashboard'});
   if(error)throw error;
   toast('Sale recorded — inventory updated');
   await loadProducts();
