@@ -2014,15 +2014,8 @@ async function kcLocationWrite(name,args,id){
 async function kcAllocateExistingStock(id){
  if(!canDo('can_change_stock'))return toast('No permission to manage stock');
  const box=$('kcLocBox')?.value,n=Number($('kcAllocateQty')?.value);
- if(!box||!Number.isInteger(n)||n<1)return toast('Choose box and positive quantity');
- const {data:p,error:pe}=await sb.from('products').select('quantity').eq('id',id).single();
- const {data:contents,error:ce}=await sb.from('storage_box_contents').select('id,box_id,expected_quantity').eq('product_id',id);
- if(pe||ce)return toast('Could not confirm current stock');
- const allocated=(contents||[]).reduce((sum,x)=>sum+(Number(x.expected_quantity)||0),0);
- if(n>Number(p.quantity)-allocated)return toast('Not enough unallocated stock. Refresh and try again.');
- const existing=(contents||[]).find(x=>x.box_id===box);
- const req=existing?sb.from('storage_box_contents').update({expected_quantity:Number(existing.expected_quantity)+n}).eq('id',existing.id):sb.from('storage_box_contents').insert({product_id:id,box_id:box,expected_quantity:n});
- const {error}=await req;
+ if(!box||!Number.isInteger(n)||n<1)return toast('Choose a box and positive quantity');
+ const {error}=await sb.rpc('kc_box_allocate',{p_product:id,p_box:box,p_quantity:n});
  if(error)return toast('Unable to allocate: '+error.message);
  await loadStorageBoxes();renderAll();toast(n+' existing units assigned without increasing total stock');kcManageLocations(id);
 }
