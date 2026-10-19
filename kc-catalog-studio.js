@@ -20,9 +20,9 @@ function doc(){
 const items=chosen();if(!items.length)return '';
 const pages=[];
 const im=p=>photo(p)?'<img class="look-photo" src="'+clean(photo(p))+'" alt="'+clean(p.name)+'">':'<div class="look-photo placeholder">KCWHC</div>';
-const price=p=>state.prices&&p.selling_price!==undefined&&p.selling_price!==null&&String(p.selling_price).trim()!==''&&!Number.isNaN(Number(p.selling_price))?'<strong class="look-price">₪ '+Number(p.selling_price).toFixed(2)+'</strong>':'';
+const price=p=>state.prices&&p.selling_price!==undefined&&p.selling_price!==null&&String(p.selling_price).trim()!==''&&Number(p.selling_price)>0&&!Number.isNaN(Number(p.selling_price))?'<strong class="look-price">₪ '+Number(p.selling_price).toFixed(2)+'</strong>':'';
 const data=p=>'<div class="look-data"><span>'+clean(cat(p))+'</span>'+(p.color?'<span><b>Colors:</b> '+clean(p.color)+'</span>':'')+(p.size?'<span><b>Size:</b> '+clean(p.size)+'</span>':'')+(state.refs&&ref(p)?'<span><b>Ref:</b> '+clean(ref(p))+'</span>':'')+'</div>';
-const line=p=>{let c=String(cat(p)).toLowerCase();return c.includes('thobe')||c.includes('dress')?'Wear the story. Celebrate the craft.':c.includes('shawl')||c.includes('scarf')?'A graceful expression of heritage.':c.includes('bag')||c.includes('pouch')?'Carry tradition beautifully.':c.includes('pillow')||c.includes('home')?'Bring heritage into your home.':'Made to be seen. Made to be treasured.'};
+const line=p=>{let c=String(cat(p)).toLowerCase();let name=String(p.name||'').toLowerCase();if(name.includes('christmas')||name.includes('santa'))return 'A little heritage. A lot of holiday magic.';return c.includes('thobe')||c.includes('dress')?'Wear your heritage. Make every entrance unforgettable.':c.includes('shawl')||c.includes('scarf')?'Not just an accessory. Your signature statement.':c.includes('bag')||c.includes('pouch')?'Carry a story they will ask about.':c.includes('pillow')||c.includes('home')?'Give your home a story worth telling.':'More than an object. A piece of your story.'};
 const card=p=>'<article class="look-card"><div class="look-photo-wrap">'+im(p)+'</div><div class="look-card-body"><div class="look-eyebrow">HERITAGE SELECTION</div><h3>'+clean(p.name||'Heritage piece')+'</h3>'+data(p)+'<div class="look-card-bottom">'+price(p)+'<em>'+line(p)+'</em></div></div></article>';
 const shell=(content,cls='')=>'<section class="look-page '+cls+'">'+content+'</section>';
 const pagehead=(heading,kicker)=>'<header class="look-head"><span>KCWHC</span><span>'+clean(kicker||'PALESTINIAN HERITAGE COLLECTION')+'</span></header><h2 class="look-section-title">'+clean(heading)+'</h2><div class="look-rule">✦ &nbsp; HANDCRAFTED HERITAGE &nbsp; ✦</div>';
@@ -40,8 +40,8 @@ if(!products.length)continue;
 const heading=String(group).replace(/</g,'');
 const hero=products[0];
 pages.push(shell(pagehead(heading,'FEATURED COLLECTION')+'<div class="look-feature"><div class="look-feature-photo">'+im(hero)+'</div><div class="look-feature-content"><div class="look-eyebrow">THE FEATURED EDIT</div><h3>'+clean(hero.name||'Signature piece')+'</h3><p class="look-feature-lead">Authentic character. Unmistakable presence.</p>'+data(hero)+price(hero)+'<p class="look-feature-copy">'+line(hero)+'</p></div></div>'+foot(num++),'look-feature-page'));
-for(let i=1;i<products.length;i+=4){
-const slice=products.slice(i,i+4);
+for(let i=1;i<products.length;i+=6){
+const slice=products.slice(i,i+6);
 pages.push(shell(pagehead(heading,'THE COLLECTION')+'<div class="look-grid">'+slice.map(card).join('')+'</div>'+foot(num++),'look-products-page'));
 }
 }
@@ -83,14 +83,14 @@ body{font-family:Arial,Helvetica,sans-serif;background:#e7e3d9;color:#153c30;-we
 .look-data span{display:block}
 .look-price{font:700 20px Georgia,serif;color:#855521}
 .look-feature-copy{font:italic 15px/1.4 Georgia,serif;margin:0}
-.look-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:5mm;margin-bottom:5mm}
+.look-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:3mm;margin-bottom:3mm}
 .look-card{min-width:0;min-height:0;background:#fffaf1;border:1px solid #d1b889;display:flex;flex-direction:column;overflow:hidden;break-inside:avoid}
-.look-photo-wrap{height:52%;min-height:0;padding:3mm 4mm 1mm}
-.look-card-body{flex:1;min-height:0;padding:3mm 4mm;display:flex;flex-direction:column;gap:1.8mm;overflow:hidden}
-.look-card h3{font:15px/1.12 Georgia,serif;margin:0;overflow-wrap:anywhere;max-height:3.36em;overflow:hidden}
-.look-card .look-data{font-size:9px;line-height:1.2;gap:1mm;max-height:10em;overflow:hidden}
+.look-photo-wrap{height:46%;min-height:0;padding:2mm 3mm 1mm}
+.look-card-body{flex:1;min-height:0;padding:2mm 3mm;display:flex;flex-direction:column;gap:1mm;overflow:hidden}
+.look-card h3{font:13px/1.12 Georgia,serif;margin:0;overflow-wrap:anywhere;max-height:3.36em;overflow:hidden}
+.look-card .look-data{font-size:8px;line-height:1.16;gap:.5mm;max-height:10em;overflow:hidden}
 .look-card-bottom{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start;gap:1mm}
-.look-card-bottom em{font:italic 10px/1.2 Georgia,serif;color:#755d3c;max-height:2.4em;overflow:hidden}
+.look-card-bottom em{font:italic 11px/1.22 Georgia,serif;color:#76522b;max-height:2.5em;overflow:hidden;border-top:1px solid #c7a66e;padding-top:1mm;width:100%}
 .look-end-page{background:linear-gradient(155deg,#fffaed,#e9d5aa)}
 .look-end{height:100%;border:2px solid #c6a266;text-align:center;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:12mm}
 .look-end-eyebrow{letter-spacing:3px;font:10px Arial}
