@@ -1973,7 +1973,56 @@ function filteredProducts(){const q=$('search').value.trim().toLowerCase();retur
 function productImage(p){return p.image_url||legacyEmbeddedImage(p)||EMBEDDED_IMAGES[p.storage_number]||''}
 function stockLabel(p){if((+p.quantity||0)<=0)return['Out of Stock','red'];if((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)return['Low Stock','amber'];return['In Stock','green']}
 function renderProducts(){if($('categoryButtons'))$('categoryButtons').innerHTML=categoryButtonsHtml(categoryFilter,'setCategory');if($('salesChannelButtons'))$('salesChannelButtons').innerHTML=salesChannelButtonsHtml(channelFilter);let rows=filteredProducts();rows=sortedByChannelPriority(rows);$('productCount').textContent=rows.length;$('products').innerHTML=rows.length?rows.map(productCard).join(''):'<div class="panel"><div class="empty">No products match this view.</div></div>';renderChannelPriorityPanel()}
-function productCard(p){const img=productImage(p),[status,cls]=stockLabel(p),rec=(p.recommendation||'Stock OK'),recCls=(+p.quantity||0)<=0?'red':((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)?'':'green';return `<article class="productCard" data-product-id="${p.id}"><div class="pcTop"><div>${img?`<img class="prodImg" src="${img}" alt="${esc(p.name)}" onclick="openImageZoom(this.src)">`:'<div class="placeholder">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number||'—')}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag">${esc(productCategory(p))}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel||'Online + Showroom')}</span></div><div class="detailsGrid"><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${+p.quantity||0}</b><small>Quantity</small></div><div class="detail"><b>${+p.reorder_level||0}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div><div class="detail"><b>${esc(p.sku||'—')}</b><small>SKU</small></div></div></div></div><div class="barcodeBox"><div class="recommend ${recCls}">💡 Recommendation: ${esc(rec)}</div><div class="barcode">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'No barcode')}</div></div></div><div class="pcActions"><button class="smallbtn primary" onclick="openProduct('${p.id}')">View</button><button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="openInventoryAction('${p.id}')">Inventory Action</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="openProduct('${p.id}',true)">Edit</button>`:''}</div></article>`}
+
+// KCWHC multi-location inventory: read from existing box contents; preserve product layout.
+function kcProductBoxRows(id){return (storageBoxContentsCache||[]).filter(c=>String(c.product_id)===String(id)).map(c=>({...c,box:(storageBoxesCache||[]).find(b=>b.id===c.box_id)})).filter(c=>c.box&&c.box.status!=='archived')}
+function kcProductLocationsHtml(p){
+ const rows=kcProductBoxRows(p.id),total=rows.reduce((n,c)=>n+(+c.expected_quantity||0),0);
+ return `<div class="kc-locations" style="margin-top:7px;font-size:12px">
+ <button type="button" class="smallbtn" style="font-size:11px;padding:6px 9px" onclick="kcToggleLocations('${p.id}')">📍 View Locations (${rows.length})</button>
+ <div id="kc-locations-${p.id}" style="display:none;padding:8px 2px">
+ ${rows.length?rows.map(c=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e9dfcb"><span>${esc(c.box.storage_room)} · ${esc(c.box.box_name||c.box.box_code)}</span><b>${+c.expected_quantity||0} pcs</b></div>`).join(''):'<div class="sub">No box quantities assigned yet.</div>'}
+ <div class="sub" style="margin:6px 0">In boxes: ${total} · Product total: ${+p.quantity||0}</div>
+ ${canDo('can_change_stock')?`<button class="smallbtn" onclick="kcManageLocations('${p.id}')">Manage Locations</button>`:''}
+ </div></div>`;
+}
+function kcToggleLocations(id){const el=document.getElementById('kc-locations-'+id);if(el)el.style.display=el.style.display==='none'?'block':'none'}
+async function kcManageLocations(id){
+ if(!canDo('can_change_stock'))return toast('No permission to manage stock');
+ try{await loadStorageBoxes()}catch(e){return toast('Could not load boxes: '+e.message)}
+ const p=products.find(x=>x.id===id);if(!p)return;
+ const rows=kcProductBoxRows(id),assigned=rows.reduce((n,c)=>n+(+c.expected_quantity||0),0);
+ const opts=(storageBoxesCache||[]).filter(b=>b.status==='active').map(b=>`<option value="${esc(b.id)}">${esc(b.storage_room)} · ${esc(b.box_name||b.box_code)}</option>`).join('');
+ openModal('Stock Locations',`<div class="stockCenterHero"><h3>${esc(p.name)}</h3><p>Same product and barcode, quantities by storage box.</p></div>
+ <div class="metricGrid"><div class="metricCard"><small>Product total</small><b>${+p.quantity||0}</b></div><div class="metricCard"><small>Assigned to boxes</small><b>${assigned}</b></div></div>
+ ${rows.map(c=>`<div class="listRow"><b>${esc(c.box.storage_room)} · ${esc(c.box.box_name||c.box.box_code)}</b><div class="sub">${+c.expected_quantity||0} pieces</div></div>`).join('')||'<div class="sub">No box assignments yet.</div>'}
+ ${assigned!==+p.quantity?`<p class="sub" style="color:#9e6610">Unallocated existing stock: ${(+p.quantity||0)-assigned}. Assigning these units to a box must not add to total stock.</p>`:''}
+ <div class="field"><label>Storage Room / Box</label><select id="kcLocBox">${opts}</select></div>
+ <div class="field"><label>Quantity to add (new incoming stock)</label><input id="kcLocQty" type="number" min="1" step="1" value="1"></div>
+ <button class="saveBtn" onclick="kcAddLocationStock('${id}')">Add Stock to Selected Box</button>
+ ${rows.length?`<div class="field"><label>Transfer From</label><select id="kcFromBox">${rows.filter(c=>+c.expected_quantity>0).map(c=>`<option value="${c.box_id}">${esc(c.box.storage_room)} · ${esc(c.box.box_name||c.box.box_code)} (${+c.expected_quantity||0})</option>`).join('')}</select></div>
+ <div class="field"><label>Transfer To</label><select id="kcToBox">${opts}</select></div><div class="field"><label>Transfer quantity</label><input id="kcTransferQty" type="number" min="1" step="1" value="1"></div><button class="saveBtn" onclick="kcTransferLocationStock('${id}')">Transfer Between Boxes</button>`:''}
+ <button class="smallbtn" onclick="openBoxManagement()">Manage / Create Boxes</button>`);
+}
+async function kcLocationWrite(name,args,id){
+ const {error}=await sb.rpc(name,args);if(error)return toast('Location update failed: '+error.message);
+ await Promise.all([loadProducts(),loadStorageBoxes()]);renderAll();toast('Location stock updated');kcManageLocations(id);
+}
+function kcAddLocationStock(id){
+ const box=$('kcLocBox')?.value,n=Number($('kcLocQty')?.value);if(!box||!Number.isInteger(n)||n<=0)return toast('Select a box and a positive whole quantity');
+ const p=products.find(x=>x.id===id);
+ if(!confirm('Add '+n+' NEW units to '+p?.name+' in the chosen box? This increases total stock.'))return;
+ kcLocationWrite('kc_box_add',{p_product:id,p_box:box,p_quantity:n},id);
+}
+function kcTransferLocationStock(id){
+ const source=$('kcFromBox')?.value,target=$('kcToBox')?.value,n=Number($('kcTransferQty')?.value);
+ if(!source||!target||source===target||!Number.isInteger(n)||n<=0)return toast('Choose different boxes and a valid quantity');
+ const available=kcProductBoxRows(id).find(c=>c.box_id===source)?.expected_quantity||0;
+ if(n>available)return toast('Not enough units in source box');
+ kcLocationWrite('kc_box_transfer',{p_product:id,p_source:source,p_target:target,p_quantity:n},id);
+}
+
+function productCard(p){const img=productImage(p),[status,cls]=stockLabel(p),rec=(p.recommendation||'Stock OK'),recCls=(+p.quantity||0)<=0?'red':((+p.reorder_level||0)>0&&(+p.quantity||0)<=+p.reorder_level)?'':'green';return `<article class="productCard" data-product-id="${p.id}"><div class="pcTop"><div>${img?`<img class="prodImg" src="${img}" alt="${esc(p.name)}" onclick="openImageZoom(this.src)">`:'<div class="placeholder">✦</div>'}</div><div><span class="pill ${cls} status">${status}</span><div class="pnumber">${esc(p.storage_number||'—')}</div><div class="pname">${productNameWithLogo(p.name)}</div><div class="tags"><span class="tag">${esc(productCategory(p))}</span>${p.size?`<span class="tag">${esc(p.size)}</span>`:''}${p.color?`<span class="tag">${esc(p.color)}</span>`:''}<span class="tag channel">${esc(p.sales_channel||'Online + Showroom')}</span></div><div class="detailsGrid"><div class="detail"><b>₪${Number(p.selling_price||0).toFixed(2)}</b><small>Selling Price</small></div><div class="detail"><b>${+p.quantity||0}</b><small>Quantity</small></div><div class="detail"><b>${+p.reorder_level||0}</b><small>Reorder Level</small></div><div class="detail"><b>${esc(p.storage_room||'—')}</b><small>Storage Room</small></div><div class="detail"><b>${esc(p.shelf_bin||'—')}</b><small>Shelf / Bin / Box</small></div><div class="detail"><b>${esc(p.storage_number||'—')}</b><small>Storage Number</small></div><div class="detail"><b>${esc(p.sku||'—')}</b><small>SKU</small></div></div></div>${kcProductLocationsHtml(p)}</div><div class="barcodeBox"><div class="recommend ${recCls}">💡 Recommendation: ${esc(rec)}</div><div class="barcode">${ean13Svg(p.barcode)||''}<div class="digits">${esc(p.barcode||'No barcode')}</div></div></div><div class="pcActions"><button class="smallbtn primary" onclick="openProduct('${p.id}')">View</button><button class="smallbtn" onclick="printProductLabel('${p.id}')">▥ Print Label</button>${canDo('can_sell')?`<button class="smallbtn" onclick="prepareSell('${p.id}')">Sell</button>`:''}${canDo('can_count_stock')?`<button class="smallbtn" onclick="countStock('${p.id}')">Count Stock</button>`:''}${canDo('can_change_stock')?`<button class="smallbtn" onclick="openInventoryAction('${p.id}')">Inventory Action</button>`:''}${canDo('can_edit_products')?`<button class="smallbtn" onclick="openProduct('${p.id}',true)">Edit</button>`:''}</div></article>`}
 function captureInventoryView(){
   const home=$('home');
   if(!home?.classList.contains('active'))return savedInventoryView;
