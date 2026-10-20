@@ -2623,6 +2623,15 @@ async function saveProduct(id){
   }
 
   try{
+    // Verify and refresh the real Supabase login before any product write.
+    // An expired/missing JWT otherwise makes the RPC run as anon (permission denied).
+    const {data:authCheck,error:authCheckError}=await sb.auth.getUser();
+    if(authCheckError||!authCheck?.user){
+      const {data:renewed,error:renewError}=await sb.auth.refreshSession();
+      if(renewError||!renewed?.session?.user){
+        throw new Error('Your Supabase login has expired. Please sign out and sign in again before saving. Your product information has not been submitted.');
+      }
+    }
     let image_url=id?currentProduct?.image_url:null;
     if(form.file)image_url=await uploadImage(form.file,form.storage);
 
