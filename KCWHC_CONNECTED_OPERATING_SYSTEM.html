@@ -2153,9 +2153,9 @@ function enableEditCurrent(){
 }
 
 function kcInlineLocationMarkup(p){
- if(!p?.id)return '';
- const rows=kcProductBoxRows(p.id);
- return '<section id="kcInlineLocations" data-product="'+esc(p.id)+'" style="margin:14px 0;padding:14px;border:1px solid #dfd0a8;border-radius:16px;background:#fffaf0"><b>📍 Quantity by Location</b><p class="sub">Enter additional box quantities without leaving Edit Product.</p>'+
+ const isNew=!p?.id;
+ const rows=isNew?[]:kcProductBoxRows(p.id);
+ return '<section id="kcInlineLocations" data-product="'+esc(p.id||'')+'" style="margin:14px 0;padding:14px;border:1px solid #dfd0a8;border-radius:16px;background:#fffaf0"><b>📍 Quantity by Location</b><p class="sub">Assign quantities to individual boxes. Existing units are allocated without increasing the total; new stock increases it.</p>'+
  rows.map(v=>'<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5d9c5"><span>'+esc(v.box.storage_room)+' · '+esc(v.box.box_name||v.box.box_code)+'</span><b>'+Number(v.expected_quantity||0)+' pcs</b></div>').join('')+
  '<div id="kcInlineLocationRows"></div><button type="button" class="smallbtn" onclick="kcAddInlineLocation()">＋ Add Another Location</button><p class="sub">Type the storage room and box, then enter quantity. New locations are created automatically.</p></section>';
 }
