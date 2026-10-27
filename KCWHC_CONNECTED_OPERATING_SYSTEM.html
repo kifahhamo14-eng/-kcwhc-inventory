@@ -2029,14 +2029,16 @@ function renderProducts(){if($('categoryButtons'))$('categoryButtons').innerHTML
 // KCWHC multi-location inventory: read from existing box contents; preserve product layout.
 function kcProductBoxRows(id){return (storageBoxContentsCache||[]).filter(c=>String(c.product_id)===String(id)).map(c=>({...c,box:(storageBoxesCache||[]).find(b=>b.id===c.box_id)})).filter(c=>c.box&&c.box.status!=='archived')}
 function kcProductLocationsHtml(p){
- const rows=kcProductBoxRows(p.id),total=rows.reduce((n,c)=>n+(+c.expected_quantity||0),0);
- return `<div class="kc-locations" style="margin-top:7px;font-size:12px">
- <button type="button" class="smallbtn" style="font-size:11px;padding:6px 9px" onclick="kcToggleLocations('${p.id}')">📍 View Locations (${rows.length})</button>
- <div id="kc-locations-${p.id}" style="display:none;padding:8px 2px">
- ${rows.length?rows.map(c=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e9dfcb"><span>${esc(c.box.storage_room)} · ${esc(c.box.box_name||c.box.box_code)}</span><b>${+c.expected_quantity||0} pcs</b></div>`).join(''):'<div class="sub">No box quantities assigned yet.</div>'}
- <div class="sub" style="margin:6px 0">In boxes: ${total} · Product total: ${+p.quantity||0}</div>
- ${canDo('can_change_stock')?`<button class="smallbtn" onclick="kcManageLocations('${p.id}')">Manage Locations</button>`:''}
- </div></div>`;
+ const rows=kcProductBoxRows(p.id),total=rows.reduce((n,c)=>n+(Number(c.expected_quantity)||0),0);
+ const productTotal=Number(p.quantity)||0, gap=productTotal-total;
+ return `<section class="kc-locations" style="margin:10px 0 5px;padding:11px;border:1px solid #dfd5bf;border-radius:12px;background:#fbfaf5;min-width:0;width:100%;box-sizing:border-box">
+ <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:7px;margin-bottom:8px"><b>📍 Stock by Location</b><b style="font-size:12px">${total} assigned / ${productTotal} total</b></div>
+ <div id="kc-locations-${p.id}" style="display:grid;gap:6px;min-width:0">
+ ${rows.length?rows.map(c=>`<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding:8px;border:1px solid #e9dfcb;border-radius:8px;background:white;min-width:0"><span style="overflow-wrap:anywhere;min-width:0;flex:1 1 150px">${esc(c.box.storage_room)} · ${esc(c.box.box_name||c.box.box_code)}</span><strong style="white-space:nowrap">${Number(c.expected_quantity)||0} pcs</strong></div>`).join(''):'<div class="sub">No quantities assigned to boxes yet.</div>'}
+ ${gap>0?`<div class="sub" style="color:#98601a">${gap} units not assigned to a box</div>`:gap<0?`<div class="sub" style="color:#b02a2a">⚠ Box quantities exceed product total by ${-gap}; review inventory</div>`:rows.length?'<div class="sub" style="color:#246b48">✓ Location quantities match total stock</div>':''}
+ </div>
+ ${canDo('can_change_stock')?`<button type="button" class="smallbtn" style="margin-top:8px" onclick="kcManageLocations('${p.id}')">Manage Locations</button>`:''}
+ </section>`;
 }
 function kcToggleLocations(id){const el=document.getElementById('kc-locations-'+id);if(el)el.style.display=el.style.display==='none'?'block':'none'}
 async function kcManageLocations(id){
@@ -2184,7 +2186,7 @@ function buildAddForm(p=null){
   const needed=p?'can_edit_products':'can_add_products';
   if(!canDo(needed)){toast('Your Admin has not enabled this product permission.');go('home');return}
   const x=p||{};
-  $('addForm').innerHTML=`<div class="formGrid"><div class="field full"><label>Product Image</label><input id="fImage" type="file" accept="image/*"></div><div class="field full"><label>Item Name *</label><input id="fName" value="${esc(x.name||'')}"></div><div class="field"><label>Category</label><select id="fCategory" onchange="onProductCategoryChange()">${KC_CATEGORIES.map(c=>`<option value="${esc(c)}" ${productCategory(x)===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="field"><label>Size</label><input id="fSize" value="${esc(x.size||'')}"></div><div class="field"><label>Color</label><input id="fColor" value="${esc(x.color||'')}"></div><div class="field full"><label>Sales Channel *</label><div class="channelChoice"><button type="button" data-v="Online Only" onclick="pickFormChannel(this)">🌐<br>Online Only</button><button type="button" data-v="Showroom Only" onclick="pickFormChannel(this)">🏬<br>Showroom Only</button><button type="button" data-v="Online + Showroom" onclick="pickFormChannel(this)">◉<br>Online + Showroom</button><button type="button" data-v="Bazar" onclick="pickFormChannel(this)">◆<br>Bazar</button></div><input id="fChannel" type="hidden" value="${esc(x.sales_channel||'Online + Showroom')}"></div><div class="field"><label>Selling Price (₪)</label><input id="fPrice" type="number" step="0.01" value="${x.selling_price??0}"></div><div class="field"><label>Quantity</label><input id="fQty" type="number" min="0" value="${x.quantity??0}"></div><div class="field"><label>Reorder Level</label><input id="fReorder" type="number" min="0" value="${x.reorder_level??0}"></div><div class="field"><label>Storage Room</label><input id="fRoom" value="${esc(x.storage_room||'')}"></div><div class="field"><label>Shelf / Bin / Box</label><input id="fShelf" value="${esc(x.shelf_bin||'')}"></div><div class="field"><label>Storage Number *</label><input id="fStorage" value="${esc(x.storage_number||'')}"></div><div class="field"><label>SKU</label><input id="fSku" value="${esc(x.sku||'')}"></div><div class="field"><label>Barcode</label><input id="fBarcode" value="${esc(x.barcode||'')}"></div><div class="field"><label>Status</label><select id="fStatus"><option ${x.status==='Active'?'selected':''}>Active</option><option ${x.status==='Out of Stock'?'selected':''}>Out of Stock</option><option ${x.status==='Discontinued'?'selected':''}>Discontinued</option></select></div></div>${x.id?kcInlineLocationMarkup(x):''}<button id="saveProductBtn" type="button" class="saveBtn" data-product-id="${esc(x.id||'')}">${x.id?'Save Changes':'Save Product'}</button>`;
+  $('addForm').innerHTML=`<div class="formGrid"><div class="field full"><label>Product Image</label><input id="fImage" type="file" accept="image/*"></div><div class="field full"><label>Item Name *</label><input id="fName" value="${esc(x.name||'')}"></div><div class="field"><label>Category</label><select id="fCategory" onchange="onProductCategoryChange()">${KC_CATEGORIES.map(c=>`<option value="${esc(c)}" ${productCategory(x)===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="field"><label>Size</label><input id="fSize" value="${esc(x.size||'')}"></div><div class="field"><label>Color</label><input id="fColor" value="${esc(x.color||'')}"></div><div class="field full"><label>Sales Channel *</label><div class="channelChoice"><button type="button" data-v="Online Only" onclick="pickFormChannel(this)">🌐<br>Online Only</button><button type="button" data-v="Showroom Only" onclick="pickFormChannel(this)">🏬<br>Showroom Only</button><button type="button" data-v="Online + Showroom" onclick="pickFormChannel(this)">◉<br>Online + Showroom</button><button type="button" data-v="Bazar" onclick="pickFormChannel(this)">◆<br>Bazar</button></div><input id="fChannel" type="hidden" value="${esc(x.sales_channel||'Online + Showroom')}"></div><div class="field"><label>Selling Price (₪)</label><input id="fPrice" type="number" step="0.01" value="${x.selling_price??0}"></div><div class="field"><label>Quantity</label><input id="fQty" type="number" min="0" value="${x.quantity??0}"></div><div class="field"><label>Reorder Level</label><input id="fReorder" type="number" min="0" value="${x.reorder_level??0}"></div><div class="field"><label>Storage Room</label><input id="fRoom" value="${esc(x.storage_room||'')}"></div><div class="field"><label>Shelf / Bin / Box</label><input id="fShelf" value="${esc(x.shelf_bin||'')}"></div><div class="field"><label>Storage Number *</label><input id="fStorage" value="${esc(x.storage_number||'')}"></div><div class="field"><label>SKU</label><input id="fSku" value="${esc(x.sku||'')}"></div><div class="field"><label>Barcode</label><input id="fBarcode" value="${esc(x.barcode||'')}"></div><div class="field"><label>Status</label><select id="fStatus"><option ${x.status==='Active'?'selected':''}>Active</option><option ${x.status==='Out of Stock'?'selected':''}>Out of Stock</option><option ${x.status==='Discontinued'?'selected':''}>Discontinued</option></select></div></div>${kcInlineLocationMarkup(x)}<button id="saveProductBtn" type="button" class="saveBtn" data-product-id="${esc(x.id||'')}">${x.id?'Save Changes':'Save Product'}</button>`;
   setTimeout(()=>{
     const saveButton=$('saveProductBtn');
     if(saveButton){
@@ -2609,7 +2611,7 @@ async function saveProduct(id){
     return;
   }
 
-  const pendingLocations=id?kcPendingInlineLocations():[];
+  const pendingLocations=kcPendingInlineLocations();
   if(pendingLocations.some(v=>!v.room||!v.boxName||!Number.isInteger(v.qty)||v.qty<1)){toast('Enter valid location quantities');return}
   if(pendingLocations.length&&!canDo('can_change_stock')){toast('Change Stock permission required');return}
   const assigned=kcProductBoxRows(id).reduce((n,v)=>n+Number(v.expected_quantity||0),0);
@@ -2695,10 +2697,12 @@ async function saveProduct(id){
 
     if(result.error)throw result.error;
 
-    if(id&&pendingLocations.length){
+    const savedProductId=(Array.isArray(result.data)?result.data[0]?.id:result.data?.id)||id||null;
+    if(pendingLocations.length){
+      if(!savedProductId)throw new Error('Product saved but its ID was not returned. Assign locations using Edit Product.');
       for(const loc of pendingLocations){
         const boxId=await kcResolveInlineBox(loc);
-        const {error:locationError}=await sb.rpc(loc.mode==='allocate'?'kc_box_allocate':'kc_box_add',{p_product:id,p_box:boxId,p_quantity:loc.qty});
+        const {error:locationError}=await sb.rpc(loc.mode==='allocate'?'kc_box_allocate':'kc_box_add',{p_product:savedProductId,p_box:boxId,p_quantity:loc.qty});
         if(locationError)throw new Error('Product details saved but a location failed: '+locationError.message);
       }
       await loadStorageBoxes();
@@ -2719,7 +2723,7 @@ async function saveProduct(id){
     document.querySelectorAll('.navb').forEach(n=>n.classList.toggle('active',n.dataset.go==='home'));
     renderProducts();
 
-    const savedId=(Array.isArray(result.data)?result.data[0]?.id:result.data?.id)||id||null;
+    const savedId=savedProductId;
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(savedId){
         const card=document.querySelector(`[data-product-id="${savedId}"]`);
